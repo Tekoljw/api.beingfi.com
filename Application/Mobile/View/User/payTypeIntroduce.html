@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file="Public:head" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+</head>
+<body class="blackbg">
+    <div class="log_title">
+        <span class="back"><a href="javascript:history.go(-1)"></a></span>
+        {:L('API参数含义说明')}
+    </div>
+    <div class="mui-content cur-padding-bottom" style="margin-top:10px;">
+        <div class="trade_record">
+            <div class="titlehead">{:L('参数列表')}</div>
+            <ul class="list-exchange">
+                <empty name="list">
+                    {:L('暂无参数说明，请添加')}
+                <else/>
+                    <volist name="list" id="vo">
+                        <li>
+                            <div class="stream-info" style="text-transform:uppercase;">
+                                <div class="tl"><p class="title">渠道ID</p><p><empty name="vo.channelid">无<else/>{$vo.channelid}</empty></p></div>
+                                <div class="tc"><p class="title">支付渠道</p><p><empty name="vo.channelid">无<else/>{$vo['channelid']|getPayChannleTitle=###}</empty></p></div>
+                                <div class="tr"><p class="title">truename</p><p><empty name="vo.truename">账户名<else/>{$vo.truename}</empty></p></div>
+                            </div>
+                            <div class="stream-info" style="text-transform:uppercase;">
+                                <div class="tl"><p class="title">mch_id</p><p><empty name="vo.mch_id">无<else/>{$vo.mch_id}</empty></p></div>
+                                <div class="tc"><p class="title">signkey</p><p><empty name="vo.signkey">无<else/>{$vo.signkey}</empty></p></div>
+                                <div class="tr"><p class="title">appid</p><p><empty name="vo.appid">无<else/>{$vo.appid}</empty></p></div>
+                            </div>
+                            <div class="stream-info" style="text-transform:uppercase;">
+                                <div class="tl"><p class="title">Appsecret</p><p><empty name="vo.appsecret">无<else/>{$vo.appsecret}</empty></p></div>
+                                <div class="tc"><p class="title">domain_record</p><p><empty name="vo.domain_record">无<else/>{$vo.domain_record}</empty></p></div>
+                                <div class="tr"><p class="title">subject</p><p><empty name="vo.subject">无<else/>{$vo.subject}</empty></p></div>
+                            </div>
+                        </li>
+                    </volist>
+                </empty>
+            </ul>
+        </div>
+        <include file="Public:footer" />
+    </div>
+</body>
+</html>

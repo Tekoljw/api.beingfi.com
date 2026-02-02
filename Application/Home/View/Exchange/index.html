@@ -1,0 +1,1061 @@
+<include file="Public:header_new" />
+<style>
+	body {background:#283046;}
+</style>
+<link rel="stylesheet" href="__PUBLIC__/Home/ecshe_css/exchange.css">
+<style>
+	.copy_button{float:right;margin-top:5px;margin-right:10px;padding:0 10px;height:30px;}
+	.search_button{
+		margin-top: 5px;
+		margin-left: 15px;
+		display: block;
+		padding: 0 15px;
+		min-width: 50px;
+		height: 25px;
+		line-height: 25px;
+		text-align: center;
+		font-size: 14px;
+		color: #fff;
+		background-color: #4f64dc;
+		border: 1px solid #6378f1;
+		border-radius: 1000px;
+	    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+		cursor: pointer;
+	}
+	.rush_button{
+		margin-top: 5px;
+		margin-left: 15px;
+		display: block;
+		padding: 0 15px;
+		min-width: 50px;
+		height: 25px;
+		line-height: 25px;
+		text-align: center;
+		font-size: 14px;
+		color: #533;
+		background-color: #A98A3F;
+		border: 1px solid #898A2C;
+		border-radius: 1000px;
+	    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+		cursor: pointer;
+	}
+	.reset_button{
+		margin-top: 5px;
+		margin-left: 15px;
+		display: block;
+		padding: 0 15px;
+		min-width: 50px;
+		height: 25px;
+		line-height: 25px;
+		text-align: center;
+		font-size: 14px;
+		color: #fff;
+		background-color: #40641c;
+		border: 1px solid #307804;
+		border-radius: 1000px;
+	    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+		cursor: pointer;
+	}
+</style>
+
+<div class="C2C_order_list">
+	<p style="margin-top:20px;margin-bottom: 20px;padding:20px;font-size:16px;color: #ffffff;background-color: #283046;border-radius:8px;">
+		<b style="color: red">重要提示：</b>{:L($configs['mytx_prompt'])}
+		<notempty name="tips.low_payparams">
+			<br><b style="color: red">低收入提示：</b>{:L($tips['low_payparams'])}
+		</notempty>
+		<notempty name="tips.fail_payparams">
+			<br><b style="color: red">失败关闭提示：</b>{:L($tips['fail_payparams'])}
+		</notempty>
+		<notempty name="tips.limit_payparams">
+			<br><b style="color: red">限额提示：</b>{:L($tips['limit_payparams'])}
+		</notempty>
+		<notempty name="tips.auto_buy_order_exist">
+			<br><b style="color: red">自动买入提示：</b>{:L($tips['auto_buy_order_exist'])}
+		</notempty>
+	</p>
+	<h2 style="color: #424ec5;">{:L($c2c_coin)}交易</h2>
+	<div class="column">
+		 <switch name="order_mode">
+            <case value="0">
+            	<a href="{:U('Exchange/index',array('order_mode'=>0,'c2c_coin'=>$c2c_coin))}"><h2 style="color: #ded6d6;text-transform:uppercase;">{:L('买市场')}</h2></a>
+				<a href="{:U('Exchange/index',array('order_mode'=>1,'c2c_coin'=>$c2c_coin))}"><h1 style="color: #ded6d6;text-transform:uppercase;">{:L('卖市场')}</h1></a>
+				<a href="{:U('Exchange/index',array('order_mode'=>2,'c2c_coin'=>$c2c_coin))}"><h1 style="color: #ded6d6;text-transform:uppercase;">{:L('我的订单')}</h1></a>
+            </case> 
+            <case value="1">
+            	<a href="{:U('Exchange/index',array('order_mode'=>0,'c2c_coin'=>$c2c_coin))}"><h1 style="color: #ded6d6;text-transform:uppercase;">{:L('买市场')}</h1></a>
+				<a href="{:U('Exchange/index',array('order_mode'=>1,'c2c_coin'=>$c2c_coin))}"><h2 style="color: #ded6d6;text-transform:uppercase;">{:L('卖市场')}</h2></a>
+				<a href="{:U('Exchange/index',array('order_mode'=>2,'c2c_coin'=>$c2c_coin))}"><h1 style="color: #ded6d6;text-transform:uppercase;">{:L('我的订单')}</h1></a>
+            </case>
+            <case value="2">
+            	<a href="{:U('Exchange/index',array('order_mode'=>0,'c2c_coin'=>$c2c_coin))}"><h1 style="color: #ded6d6;text-transform:uppercase;">{:L('买市场')}</h1></a>
+				<a href="{:U('Exchange/index',array('order_mode'=>1,'c2c_coin'=>$c2c_coin))}"><h1 style="color: #ded6d6;text-transform:uppercase;">{:L('卖市场')}</h1></a>
+				<a href="{:U('Exchange/index',array('order_mode'=>2,'c2c_coin'=>$c2c_coin))}"><h2 style="color: #ded6d6;text-transform:uppercase;">{:L('我的订单')}</h2></a>
+            </case>
+            <default />
+            	<a href="{:U('Exchange/index',array('order_mode'=>0,'c2c_coin'=>$c2c_coin))}"><h2 style="color: #ded6d6;text-transform:uppercase;">{:L('买市场')}</h2></a>
+				<a href="{:U('Exchange/index',array('order_mode'=>1,'c2c_coin'=>$c2c_coin))}"><h1 style="color: #ded6d6;text-transform:uppercase;">{:L('卖市场')}</h1></a>
+				<a href="{:U('Exchange/index',array('order_mode'=>2,'c2c_coin'=>$c2c_coin))}"><h1 style="color: #ded6d6;text-transform:uppercase;">{:L('我的订单')}</h1></a>
+        </switch>
+        <div class="navs">
+			<a href="{:U('Exchange/bank')}" style="font-size: 16px">&#8226; {:L('收款账户管理')}</a>
+		</div>
+		<div class="navs">
+			<h3 style="color: #ded6d6; font-size: 16px;">
+				{:L('自动卖出')}
+			</h3>
+		</div>
+		<div class="navs" style="margin-top:3px;margin-right:6px;">
+			<eq name="auto_c2c_sell_status" value="1">
+				<input class="ids" title="开启自动卖出交易" type="checkbox" style="zoom:150%;" id="auto_c2c_sell_status" name=" auto_c2c_sell_status" value="{$auto_c2c_sell_status}" checked/>
+			<else/>
+				<input class="ids" title="开启自动卖出交易" type="checkbox" style="zoom:150%;" id="auto_c2c_sell_status" name=" auto_c2c_sell_status" value="{$auto_c2c_sell_status}"/>
+			</eq>
+		</div>
+		<div class="navs">
+			<h3 style="color: #ded6d6; font-size: 16px;">
+				{:L('自动买入')}
+			</h3>
+		</div>
+		<div class="navs" style="margin-top:3px;margin-right:6px;">
+			<eq name="auto_c2c_buy_status" value="1">
+				<input class="ids" title="开启自动买入交易" type="checkbox" style="zoom:150%;" id="auto_c2c_buy_status" name=" auto_c2c_buy_status" value="{$auto_c2c_buy_status}" checked/>
+			<else/>
+				<input class="ids" title="开启自动买入交易" type="checkbox" style="zoom:150%;" id="auto_c2c_buy_status" name=" auto_c2c_buy_status" value="{$auto_c2c_buy_status}"/>
+			</eq>
+		</div>
+		<form name="formSearch" id="formSearch" method="get" name="form1">
+			<div class="navs" style="margin-top:9px;margin-right:15px;">
+				<a class="search_button" id="search" href="javascript:;"><b style="color: white">{:L('搜索')}</b></a>
+			</div>
+			<div class="navs" style="margin-right:1px;">
+				<select style=" width: 100px; margin-right: 6px;" id="search_field" name="search_field" class="form-control" value="{$search_field}">
+					<option value="orderid">订单号</option>
+					<option value="out_order_id" <eq name="search_field" value="out_order_id">selected</eq>>外部订单号</option>
+					<option value="manual_order" <eq name="search_field" value="manual_order">selected</eq>>手动生成订单</option>
+					<option value="auto_order" <eq name="search_field" value="auto_order">selected</eq>>自动生成订单</option>
+					<option value="auto_buy_order" <eq name="search_field" value="auto_buy_order">selected</eq>>自动买入订单</option>
+					<option value="auto_comfirm_fail" <eq name="search_field" value="auto_comfirm_fail">selected</eq>>自动确认失败</option>
+					<option value="return_order_id" <eq name="search_field" value="return_order_id">selected</eq>>订单后5位</option>
+				</select>
+				<input class="search-input form-control" style=" width: 160px;" type="text" id="search_value" name="search_value" value="{$search_value}" placeholder="请选择类型后,输入查询内容" checked/>
+			</div>
+		</form>
+		<script>
+			//搜索功能
+			$(function () {
+				$('#search').click(function () {
+					$('#formSearch').submit();
+				});
+			});
+			//回车搜索
+			$(".search-input").keyup(function (e) {
+				if (e.keyCode === 13) {
+					$("#search").click();
+					return false;
+				}
+			});
+		</script>
+	</div>
+	<ul class="table-head">
+		<li style="width: 13%"><i></i>{:L('时间')}</li>
+		<li style="width: 20%"><i></i>{:L('类别')}</li>
+		<li style="width: 19%"><i></i>{:L('用户信息')}</li>
+		<li style="width: 10%" class="tc"><i></i>{:L('数量')}</li>
+		<li style="width: 8%" class="tc"><i></i>{:L('单价')}(￥)</li>
+		<li style="width: 10%" class="tc"><i></i>{:L('总价')}(￥)</li>
+		<li style="width: 10%" class="tc">{:L('状态')}</li>
+		<li style="width: 10%" class="tc">{:L('操作')}</li>
+	</ul>
+	<ul class="table-list">
+		<volist name="list" id="vo">
+			<li>
+				<dl>
+					<dd class="fl" style="width:13%"><i></i>{$vo.addtime|date='Y-m-d H:i:s',###}</dd>
+					<dd class="fl otype" style="width:20%;text-transform:uppercase;"><i></i>
+						<switch name="order_mode">
+							<case value="0"> <!--买入市场展示买入订单-->
+								<span class="green">{:L('买入')}</span> {$vo['type']}/CNY
+							</case>
+							<case value="1"> <!--卖出市场展示卖出订单-->
+								<span class="red">{:L('卖出')}</span> {$vo['type']}/CNY
+							</case>
+							<case value="2"> <!--我的订单-->
+								<if condition="($vo['otype'] eq 1 AND $userid eq $vo['userid']) OR ($vo['otype'] eq 2 AND $userid eq $vo['aid'])"><!--买入-->
+									<span class="green">{:L('买入')}</span> {$vo['type']}/CNY
+									<if condition="$vo['punishment_level'] gt 0 AND $vo['otype'] eq 1">
+										<span class="red">【自动，惩罚】</span>
+									<elseif condition="$vo['punishment_level'] eq 0 AND $vo['aid'] gt 0 AND $vo['otype'] eq 2" />
+										【{$vo['pay_channelid']|getPayTypeTitle=###}】
+									<elseif condition="$vo['punishment_level'] eq 0 AND $vo['notifyurl'] neq NULL" />
+										-自动赠送<span class="green">{$vo['all_scale']}</span>
+									</if>
+									<if condition="$vo['rush_status'] eq 1">
+										<br><i></i><b style="color: red">{:L('订单号：')}{$vo.orderid}</b>
+										<if condition="$vo['status'] eq 1 AND $vo['otype'] eq 1">
+											<br><i></i><b style="color: #ffa500">发来催促，尽快付款，并确认</b>
+										<elseif condition="$vo['status'] eq 2"></elseif>
+											<br><i></i><b style="color: #ffa500">已发催促，等待对方确认</b>
+										<elseif condition="$vo['status'] eq 8"></elseif>
+											<br><i></i><b style="color: #ffa500">已发重置请求，等待对方重置</b>
+										</if>
+										<if condition="$vo['return_order_id'] neq NULL"><br><i></i><b>{:L('后5位：')}{$vo.return_order_id}</b></if>
+									<elseif condition="$vo['rush_status'] eq 2"></elseif>
+										<br><i></i><b style="color: #F98A3F">{:L('订单号：')}{$vo.orderid}</b>
+										<br><i></i><b style="color: #ffa500">自动确认失败</b>
+										<if condition="$vo['return_order_id'] neq NULL"><br><i></i><b>{:L('后5位：')}{$vo.return_order_id}</b></if>
+									<else/>
+										<br><i></i><b>{:L('订单号：')}{$vo.orderid}</b>
+										<if condition="$vo['return_order_id'] neq NULL"><br><i></i><b>{:L('后5位：')}{$vo.return_order_id}</b></if>
+										<notempty name="search_value"><br><i></i><b>{:L('外单号：')}{$vo.out_order_id}</b></notempty>
+									</if>
+								<else/>
+									<span class="red">{:L('卖出')}</span> {$vo['type']}/CNY
+									<if condition="$vo['punishment_level'] eq 3 AND $vo['otype'] eq 2">
+										<span class="red">【延迟30分钟惩罚】</span>
+									<elseif condition="$vo['punishment_level'] eq 2 AND $vo['otype'] eq 2" />
+										<span class="red">【延迟10分钟惩罚】</span>
+									<elseif condition="$vo['punishment_level'] eq 1 AND $vo['otype'] eq 2" />
+										<span class="red">【延迟5分钟惩罚】</span>
+									<elseif condition="$vo['punishment_level'] eq 0 AND $vo['aid'] gt 0 AND $vo['otype'] eq 2" />
+										【{$vo['pay_channelid']|getPayTypeTitle=###}】
+									<elseif condition="$vo['punishment_level'] eq 0 AND $vo['notifyurl'] neq NULL" />
+										-自动赠送<span class="green">{$vo['all_scale']}</span>
+									</if>
+									<if condition="$vo['rush_status'] eq 1">
+										<br><i></i><b style="color: red">{:L('订单号：')}{$vo.orderid}</b>
+										<if condition="$vo['status'] eq 1 AND $vo['otype'] eq 1">
+											<br><i></i><b style="color: #ffa500">已发催促，等待对方付款并确认</b>
+										<elseif condition="$vo['status'] eq 2"/>
+											<br><i></i><b style="color: #ffa500">订单已付款，发来催促，请确认</b>
+										<elseif condition="$vo['status'] eq 8"/>
+											<br><i></i><b style="color: #ffa500">订单已付款，发来修改请求，请重置</b>
+										</if>
+										<if condition="$vo['return_order_id'] neq NULL"><br><i></i><b>{:L('后5位：')}{$vo.return_order_id}</b></if>
+									<elseif condition="$vo['rush_status'] eq 2"></elseif>
+										<br><i></i><b style="color: #F98A3F">{:L('订单号：')}{$vo.orderid}</b>
+										<br><i></i><b style="color: #ffa500">自动确认失败</b>
+										<if condition="$vo['return_order_id'] neq NULL"><br><i></i><b>{:L('后5位：')}{$vo.return_order_id}</b></if>
+									<else/>
+										<br><i></i><b>{:L('订单号：')}{$vo.orderid}</b>
+										<if condition="$vo['return_order_id'] neq NULL"><br><i></i><b>{:L('后5位：')}{$vo.return_order_id}</b></if>
+										<notempty name="search_value"><br><i></i><b>{:L('外单号：')}{$vo.out_order_id}</b></notempty>
+									</if>
+								</if>
+							</case>
+						</switch>
+
+						<if condition="$order_mode neq 2">
+							<br><i></i><b>{:L('订单号：')}{$vo.orderid}</b>
+							<if condition="$vo['return_order_id'] neq NULL"><br><i></i><b>{:L('后5位：')}{$vo.return_order_id}</b></if>
+						</if>
+					</dd>
+					<dd class="fl otype" style="width:19%;"><i></i>
+						<switch name="order_mode">
+							<case value="0"> <!--买入市场展示买入订单-->
+								<span style="color: #ffa500">{:L('用户名：')}</span>{$vo.userid|getFuzzyUserName=###}
+								<br><i></i><span style="color: #4f64dc">{:L('账号：')}</span>
+							</case>
+							<case value="1"> <!--卖出市场展示卖出订单-->
+								<span style="color: #ffa500">{:L('用户名：')}</span>{$vo.userid|getFuzzyUserName=###}
+								<br><i></i><span style="color: #4f64dc">{:L('账号：')}</span>
+							</case>
+							<case value="2"> <!--我的订单-->
+								<if condition="($vo['otype'] eq 1 AND $vo['status'] gt 0) OR ($vo['otype'] eq 2)">
+									<span style="color: #ffa500">{:L('账户名：')}</span>{$vo.truename}
+									<br><i></i><span style="color: #4f64dc">{:L('账号：')}</span><empty name="vo.bankcard" >{$vo.bank}<else/>{$vo.bankcard}</empty>
+								<else/>
+									<span style="color: #ffa500">{:L('用户名：')}</span>{$vo.userid|getFuzzyUserName=###}
+									<br><i></i><span style="color: #4f64dc">{:L('账号：')}</span>下单后可见
+								</if>
+							</case>
+						</switch>
+					</dd>
+					<dd class="fl tc" style="width:10%"><i></i>{$vo.num}</dd>
+					<dd class="fl tc" style="width:8%"><i></i>{$vo.uprice}</dd>
+					<dd class="fl tc" style="width:10%"><i></i>{$vo.mum}</dd>
+					<dd class="fl tc" style="width:10%">
+						<switch name="order_mode">
+            				<case value="0"> <!--买入市场展示买入订单-->
+								<eq name="vo.otype" value="1">
+									<span class="green icon_time">{:L('交易中')}</span>
+								</eq>
+							</case>
+							<case value="1"> <!--卖出市场展示卖出订单-->
+								<eq name="vo.otype" value="2">
+									<span class="green icon_time">{:L('交易中')}</span>
+								</eq>
+							</case>
+							<case value="2"> <!--我的订单-->
+								<if condition="($vo['otype'] eq 1 AND $userid eq $vo['userid']) OR ($vo['otype'] eq 2 AND $userid eq $vo['aid'])"><!--买入-->
+									<if condition="$vo.status eq 1"><span class="green icon_wait">{:L('待支付')}</span>
+									<elseif condition="$vo.status eq 2" /><span class="green icon_wait">{:L('卖家处理中')}</span>
+									<elseif condition="$vo.status eq 3" /><span class="green icon_yhk">{:L('交易完成')}</span>
+									<elseif condition="$vo.status eq 8" /><span class="red icon_yhkqx">{:L('已取消')}</span>
+									<else /><span class="green icon_time">{:L('交易中')}</span></if>
+								<else />
+									<if condition="$vo.status eq 1"><span class="green icon_wait">{:L('待买家付款')}</span>
+									<elseif condition="$vo.status eq 2" /><span class="green icon_wait">{:L('买家已付款')}</span>
+									<elseif condition="$vo.status eq 3" /><span class="green icon_yhk">{:L('交易完成')}</span>
+									<elseif condition="$vo.status eq 8" /><span class="red icon_yhkqx">{:L('已取消')}</span>
+									<else /><span class="green icon_time">{:L('交易中')}</span></if>
+								</if>
+							</case>
+						</switch>
+					</dd>
+					<dd class="fl tc" style="width:10%">
+						<switch name="order_mode">
+            				<case value="0"> <!--展示买入订单-->
+								<eq name="vo.otype" value="1">
+									<if condition="($userid neq $vo['userid'])">
+										<a class="btns_sell"  href="javascript:void(0)" onclick="tradeadd_sell('{$vo['orderid']}')"><b>{:L('卖出')}</b></a>
+									<else/>
+										<span class="red">{:L('自有订单')}</span>
+									</if>
+								<else/>
+									<span class="red">{:L('不能操作')}</span>
+								</eq>
+							</case>
+							<case value="1"> <!--展示卖出订单-->
+								<eq name="vo.otype" value="2">
+									<if condition="($userid neq $vo['userid'])">
+										<a class="btns_buy"  href="javascript:void(0)" onclick="tradeadd_buy('{$vo['orderid']}')"><b>{:L('购买')}</b></a>
+									<else/>
+										<span class="red">{:L('自有订单')}</span>
+									</if>
+								<else/>
+									<span class="red">{:L('不能操作')}</span>
+								</eq>
+							</case>
+							<case value="2"> <!--我的订单-->
+								<if condition="($vo['otype'] eq 1 AND $userid eq $vo['userid']) OR ($vo['otype'] eq 2 AND $userid eq $vo['aid'])"><!--买入-->
+									<if condition="$vo.status eq 0">
+										<a class="btns_sell" href="javascript:void(0)" onclick="cancelOrder('{$vo['orderid']}')"><b>{:L('取消')}</b></a>
+									<elseif condition="$vo.status eq 1" />
+										<a class="btns_sell"  href="javascript:void(0)" onclick="showUserInfo('{$vo['orderid']}',1)"><b>{:L('卖家信息')}</b></a>
+										<a class="btns_buy" href="javascript:void(0)" onclick="showOrderQueen('{$vo['orderid']}',0)"><b>{:L('确认付款')}</b></a>
+									<elseif condition="$vo.status eq 2" />
+										<a class="btns_sell"  href="javascript:void(0)" onclick="showUserInfo('{$vo['orderid']}',1)"><b>{:L('卖家信息')}</b></a>
+										<if condition="$vo['rush_status'] eq 0 AND $vo['userid'] gt 0 AND $vo['aid'] gt 0">
+											<a class="rush_button" href="javascript:void(0)" onclick="rushOrder('{$vo['orderid']}')"><b>{:L('催单')}</b></a>
+										</if>
+									<elseif condition="$vo.status eq 3" />
+										<a class="btns_sell"  href="javascript:void(0)" onclick="showUserInfo('{$vo['orderid']}',1)"><b>{:L('卖家信息')}</b></a>
+										<if condition="$vo['repost_num'] gt 0">
+											<a class="btns_buy" href="javascript:void(0)" onclick="repostOrderNotify('{$vo['orderid']}')">补发通知</a>
+										</if>
+									<elseif condition="$vo.status eq 8" />
+										<if condition="$vo['otype'] eq 2 AND $vo['rush_status'] eq 0 AND $vo['userid'] gt 0 AND $vo['aid'] gt 0">
+											<a class="rush_button" href="javascript:void(0)" onclick="rushOrder('{$vo['orderid']}')"><b>{:L('催改成功')}</b></a>
+										</if>
+									<else />--
+									</if>
+								<else />
+									<if condition="$vo.status eq 0">
+										<a class="btns_sell" href="javascript:void(0)" onclick="cancelOrder('{$vo['orderid']}')"><b>{:L('取消')}</b></a>
+									<elseif condition="$vo.status eq 1" />
+										<a class="btns_sell" href="javascript:void(0)" onclick="showUserInfo('{$vo['orderid']}',0)">买家信息</a>
+										<if condition="$vo['rush_status'] eq 0 AND $vo['userid'] gt 0 AND $vo['aid'] gt 0">
+											<a class="rush_button" href="javascript:void(0)" onclick="rushOrder('{$vo['orderid']}')"><b>{:L('催单')}</b></a>
+										</if>
+									<elseif condition="$vo.status eq 2" />
+										<a class="btns_sell" href="javascript:void(0)" onclick="showUserInfo('{$vo['orderid']}',0)">买家信息</a>
+										<a class="btns_buy" href="javascript:void(0)" onclick="showOrderQueen('{$vo['orderid']}',1)">确认收款</a>
+									<elseif condition="$vo.status eq 3" />
+										<a class="btns_sell" href="javascript:void(0)" onclick="showUserInfo('{$vo['orderid']}',0)">买家信息</a>
+									<elseif condition="$vo.status eq 8" />
+										<if condition="$vo['otype'] eq 2 AND $vo['userid'] gt 0 AND $vo['aid'] gt 0">
+											<a class="reset_button" href="javascript:void(0)" onclick="resetQueenOrder('{$vo['orderid']}')"><b>{:L('设为成功')}</b></a>
+										<else/>--
+										</if>
+									<else />--
+									</if>
+								</if>
+							</case>
+						</switch>
+					</dd>
+				</dl>
+			</li>
+		</volist>
+	</ul>
+	<div class="pages">{$page}</div>
+</div>
+
+<div class="C2C_mian_box">
+	<div class="column">
+		<switch name="c2c_coin">
+            <case value="{:Anchor_CNY}">
+            	<a href="{:U('Exchange/index?c2c_coin='.Anchor_CNY)}"><h2 style="color: #ded6d6; text-transform:uppercase;">{:Anchor_CNY} {:L('交易')}</h2></a>
+            	<a href="{:U('Exchange/index?c2c_coin=btc')}"><h1 style="color: #ded6d6; text-transform:uppercase;">{:L('btc交易')}</h1></a>
+            	<a href="{:U('Exchange/index?c2c_coin=usdt')}"><h1 style="color: #ded6d6; text-transform:uppercase;">{:L('usdt交易')}</h1></a>
+            </case> 
+            <case value="btc">
+            	<a href="{:U('Exchange/index?c2c_coin='.Anchor_CNY)}"><h1 style="color: #ded6d6; text-transform:uppercase;">{:Anchor_CNY} {:L('交易')}</h1></a>
+            	<a href="{:U('Exchange/index?c2c_coin=btc')}"><h2 style="color: #ded6d6; text-transform:uppercase;">{:L('btc交易')}</h2></a>
+            	<a href="{:U('Exchange/index?c2c_coin=usdt')}"><h1 style="color: #ded6d6; text-transform:uppercase;">{:L('usdt交易')}</h1></a>
+            </case>
+            <case value="usdt">
+            	<a href="{:U('Exchange/index?c2c_coin='.Anchor_CNY)}"><h1 style="color: #ded6d6; text-transform:uppercase;">{:Anchor_CNY} {:L('交易')}</h1></a>
+            	<a href="{:U('Exchange/index?c2c_coin=btc')}"><h1 style="color: #ded6d6; text-transform:uppercase;">{:L('btc交易')}</h1></a>
+            	<a href="{:U('Exchange/index?c2c_coin=usdt')}"><h2 style="color: #ded6d6; text-transform:uppercase;">{:L('usdt交易')}</h2></a>
+            </case>
+            <default />
+            	<a href="{:U('Exchange/index?c2c_coin='.Anchor_CNY)}"><h2 style="color: #ded6d6; text-transform:uppercase;">{:Anchor_CNY} {:L('交易')}</h2></a>
+            	<a href="{:U('Exchange/index?c2c_coin=btc')}"><h1 style="color: #ded6d6; text-transform:uppercase;">{:L('btc交易')}</h1></a>
+            	<a href="{:U('Exchange/index?c2c_coin=usdt')}"><h1 style="color: #ded6d6; text-transform:uppercase;">{:L('usdt交易')}</h1></a>
+        </switch>
+	</div>
+
+	<div class="clear">
+		<p style="margin-top:20px;margin-bottom: 20px;padding:20px;font-size:16px;color: #ffffff;background-color: #283046;border-radius:8px;">
+			{:L($configs['mycz_prompt'])}
+		</p>
+		<div class="buy-box">
+			<p class="buy-title">{:L('付款期限')} : <span>30</span> {:L('分钟')}</p>
+			<eq name="c2c_coin" value="cnc">
+				<input type="text" name="price" id="buy_price" autocomplete="off" class="prohibit" value="{$buy_price}" readonly />
+			<else/>
+				<input type="text" name="price" id="buy_price" autocomplete="off" value="{$buy_price}"/>
+			</eq>
+			<input type="text" name="num" id="buy_num" autocomplete="off" maxlength="11" />
+			<p class="buy-count">
+				<span>{:L('交易额')}<b id="buy_mum">0.00</b> CNY</span>
+				<span></span>
+			</p>
+			<label class="chain-name1">{:L('买入价')}（￥）</label>
+			<label class="chain-name2" style="text-transform:uppercase;">{:L('买入量')}{$c2c_coin}</label>
+			<button type="button" class="btn-buy" id="buybutton" onclick="tradeadd_buy();">{:L('立即买入')}</button>
+		</div>
+
+		<div class="buy-box sell-box">
+			<p class="buy-title" style="text-transform:uppercase;">{$c2c_coin}（{:L('可用:')}<span>{$cny['ky']}</span>{:L(' 交易中:')}<b style="color: #F98A3F">{$cny['exchanging']}</b>）</p>
+			<eq name="c2c_coin" value="cnc">
+				<input type="text" name="price" id="sell_price" autocomplete="off" class="prohibit" value="{$sell_price}" readonly />
+			<else/>
+				<input type="text" name="price" id="sell_price" autocomplete="off" value="{$sell_price}"/>
+			</eq>
+			<input type="text" name="num" id="sell_num" autocomplete="off" maxlength="11" />
+			<p class="buy-count">
+				<span>{:L('交易额')}<b id="sell_mum">0.00</b> CNY</span>
+				<span></span>
+			</p>
+			<label class="chain-name1">{:L('卖出价')}（￥）</label>
+			<label class="chain-name2" style="text-transform:uppercase;">{:L('卖出量')}{$c2c_coin}</label>
+			<button type="button" class="btn-buy" id="sellerbutton" onclick="tradeadd_sell();">{:L('立即卖出')}</button>
+		</div>
+	</div>
+</div>
+
+<div class="C2C_hint">
+	<h3 class="title">{:L('温馨提示')}</h3>
+	<p>为了您的购买可以快速到账，请在交易前仔细阅读以下注意事项：</p>
+	<p>1. 买卖商户均为实名认证商户，并提供保证金，可放心交易；</p>
+	<p>2. 如需申请成为商户请发邮件到 <b style="color:#FF8702">{$configs['contact']}</b> ；</p>
+	<p>3. 请使用本人绑定的银行卡进行汇款，汇款时不允许有备注说明，否则均会退款，退款时间为48小时内；</p>
+	<p>4. 商家处理时间 <b style="color:#097DF7">9:00 - 21:00</b> 非处理时间的订单会在第二天 <b style="color:#097DF7">9:00</b> 开始处理，一般接单后24小时内会完成打款；</p>
+	<p>5. 单笔买入限额 {$configs['mycz_min']} CNY ~ {$configs['mycz_max']} CNY<span style="margin: 0 15px;">|</span>单笔卖出限额 {$configs['mytx_min']} CNY ~ {$configs['mytx_max']} CNY；</p>
+	<p>6. 手动CNC交易订单需要在<b style="color:#FF8702">30分钟内</b>成交，如果超过该时间，订单交易<b style="color:#097DF7">自动取消</b>，设置为失败订单。如为卖出订单<b style="color:#097DF7">返还对应CNC</b>；</p>
+	<p>7. 自动CNC交易订单<b style="color:#FF8702">30分钟内</b>未成交，订单交易<b style="color:#097DF7">自动取消</b>，设置为失败订单。如为卖出订单<b style="color:#097DF7">返还对应CNC</b>；</p>
+	<p>8. 确定具体交易订单的时候注意，平台订单的时间会比实际支付时间早。请查看比<b style="color:#FF8702">付款时间早</b>的平台订单来确认。</p>
+</div>
+
+<div class="float_win_pay float_win_table" id="showUserInfo" style="display: none;">
+    <div class="tan_title">
+        <h4 id="userInfo_title">{:L('卖家信息')}</h4>
+        <span class="close-btn" onclick="closeCharge();">x</span>
+    </div>
+    <div class="payment_content">
+    	<p id="userInfo_Tips">{:L('1.请按提示信息向该卖家汇款；')}</p>
+		<div style="height:300px;">
+			<table width="100%">
+				<tbody id="payment"></tbody>
+			</table>
+		</div>
+
+		<p>{:L('2.可以前往我的订单中再次查看订单信息。')}</p>
+		<p>{:L('3.卖家确认收到款后，自动充值'.Anchor_CNY.'。如超过24小时未收到币，请向客服反馈解决。')}</p>
+		<p class="red">{:L('4.买家付款并且确认汇款后，请前往指定的收款账户查看，务必确认收到汇款后再进行确认操作。')}</p>
+		<p class="red">{:L('5.请在30分钟之内完成转账，否则随时订单会被系统取消')}</p>
+    </div>
+</div>
+
+<div class="float_win_bank" id="addidcard" style="display: none">
+    <h2 class="tan_title">{:L('请先通过实名认证，再进行'.Anchor_CNY.'交易')}</h2>
+    <div class="bank_content">
+    	<a class="btn btn_1" href="{:U('User/index')}">{:L('去实名')}</a>
+    	<a class="btn btn_2" href="#" onclick="closeCharge();">{:L('取消')}</a>
+    </div>
+</div>
+
+<!--账户管理页面-->
+<div class="float_win_bank" id="addAccount" style="display: none">
+    <h2 class="tan_title">{:L('没有可用的手动交易账户，请前往添加')}</h2>
+    <div class="bank_content">
+    	<a class="btn btn_1" href="{:U('Exchange/bank')}">{:L('去添加')}</a>
+    	<a class="btn btn_2" href="#" onclick="closeCharge();">{:L('取消')}</a>
+    </div>
+</div>
+
+<!--账户管理页面-->
+<div class="float_win_bank" id="selsctAccount" style="display: none">
+    <h2 class="tan_title">{:L('请选择用于交易的账户')}</h2>
+    <div class="bank_content">
+    	<a class="btn btn_1" href="{:U('Exchange/bank')}">{:L('确定')}</a>
+    	<a class="btn btn_2" href="#" onclick="closeCharge();">{:L('取消')}</a>
+    </div>
+</div>
+
+<!--选择交易账户 -->
+<div class="float_win_pay" id="selectAccount" style="display:none;">
+    <div class="tan_title">
+        <h4>选择交易账户</h4>
+        <span class="close-btn" onclick="closeCharge();">x</span>
+    </div>
+    <div class="payment_content">
+        <ul>
+            <li>
+                <span class="label-1" style="font-size: 18px">{:L('交易账户')}</span>
+                <input type="hidden" id="select_account_orderid"/>
+                <td>
+                    <select style="width: 160px; height: 30px; margin-right: 10px;" id="select_account_id">
+                        <option value="">--{:L('选择账户')}--</option>
+                        <volist name="manualPayParams" id="v">
+                            <option value="{$v.id}">{$v.truename}</option>
+                        </volist>
+                    </select>
+                </td>
+            </li>
+            <li style="margin-top:30px;">
+                <a href="javascript:void(0)" onclick="upExchangeSell()" class="btns">{:L('确定')}</a>
+            </li>
+            <span class="loading"></span>
+        </ul>
+    </div>
+</div>
+
+<!--确认卖出成功处理-->
+<div class="float_win_pay" id="showOrderQueen" style="display: none">
+    <div class="tan_title">
+        <h4 id="queen_title">{:L('确认付款')}</h4>
+        <span class="close-btn" onclick="closeCharge();">x</span>
+    </div>
+    <div class="payment_content">
+    	<ul>
+			<li>
+				<span class="label-1">{:L('交易密码')}</span>
+				<input type="hidden" id="index_id"/>
+				<input type="password" autocomplete="off" id="paypassword" class="input-1" />
+				<span class="label-1">{:L('修改金额(金额不同才填写)')}</span>
+				<input type="real_amount" autocomplete="off" id="real_amount" class="input-1" />
+			</li>
+	        <li style="margin-top:30px;">
+	            <a class="btns" href="javascript:void(0)" onclick="queenOrder()" >{:L('确定')}</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-------------------------------------------------->
+
+<div id="dialogBoxShadow" style="position: absolute; top: 0px; left: 0px; z-index: 100; background-color: rgb(0, 0, 0); opacity: 0.5; width: 100%; background-position: initial initial; background-repeat: initial initial; display: none;"></div>
+
+<script type="text/javascript">
+var trans_lock = 0;
+	
+$('#buy_num').bind('input propertychange', function () {
+    $("#buy_mum").html((($('#buy_num').val() * $('#buy_price').val()).toFixed(8) * 1).toFixed(2));
+});
+$('#sell_num').bind('input propertychange', function () {
+    $("#sell_mum").html((($('#sell_num').val() * $('#sell_price').val()).toFixed(8) * 1).toFixed(2));
+});
+
+//开启自动卖出CNC的状态
+$('#auto_c2c_sell_status').click(function(){
+	//alert("勾上了");
+	$.post("{:U('Exchange/autoSellCNCstatus')}",{},function(data){
+		layer.closeAll('loading');
+		trans_lock = 0;	
+		if (data.status==1) {		
+			layer.msg(data.info,{icon : 1 });
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 }, function (){ window.location.reload()});
+			return false;
+		}
+	},'json'); 
+});
+
+//开启自动卖出CNC的状态
+$('#auto_c2c_buy_status').click(function(){
+	//alert("勾上了");
+	$.post("{:U('Exchange/autoBuyCNCstatus')}",{},function(data){
+		layer.closeAll('loading');
+		trans_lock = 0;	
+		if (data.status==1) {		
+			layer.msg(data.info,{icon : 1 });
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 }, function (){ window.location.reload()});
+			return false;
+		}
+	},'json'); 
+});
+	
+//买入处理
+function tradeadd_buy(orderid){
+	var idcard = "{$idcard}";
+	var user_accounts = "{$user_accounts}";	
+	var logins = "{$logins}";
+	var coin_type = "{$c2c_coin}";
+	var buy_price = $('#buy_price').val();
+	var buy_num = $('#buy_num').val();
+
+	//判断是否接单形式，只有下单才进入判断
+	if(!orderid){
+		
+		orderid = 0;
+		var price = parseFloat(buy_price);
+		var num = parseFloat(buy_num);
+		//var paypassword=$('#buy_paypassword').val();
+		var reg = /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/;
+		
+		if(price==""||price==null||!reg.test(price)){
+			layer.tips("{:L('交易价格必须大于')}0",'#buy_price',{tips : 3 });
+			trans_lock = 0;
+			return false;
+		}
+		if(num==""||num==null||!reg.test(num)){
+			layer.tips("{:L('交易数量必须大于')}0",'#buy_num',{tips : 3 });
+			trans_lock = 0;
+			return false;
+		}
+	}
+	
+	if(trans_lock){
+		layer.msg("{:L('不要重复提交')}",{icon : 2 });
+		return;
+	}
+	trans_lock = 1;
+	
+	if(logins == 0){
+		layer.msg("{:L('请先登录！')}");
+		trans_lock = 0;
+		return false;
+	}
+	if(idcard == 0){
+		addidcard();
+		trans_lock = 0;
+		return false;
+	}
+	if(user_accounts == 0){
+		addAccount();
+		trans_lock = 0;
+		return false;
+	}
+
+	layer.load(2);
+
+	$.post("{:U('Exchange/upTrade')}",{price : buy_price,num : buy_num,otype : 1,orderid : orderid,coin_type:coin_type},function(data){
+		layer.closeAll('loading');
+		trans_lock = 0;	
+		if (data.status==1) {
+			$("#buy_num").val('');
+			$("#sell_num").val('');
+			$("#buy_mum").html('0.00');
+			$("#sell_mum").html('0.00');
+			//$('#buy_paypassword').val('');
+						
+			layer.msg(data.info,{icon : 1 });
+			if(orderid){
+				var type = 1;
+				setTimeout('showUserInfo('+'\"'+orderid+'\"'+','+type+')', 2000); //延迟
+			}else{
+				setTimeout('window.location.reload()', 3000); //延迟
+			}
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 });
+			return false;
+		}
+	},'json');
+}
+
+//卖出处理
+function tradeadd_sell(orderid){
+	var idcard 			= "{$idcard}";
+	var user_accounts 	= "{$user_accounts}";	
+	var logins 			= "{$logins}";
+	var coin_type 		= "{$c2c_coin}";
+	var sell_price 		= $('#sell_price').val();
+	var sell_num 		= $('#sell_num').val();
+	
+	//判断是否接单形式，只有下单才进入判断
+	if(!orderid){
+
+		orderid = 0;
+		var price=parseFloat(sell_price);
+		var num=parseFloat(sell_num);
+		//var paypassword=$('#sell_paypassword').val();
+		var reg = /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/;
+		
+		if(price==""||price==null||!reg.test(price)){
+			layer.tips("{:L('交易价格必须大于')}0",'#sell_price',{tips : 3 });
+			trans_lock = 0;
+			return false;
+		}
+		if(num==""||num==null||!reg.test(num)){
+			layer.tips("{:L('交易数量必须大于')}0",'#sell_num',{tips : 3 });
+			trans_lock = 0;
+			return false;
+		}
+	}
+
+	if(trans_lock){
+		layer.msg("{:L('不要重复提交')}",{icon : 2 });
+		return;
+	}
+	trans_lock = 1;
+	
+	if(logins == 0){
+		layer.msg("{:L('请先登录！')}");
+		trans_lock = 0;
+		return false;
+	}
+	if(idcard == 0){
+		addidcard();
+		trans_lock = 0;
+		return false;
+	}
+	if(user_accounts == 0){
+		addAccount();
+		trans_lock = 0;
+		return false;
+	}
+
+	$('#select_account_orderid').val(orderid);
+
+	layer.open({
+        type: 1,
+        title: false,
+        closeBtn: 0,
+        area: 'autos',
+        skin: 'layui-layer-nobg',
+        shadeClose: true,
+        content: $('#selectAccount')
+    });
+}
+
+//卖出信息提交
+function upExchangeSell(){
+	var idcard 			= "{$idcard}";
+	var user_accounts 	= "{$user_accounts}";	
+	var logins 			= "{$logins}";
+	var coin_type 		= "{$c2c_coin}";
+	var sell_price 		= $('#sell_price').val();
+	var sell_num 		= $('#sell_num').val();
+	var payparams_id 	= $('#select_account_id').val();
+	var orderid 		= $('#select_account_orderid').val();
+
+	if(logins == 0){
+		layer.msg("{:L('请先登录！')}");
+		trans_lock = 0;
+		return false;
+	}
+	if(idcard == 0){
+		addidcard();
+		trans_lock = 0;
+		return false;
+	}
+	if(user_accounts == 0){
+		addAccount();
+		trans_lock = 0;
+		return false;
+	}
+
+	if (payparams_id == "" || payparams_id == null) {
+        layer.tips('{:L('请选择账户')}', '#select_account_id', { tips: 3 });
+        return false;
+    }
+
+	layer.load(2);
+
+	$.post("{:U('Exchange/upMytx')}",{price : sell_price,num : sell_num,otype : 2,orderid:orderid,coin_type:coin_type, payparams_id:payparams_id},function(data){
+		layer.closeAll('loading');
+		trans_lock = 0;
+		if (data.status==1) {
+			$("#buy_num").val('');
+			$("#sell_num").val('');
+			$("#buy_mum").val('0.00');
+			$("#sell_mum").val('0.00');
+			//$('#buy_paypassword').val('');
+			
+			layer.msg(data.info,{icon : 1 });
+			if(orderid > 0){
+				var type = 0;
+				setTimeout('showUserInfo('+'\"'+orderid+'\"'+','+type+')', 2000); //延迟
+			}else{
+				setTimeout('window.location.reload()', 3000); //延迟
+			}
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 });
+			return false;
+		}
+	},'json');
+}
+
+//展示用户信息
+function showUserInfo(orderid,type) {
+	var bShowInfo = true;
+	$.post("/Ajax/c2cPayment?orderid="+orderid+"&type="+type+"&ajax=json",function(data){
+		var data = JSON.parse(data);
+		if(data.status){
+			var content = null;
+			if(type == 1){
+				content = '<tr><th>{:L('账户名')}</th><td><span id="invite-copy1">'+data['accountInfo']['truename']+'</span><input type="button" value="{:L('复制')}" data-clipboard-action="copy" data-clipboard-target="#invite-copy1" class="copy_button" id="copy_button1"></td></tr><tr><th>{:L('账户类型')}</th><td>'+data['accountInfo']['paytype']+'</td></tr><tr><th>{:L('类型名称')}</th><td>'+data['accountInfo']['mch_id']+'</td></tr><tr><th>{:L('收款账号')}</th><td><span id="invite-copy2">'+data['accountInfo']['appid']+'</span><input type="button" value="{:L('复制')}" data-clipboard-action="copy" data-clipboard-target="#invite-copy2" class="copy_button" id="copy_button1"></td></tr><tr><th>{:L('账号附加信息')}</th><td><span id="invite-copy3">'+data['accountInfo']['signkey']+'</span><input type="button" value="{:L('复制')}" data-clipboard-action="copy" data-clipboard-target="#invite-copy3" class="copy_button" id="copy_button1"></td></tr><tr><th>{:L('转账金额')}</th><td><b class="red">'+data['order']['mum']+'</b></td></tr><tr><th>{:L('转账备注')}</th><td><b class="red" id="invite-copy4">'+data['order']['remarks']+'</b> (请务必填写)<input type="button" value="{:L('复制')}" data-clipboard-action="copy" data-clipboard-target="#invite-copy4" class="copy_button" id="copy_button2"></td></tr>';
+
+					$("#userInfo_title").html("卖家信息");
+					$("#userInfo_Tips").html("1.请按提示信息向该卖家汇款；");
+			}else{
+				content = '<tr><th>{:L('买家姓名')}</th><td>'+data['userInfo']['truename']+'</td></tr><tr><th>{:L('用户名')}</th><td><span id="invite-copy1">'+data['userInfo']['username']+'</span><input type="button" value="{:L('复制')}" data-clipboard-action="copy" data-clipboard-target="#invite-copy1" class="copy_button" id="copy_button1"></td></tr><tr><th>{:L('联系方式')}</th><td><b class="red" id="invite-copy2">'+data['userInfo']['mobile']+'</b><input type="button" value="{:L('复制')}" data-clipboard-action="copy" data-clipboard-target="#invite-copy2" class="copy_button" id="copy_button2"></td></tr>';
+
+					$("#userInfo_title").html("买家信息");
+					$("#userInfo_Tips").html("1.如下为买家的大致信息：");
+			}
+			$("#payment").html(content);
+			
+		}else{
+			bShowInfo = false;
+			layer.msg(data.info,{icon : 2 });
+			return false;
+		}
+	});
+	
+	//是否显示信息面板
+	if(bShowInfo){
+		parent.layer.open({
+	        type: 1,
+	        title: false,
+	        closeBtn: 0,
+	        area: 'autos',
+	        skin: 'layui-layer-nobg',
+	        shadeClose: true,
+	        content: $('#showUserInfo')
+	    });
+	}
+}
+function addidcard() {
+    layer.open({
+        type: 1,
+        title: false,
+        closeBtn: 0,
+        area: 'autos',
+        skin: 'layui-layer-nobg',
+        shadeClose: true,
+        content: $('#addidcard')
+    });
+}
+
+//添加账户
+function addAccount() {
+    layer.open({
+        type: 1,
+        title: false,
+        closeBtn: 0,
+        area: 'autos',
+        skin: 'layui-layer-nobg',
+        shadeClose: true,
+        content: $('#addAccount')
+    });
+}
+function closeCharge() {
+    layer.closeAll();
+	window.location.reload();
+	trans_lock = 0;
+}
+
+//显示卖出订单的确认界面
+function showOrderQueen(orderid, type) {
+	if(!type){
+		type = 0;
+		$('#queen_title').html("确认付款");
+	}else{
+		$('#queen_title').html("确认收款");
+	}
+	$('#index_id').val(orderid);
+    layer.open({
+        type: 1,
+        title: false,
+        closeBtn: 0,
+        area: 'autos',
+        skin: 'layui-layer-nobg',
+        shadeClose: true,
+        content: $('#showOrderQueen')
+    });
+}
+
+//确认订单成功
+function queenOrder() {
+    var orderid 	= $('#index_id').val();
+    var paypassword = $('#paypassword').val();
+	var real_amount = $('#real_amount').val();
+
+    if(paypassword=="" || paypassword==null){
+		layer.tips("{:L('请输入交易密码')}",'#paypassword',{tips:3});
+		return false;
+	}
+
+    $.post("{:U('Exchange/orderQueren')}", {orderid:orderid,paypassword:paypassword,real_amount:real_amount}, function(data) {
+        if (data.status == 1) {
+            layer.msg(data.info, { icon: 1 });
+            setTimeout('window.location.reload()', 1000); //延迟
+        } else {
+            layer.msg(data.info, { icon: 2 });
+            if (data.url) {
+                window.location = data.url;
+            }
+        }
+    }, "json");
+}
+
+//取消订单　
+function cancelOrder(orderid){
+	$.post("{:U('Exchange/cancelOrder')}",{orderid : orderid},function(data){
+		layer.closeAll('loading');
+
+		if (data.status==1) {
+			
+			layer.msg(data.info,{icon : 1 });
+			setTimeout('window.location.reload()', 2000); //延迟
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 });
+			return false;
+		}
+	},'json');
+}
+
+//补发订单通知　
+function repostOrderNotify(orderid){
+	$.post("{:U('Exchange/repostOrderNotify')}",{orderid : orderid},function(data){
+		layer.closeAll('loading');
+
+		if (data.status==1) {
+			
+			layer.msg(data.info,{icon : 1 });
+			setTimeout('window.location.reload()', 2000); //延迟
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 });
+			return false;
+		}
+	},'json');
+}
+
+//催促订单　
+function rushOrder(orderid){
+	$.post("{:U('Exchange/rushOrder')}",{orderid : orderid},function(data){
+		layer.closeAll('loading');
+
+		if (data.status==1) {
+			
+			layer.msg(data.info,{icon : 1 });
+			setTimeout('window.location.reload()', 2000); //延迟
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 });
+			return false;
+		}
+	},'json');
+}
+
+//重新确认订单成功
+function resetQueenOrder(orderid) {
+    layer.config({
+        extend: 'extend/layer.ext.js'
+    });
+    layer.ready(function() {
+        //默认prompt
+        layer.prompt({
+            title: '{:L(' 输入交易密码， 并确认 ')}',
+            formType: 1
+        }, function(val) {
+            if (val) {
+                //需要执行的方法
+                $.post("{:U('Exchange/resetOrderQueen')}", {
+                    orderid: orderid,
+                    paypassword: val
+                }, function(data) {
+                    if (data.status == 1) {
+                        layer.msg(data.info, { icon: 1 }, function (){ 
+                            window.location.reload();
+                        });
+                    } else {
+                        layer.msg(data.info, { icon: 2 });
+                        if (data.url) {
+                            window.location = data.url;
+                        }
+                    }
+                }, "json");
+            };
+        });
+    });
+}
+
+</script>
+
+<script src="__PUBLIC__/Home/js/clipboard.min.js"></script>
+<script src="__PUBLIC__/Front/js/iNotify.js"></script>
+<script>
+var clipboard = new Clipboard('#copy_button1');
+clipboard.on('success', function(e) {
+	layer.msg('{:L('复制成功！')}');
+	// console.log(e);
+});
+clipboard.on('error', function(e) {
+	layer.msg('{:L('复制失败！')}');
+	console.log(e);
+});
+	
+var clipboard2 = new Clipboard('#copy_button2');
+clipboard2.on('success', function(e) {
+	layer.msg('{:L('复制成功！')}');
+	// console.log(e);
+});
+clipboard2.on('error', function(e) {
+	layer.msg('{:L('复制失败！')}');
+	console.log(e);
+});
+
+//滚动通知
+var iNotify = new iNotify({
+    message: '有消息了。',//标题
+    effect: 'flash', // flash | scroll 闪烁还是滚动
+    interval: 300,
+    audio:{
+        //file: ['/Public/sound/msg.mp4','/Public/sound/msg.mp3','/Public/sound/msg.wav']
+        file:'https://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=5&text=有订单需要处理'
+    }
+});
+
+<eq name="checkNotice" value="1">
+    setInterval(function() {
+        $.ajax({
+            type: "GET",
+            url: "/Home/Exchange/checkNotice",
+            cache: false,
+            success: function (res) {
+                if (res.num>0) {
+                    iNotify.setFavicon(res.num).setTitle('订单通知').setInterval(300).notify({
+                        title: "01otc订单通知",
+                        body: "有新的订单，请及时处理"
+                    }).player();
+                }else{
+                  iNotify.faviconClear().setTitle(false).stopPlay();
+                }
+            }
+        });
+    },20000);
+</eq>
+
+</script>
+<include file="Public:footer" />

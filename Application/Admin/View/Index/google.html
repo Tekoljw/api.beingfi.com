@@ -1,0 +1,99 @@
+<include file="Public:header"/>
+<div id="main-content">
+	<div id="top-alert" class="fixed alert alert-error" style="display: none;">
+		<button class="close fixed" style="margin-top: 4px;">&times;</button>
+		<div class="alert-content">警告内容</div>
+	</div>
+
+	<div id="main" class="main">
+		<div class="main-title-h">
+			<eq name="ga_transfer" value="0">
+            	<span class="h1-title">绑定google验证</span>
+            <else/>
+            	<span class="h1-title">解绑google验证</span>
+        	</eq>
+		</div>
+		<div class="tab-wrap">
+			<div class="tab-content">
+				<form id="form" action="{:U('Index/upGoogle')}" method="post" class="form-horizontal" enctype="multipart/form-data">
+					<div id="tab" class="tab-pane in tab">
+						<div class="form-item cf">
+							<table>
+								<eq name="ga_transfer" value="0">
+									<tr class="controls">
+										<img src="__PUBLIC__/Admin/images/google.png" width="200" height="74">
+										<p ><b>1. {:L('下载并安装 Google 身份验证器')}</b></p>
+										<a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1">
+											<img src="__PUBLIC__/Home/ecshe_img/user_icon/download-Google.png">
+										</a>
+										<a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8">
+											<img src="__PUBLIC__/Home/ecshe_img/user_icon/download-Apple.png">
+										</a>
+									</tr>
+									<tr class="controls">
+										<p><b>2. {:L('使用 Google 身份验证器 扫描二维码或输入序列号')}</b></p>
+										<div class="CodeContent">
+											<div style="width:50%;" id="qrcode"></div>
+											<div style="width:45%;">{:L('双重验证可以更安全的保护您的账户，此密钥可让您在手机丢失的情况下恢复您的 Google 身份验证。')}</div>
+										</div>
+										<p style="width:400px;line-height:45px;background-color:#fff8ea;text-align:center;"><b>{$Asecret}</b></p>
+									</tr>
+									<tr class="controls">
+										<span class="label-1">{:L('谷歌验证码')}</span>
+										<input type="hidden" name="type" value="add"/>
+										<input type="text" class="form-control input-10x" autocomplete="off" id="ga_verify" name="ga_verify"/>
+									</tr>
+									<tr class="controls">
+										<div class="form-item cf">
+											<button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">提交
+											</button>
+											<a class="btn btn-return" href="{$Think.server.HTTP_REFERER}">返 回</a>
+										</div>
+									</tr>
+								<else/>
+									<tr class="controls">
+										<p><img src="__PUBLIC__/Admin/images/google.png" width="200" height="74"></p>
+										<span class="label-1">{:L('谷歌验证码')}</span>
+										<input type="hidden" name="type" value="delet"/>
+										<input type="text" class="form-control input-10x" autocomplete="off" id="ga_verify" name="ga_verify"/>
+									</tr>
+									<tr class="controls">
+										<div class="form-item cf">
+											<button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">提交
+											</button>
+											<a class="btn btn-return" href="{$Think.server.HTTP_REFERER}">返 回</a>
+										</div>
+									</tr>
+								</eq>
+							</table>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="__PUBLIC__/Home/js/jquery.qrcode.min.js"></script>
+
+<script type="text/javascript">
+	//提交表单
+	$('#submit').click(function () {
+		$('#form').submit();
+	});
+</script>
+
+<script>
+
+$('#qrcode').qrcode({
+	render: "table",
+	size: 200,
+	text: "{$qrCodeUrl}"
+});
+</script>
+<include file="Public:footer"/>
+<block name="script">
+    <script type="text/javascript" charset="utf-8">
+        //导航高亮
+        highlight_subnav("{:U('Index/google')}");
+    </script>
+</block>

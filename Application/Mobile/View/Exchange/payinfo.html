@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+	<title>订单信息</title>
+	<include file="Public:head" />
+</head>
+<body>
+<header class="mui-bar mui-bar-bg mui-bar-nav">
+	<a class="mui-icon mui-icon-left-nav mui-pull-left" href="{:U('Exchange/index')}"></a>
+	<h1 class="mui-title color_white">订单信息</h1>
+</header>
+
+<div class="mui-content" style="margin-top:20px;">
+	<div class="payinfo-head">
+		<i class="iconfont icon-qiandai"></i>
+		<p class="money">￥{$data['order']['mum']}</p>
+		<eq name="data.type" value="1">
+			<p><b class="red">卖家信息</b></p>
+		<else/>
+			<p><b class="red">买家信息</b></p>
+		</eq>
+	</div>
+	<div class="mui-control-content form-payinfo mui-active">
+		<div class="mui-input-row mui-input-row-h">
+			<label>流水号</label>
+			<div class="fl inputs">{$data['order']['orderid']}</div>
+		</div>
+		<div class="mui-input-row mui-input-row-h" style="margin-bottom:10px;">
+			<label>申请时间</label>
+			<div class="fl inputs">{$data['order']['addtime']|addtime}</div>
+		</div>
+		<eq name="data.type" value="1">
+			<div class="mui-input-row mui-input-row-g">
+				<label>账户名</label>
+				<div class="fl inputs"><span id="invite-copy1">{$data['accountInfo']['truename']}</span><input type="button" value="复制" class="btn btn-copy" data-clipboard-text="{$data['accountInfo']['truename']}"></div>
+			</div>
+			<div class="mui-input-row mui-input-row-g">
+				<label>账户类型</label>
+				<div class="fl inputs">{$data['accountInfo']['paytype']|getPayTypeName=###}</div>
+			</div>
+			<div class="mui-input-row mui-input-row-g">
+				<label>类型名称</label>
+				<div class="fl inputs">{$data['accountInfo']['mch_id']}</div>
+			</div>
+			<div class="mui-input-row mui-input-row-g">
+				<label>收款账号</label>
+				<div class="fl inputs"><span id="invite-copy1">{$data['accountInfo']['appid']}</span><input type="button" value="复制" class="btn btn-copy" data-clipboard-text="{$data['accountInfo']['appid']}"></div>
+			</div>
+			<div class="mui-input-row mui-input-row-g">
+				<label>账号附加信息</label>
+				<div class="fl inputs">{$data['accountInfo']['signkey']}</div>
+			</div>
+			<div class="mui-input-row mui-input-row-g">
+				<label>转账金额</label>
+				<div class="fl inputs"><span id="invite-copy1">{$data['order']['mum']}</span><input type="button" value="复制" class="btn btn-copy" data-clipboard-text="{$data['order']['mum']}"></div>
+			</div>
+			<div class="mui-input-row mui-input-row-g">
+				<label>转账备注</label>
+				<div class="fl inputs">{$data['order']['remarks']}</div>
+			</div>
+		<else/>
+			<div class="mui-input-row mui-input-row-g">
+				<label>买家姓名</label>
+				<div class="fl inputs"><span id="invite-copy1">{$data['userInfo']['truename']}</span><input type="button" value="复制" class="btn btn-copy" data-clipboard-text="{$data['userInfo']['truename']}"></div>
+			</div>
+			<div class="mui-input-row mui-input-row-g">
+				<label>用户名</label>
+				<div class="fl inputs">{$data['userInfo']['username']}</div>
+			</div>
+			<div class="mui-input-row mui-input-row-g">
+				<label>联系方式</label>
+				<div class="fl inputs"><span id="invite-copy1">{$data['userInfo']['mobile']}</span><input type="button" value="复制" class="btn btn-copy" data-clipboard-text="{$userInfo['userInfo']['mobile']}"></div>
+			</div>
+		</eq>
+	</div>
+	<div class="payinfo_record">
+		<div class="titlehead">温馨提示</div>
+		<div class="content">
+			<p>1. 买卖商户均为实名认证商户，并提供保证金，可放心交易；</p><br>
+			<p>2. 商家处理时间 9:00 - 21:00 非处理时间的订单会在第二天 9:00 开始处理，一般接单后2小时内完成交易，最长处理时间不超过24小时。请在下单后30分钟内完成付款，否则会延迟到账；</p><br>
+			<p>3. 单天最多只能发起<span class="red">10笔</span>卖出订单。</p><br>
+			<p>4. <span class="red">买家付款并且确认汇款后，请前往指定的收款账户查看。</span>请务必确认收到汇款后再进行确认操作。</p><br>
+			<p>5. 如果您的交易24小时内未处理，请及时联系在线客服登记。我们会有专人与您联系，请保持手机畅通。另24小时内无处理的交易订单由于有时咨询量过大，在线客服无法及时提供帮助，敬请谅解；</p>
+		</div>
+	</div>
+</div>
+
+<script src="__PUBLIC__/Home/js/clipboard.min.js"></script>
+<script>
+var clipboard = new Clipboard('.btn-copy');
+clipboard.on('success', function(e) {
+	layer.msg("{:L('复制成功！')}");
+	console.log(e);
+});
+clipboard.on('error', function(e) {
+	layer.msg("{:L('复制失败！')}");
+	console.log(e);
+});
+</script>
+</body>
+</html>

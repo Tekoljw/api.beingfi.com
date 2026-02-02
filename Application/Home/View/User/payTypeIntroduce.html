@@ -1,0 +1,55 @@
+<include file="Public:header_new" />
+<link rel="stylesheet" href="__PUBLIC__/Home/ecshe_css/user.css">
+<style>
+	.float_win_pay .payment_content{min-width: 650px;}
+</style>
+
+<div class="infoBox">
+	<include file="Public:top" />
+</div>
+
+<div class="UserBox" style="margin-top:20px;margin-bottom:40px;">
+	<div class="fl SettingLeft">
+		 <include file="User:left" />
+	</div>
+	<div class="fr SettingRight">
+		<div class="titles">
+            <h3 class="fl">{:L('API参数含义说明')}</h3>
+		</div>
+		<div class="Column_LogonLog">
+			<table class="table-ellipsis" border="0" cellspacing="0" cellpadding="0">
+				<tr class="title">
+					<th width="50px">{:L('渠道ID')}</th>
+                    <th width="150px">{:L('渠道名称')}</th>
+                    <th width="50px">truename</th>
+					<th width="110px">mch_id</th>
+					<th width="110px">signkey</th>
+                    <th width="110px">appid</th>
+                    <th width="110px">Appsecret</th>
+                    <th width="110px">domain_record</th>
+                    <th width="110px">subject</th>
+				</tr>
+				<volist name="list" id="vo">
+					<tr>
+						<td>{$vo.channelid}</td>
+                        <td>{$vo['channelid']|getPayChannleTitle=###}</td>
+                        <td><empty name="vo.truename">账户名<else/>{$vo.truename}</empty></td>
+						<td><empty name="vo.mch_id">无<else/>{$vo.mch_id}</empty></td>
+						<td><empty name="vo.signkey">无<else/>{$vo.signkey}</empty></td>
+						<td><empty name="vo.appid">无<else/>{$vo.appid}</empty></td>
+						<td><empty name="vo.appsecret">无<else/>{$vo.appsecret}</empty></td>
+						<td><empty name="vo.domain_record">无<else/>{$vo.domain_record}</empty></td>
+						<td><empty name="vo.subject">无<else/>{$vo.subject}</empty></td>
+					</tr>
+				</volist>
+			</table>
+			<div class="pages">{$page}</div>
+		</div>
+	</div>
+</div>
+
+<script>
+$("title").html("{:L('API参数说明')} - {:C('web_title')}");
+$('#menu_4').addClass('on');
+</script>
+<include file="Public:footer" />

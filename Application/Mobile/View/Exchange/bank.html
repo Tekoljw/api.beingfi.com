@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+	<title>账户管理</title>
+	<include file="Public:head" />
+</head>
+<body style="background-color:#f3f4f6;">
+<header class="mui-bar mui-bar-bg mui-bar-nav">
+	<a class="mui-icon mui-icon-left-nav mui-pull-left" href="{:U('Morefind/index')}"></a>
+	<h1 class="mui-title color_white">账户管理</h1>
+</header>
+
+<div class="mui-content">
+	<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+		<a class="mui-control-item mui-active" href="#personal_account">{:L('个人账户')}</a>
+		<a class="mui-control-item" href="#organization_account">{:L('机构账户')}</a>
+	</div>
+</div>
+
+<div class="mui-content cur-padding-bottom" style="margin-top:20px;background-color:#f3f4f6;">
+	<div id="personal_account" class="mui-control-content form-exchange mui-active">
+		<empty name="UserAccountTypes">
+            <span class="tc" style="margin-top: 50px; font-size: 24px">{:L('暂无开通的个人通道，请联系平台开通')}</span>
+        <else/>
+			<ul class="myuser-banklist">
+				<volist name="UserAccountTypes" id="vo">
+					<eq name="vo.is_personal" value="1">
+						<li>
+							<a class="btn-delete" href="{:U('Exchange/payPersonalParams?channelid=' .$vo['channelid'])}"><i class="iconfont icon-zhihuan"></i></a>
+							<h3>{$vo['paytype']|getPayTypeName=###}【{$vo.channel_num}】</h3>
+							<p>{$vo.channel_title}</p>
+							<p><span style="color: black">自动卖出优惠</span>：{$vo.sale_sell_rate}</p>
+							<p><span style="color: red">自动买入费率</span>：{$vo.auto_buy_rate}</p>
+						</li>
+					</eq>
+				</volist>
+			</ul>
+		</empty>
+	</div>
+	<div id="organization_account" class="mui-control-content form-exchange mui-active">
+		<empty name="UserAccountTypes">
+            <span class="tc" style="margin-top: 50px; font-size: 24px">{:L('暂无开通的机构通道，请联系平台开通')}</span>
+        <else/>
+			<ul class="myuser-banklist">
+				<volist name="UserAccountTypes" id="vo">
+					<eq name="vo.is_personal" value="0">
+						<li>
+							<a class="btn-delete" href="{:U('Exchange/payOrganizationParams?channelid=' .$vo['channelid'])}"><i class="iconfont icon-zhihuan"></i></a>
+							<h3>{$vo['paytype']|getPayTypeName=###}【{$vo.channel_num}】</h3>
+							<p>{$vo.channel_title}</p>
+							<p><span style="color: black">自动卖出优惠</span>：{$vo.sale_sell_rate}</p>
+							<p><span style="color: red">自动买入费率</span>：{$vo.auto_buy_rate}</p>
+						
+						</li>
+					</eq>
+				</volist>
+			</ul>
+		</empty>
+	</div>
+</div>
+
+<script src="__PUBLIC__/Mobile/ecshe_js/mui.min.js"></script>
+</body>
+</html>

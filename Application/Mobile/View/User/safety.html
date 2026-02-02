@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file="Public:header2" />
+    <script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Home/js/jquery.cookies.2.2.0.js"></script>
+</head>
+<body class="blackbg">
+    <div id="container" class="logbg">
+        <div class="log_title">
+            <span class="back"><a href="javascript:history.go(-1)"></a></span>
+            {:L('安全设置')}
+        </div>
+        <div class="usermenu">
+            <ul>
+                <li>
+                    <a href="{:U('User/nameauth')}">
+                        <span class="imgbox"><img src="__PUBLIC__/Mobile/images/saftyicon1.png"></span>
+                        {:L('实名认证')}
+                        <if condition="$user.kyc_lv eq 1" >
+                            <if condition="$user.idstate eq 8" >
+                                <span class="price" style="color:#FF0004;"><b>{:L('初级认证-未通过')}</b></span>
+                            <elseif condition="$user.idstate eq 1"/>
+                                <span class="price"><b>{:L('审核中')}</b></span>
+                            <elseif condition="$user.idstate eq 2"/>
+                                <span class="price green"><b>{:L('初级认证-通过')}</b></span>
+                            <else />
+                                <span class="price">{:L('未认证')}</span>
+                            </if>
+                            
+                        <elseif condition="$user.kyc_lv eq 2" />
+                            <if condition="$user.idstate eq 8" >
+                                <span class="price" style="color:#FF0004;"><b>{:L('高级认证-未通过')}</b></span>
+                            <elseif condition="$user.idstate eq 1"/>
+                                <span class="price"><b>{:L('审核中')}</b></span>
+                            <elseif condition="$user.idstate eq 2"/>
+                                <span class="price green"><b>{:L('高级认证-通过')}</b></span>
+                            <else />
+                                <span class="price">{:L('未认证')}</span>
+                            </if>
+                        <else />
+                            <span class="price">{:L('未认证')}</span>
+                        </if>
+                    </a>
+                </li>
+                <li>
+                    <a href="{:U('User/nameauth2')}">
+                        <span class="imgbox"><img src="__PUBLIC__/Mobile/images/saftyicon1.png"></span>
+                        {:L('机构认证')}
+                        <if condition="$user.kyc_lv eq 2 AND $user.idstate eq 2">
+                            <if condition="$organization_status eq 1">
+                                <span class="price"><b>{:L('审核中')}</b></span>
+                            <elseif condition="$organization_status eq 2"/>
+                                <span class="price green"><b>{:L('已通过')}</b></span>
+                            <elseif condition="$organization_status eq 3"/>
+                                <span class="price" style="color:#FF0004;"><b>{:L('未通过')}</b></span>
+                            <else/>
+                                <span class="price">{:L('未认证')}</span>
+                            </if>
+                        <else/>
+                            <span class="price">{:L('需实名高级认证通过')}</span>
+                        </if>
+                    </a>
+                </li>
+                <li>
+                    <a href="{:U('User/moble')}">
+                        <span class="imgbox"><img src="__PUBLIC__/Mobile/images/saftyicon2.png"></span>
+                         {:L('手机绑定')}
+                         <span class="price green"><b>{:L('已绑定')}</b></span>
+                    </a>
+                </li>
+                <li style="">
+                    <a href="{:U('User/ga')}">
+                        <span class="imgbox"><img src="__PUBLIC__/Mobile/images/saftyicon2.png"></span>
+                         {:L('谷歌验证')}
+                        <eq name="user.ga" value="">
+                            <span class="price">{:L('设置')}</span>
+                        <else/>
+                            <span class="price green"><b>{:L('已绑定')}</b></span>
+                        </eq> 
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="usermenu">
+            <ul>
+                <li>
+                    <a href="{:U('User/password')}">
+                        <span class="imgbox"><img src="__PUBLIC__/Mobile/images/saftyicon3.png"></span>
+                         {:L('修改登录密码')}
+                         <span class="price gray">{:L('修改')}</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{:U('User/paypassword')}">
+                        <span class="imgbox"><img src="__PUBLIC__/Mobile/images/saftyicon4.png"></span>
+                         {:L('修改交易密码')}
+                         <span class="price gray">{:L('修改')}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="usermenu">
+            <ul>
+                <li>
+                    <a href="{:U('User/log')}">
+                        <span class="imgbox"><img src="__PUBLIC__/Mobile/images/usericon10.png"></span>
+                         {:L('登录日志')}
+                         <span class="price gray">{:L('查看')}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file="Public:header2" />
+    <script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Home/js/jquery.cookies.2.2.0.js"></script>
+</head>
+<body class="blackbg">
+    <div id="container" class="logbg">
+        <div class="log_title">
+            <span class="back"><a href="javascript:history.go(-1)"></a></span>
+            {:L('实名认证')}
+        </div>
+        <div class="useifor">
+            <if condition="$user.kyc_lv eq 1" >
+                <if condition="$user.idstate eq 8" >
+                    <p style="margin:20px 20px;line-height:25px;padding:20px;background-color:#fff1e0;font-size:1rem;color:#d89c2a;">{:L('初级认证驳回原因')} : {$user.idcardinfo}</p>
+                <elseif condition="$user.idstate eq 1"/>
+                    <p class="price">{:L('初级认证审核中')}</p>
+                <elseif condition="$user.idstate eq 2"/>
+                    <p class="price green">{:L('初级认证审核通过')}</p>
+                </if>
+                {:L('姓名：')}{$user.truename}<br/>
+                {:L('证件类型：身份证')}<br/>
+                {:L('身份证号：')}{$user.idcard}<br/>
+                {:L('认证时间：')}{$user['addtime']|addtime}
+            <elseif condition="$user.kyc_lv eq 2" />
+                <if condition="$user.idstate eq 8" >
+                    <p style="margin:20px 20px;line-height:25px;padding:20px;background-color:#fff1e0;font-size:1rem;color:#d89c2a;">{:L('高级认证驳回原因')} : {$user.idcardinfo}</p>
+                <elseif condition="$user.idstate eq 1"/>
+                    <p class="price">{:L('高级认证审核中')}</p>
+                <elseif condition="$user.idstate eq 2"/>
+                    <p class="price green">{:L('高级认证审核通过')}</p>
+                </if>
+                {:L('姓名：')}{$user.truename}<br/>
+                {:L('证件类型：身份证')}<br/>
+                {:L('身份证号：')}{$user.idcard}<br/>
+                {:L('认证时间：')}{$user['addtime']|addtime}
+            <else />
+                <p>{:L('未认证')}</p>
+            </if>
+        </div>
+        <div class="ifor_flow">
+            <h2>{:L('实名认证信息流程：')}</h2>
+            <p>1.{:L('<b style="color: green">实名认证</b>需提交照片，请前往<b style="color: green">PC网站</b>提交或联系网站客服人员,推荐PC网站。')}
+            <p>{:L('手持证件照示例：')}
+                <img src="__PUBLIC__/Mobile/images/pic.jpg" style="display: block;max-width: 60%;margin:0 auto;margin-top: 10px;">
+            </p>
+            <p>2.{:L('申请提交后，工作人员会在两小时内会进行审核。（注：工作时间）')}</p>
+            <p>3.{:L('申请通过，证件认证处会显示审核认证成功。')}<br/>{:L('申请失败，则请您根据提示信息重新提交申请')}</p>
+        </div>
+    </div>
+</body>
+</html>

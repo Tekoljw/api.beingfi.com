@@ -1,0 +1,53 @@
+<include file="Public/header"/>
+<div id="main-content">
+  <div id="top-alert" class="fixed alert alert-error" style="display: none;">
+    <button class="close fixed" style="margin-top: 4px;">&times;</button>
+    <div class="alert-content">警告内容</div>
+  </div>
+  <div id="main" class="main">
+    <div class="main-title-h">
+      <span class="h1-title">索引ID超过限制的表</span>
+    </div>
+    <div class="data-table table-striped">
+      <table class="">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>表名</th>
+        </tr>
+        </thead>
+        <tbody>
+          <notempty name="list">
+            <volist name="list" id="vo">
+            <tr>
+               <td>{$vo.id}</td>
+               <td>{$vo.tablename}</td>
+            </tr>
+            </volist>
+          <else/>
+            <td colspan="12" class="text-center empty-info"><i class="glyphicon glyphicon-exclamation-sign"></i>暂无数据</td>
+          </notempty>
+        </tbody>
+      </table>
+      <div class="page">
+        <div>{$page}</div>
+      </div>
+    </div>
+  </div>
+</div>
+ <include file="Public/footer"/>
+<script>
+    $('#pageList').change(function(){
+        $('#pageForm').submit();
+    });
+    layui.use(['laydate', 'laypage', 'layer', 'table', 'form'], function() {
+        var laydate = layui.laydate //日期
+            ,laypage = layui.laypage //分页
+            ,layer = layui.layer //弹层
+            ,form = layui.form //表单
+            ,table = layui.table; //表格
+            
+    });
+</script>
+</body>
+</html>

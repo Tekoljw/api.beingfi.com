@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+	<title>风控参数编辑</title>
+	<include file="Public:head" />
+</head>
+<body>
+<header class="mui-bar mui-bar-bg mui-bar-nav">
+	<a class="mui-icon mui-icon-left-nav mui-pull-left" href="{:U('Exchange/payPersonalParams')}"></a>
+	<h1 class="mui-title color_white">风控参数编辑</h1>
+</header>
+
+<div class="mui-content" style="margin-top:20px;">
+	<div class="mui-control-content form-bank mui-active">
+		<div class="mui-input-row mui-input-row-g">
+			<label style="color: blue">每日总金额</label>
+			<input type="hidden" id="id" value="{$info.id}"/>
+            <input type="hidden" id="is_personal" value="{$info.is_personal}"/>
+			<input type="text" autocomplete="off" placeholder="注意填写金额整数，不限制填写0" id="all_money" value="{$info.all_money}">
+		</div>
+        <div class="mui-input-row mui-input-row-g">
+            <label style="color: blue">每日总次数</label>
+            <input type="text" autocomplete="off" placeholder="注意填写次数需整数，不限制填写0" id="all_pay_num" value="{$info.all_pay_num}">
+        </div>
+		<div class="mui-input-row mui-input-row-g">
+			<label style="color: blue">开始时间</label>
+			<input type="text" autocomplete="off" placeholder="注意填写时间整数，不限制填写0" id="start_time" value="{$info.start_time}">
+		</div>
+		<div class="mui-input-row mui-input-row-g">
+			<label style="color: blue">结束时间</label>
+			<input type="text" autocomplete="off" placeholder="注意填写时间整数，不限制填写0" id="end_time" value="{$info.end_time}">
+		</div>
+		<div class="mui-input-row mui-input-row-g">
+			<label style="color: blue">最小金额</label>
+			<input type="text" autocomplete="off" placeholder="注意填写金额整数，不限制填写0" id="min_money" value="{$info.min_money}">
+		</div>
+		<div class="mui-input-row mui-input-row-g">
+			<label style="color: blue">最大金额</label>
+			<input type="text" autocomplete="off" placeholder="注意填写金额整数，不限制填写0" id="max_money" value="{$info.max_money}">
+		</div>
+        <div class="mui-input-row mui-input-row-g">
+            <label style="color: blue">风控状态</label>
+            <td>
+                <select style="width: 160px; height: 20px; margin-right: 10px;" id="control_status" name="control_status">
+                    <option value="">--{:L('选择状态')}--</option>
+                    <option value="1" <eq name="info.control_status" value="1">selected</eq> >开启
+                    </option>
+                    <option value="0" <eq name="info.control_status" value="0">selected</eq> >关闭
+                    </option>
+                </select>
+            </td>
+        </div>
+        <div class="mui-input-row mui-input-row-g">
+            <label style="color: blue">上线状态</label>
+            <td>
+                <select style="width: 160px; height: 20px; margin-right: 10px;" id="offline_status" name="offline_status">
+                    <option value="">--{:L('选择上线')}--</option>
+                    <option value="1" <eq name="info.offline_status" value="1">selected</eq> >上线
+                    </option>
+                    <option value="0" <eq name="info.offline_status" value="0">selected</eq> >下线
+                    </option>
+                </select>
+            </td>
+        </div>
+		<div class="mui-input-row mui-input-row-g">
+			<label style="color: blue">交易密码</label>
+			<input type="password" autocomplete="off" placeholder="输入支付密码" id="paypassword">
+		</div>
+		<button type="button" class="mui-btn mui-btn-default" href="javascript:void(0)" onclick="Update()">保存</button>
+		<div><p class="forget tc"><a href="{:U('Login/findpaypwd')}">{:L('忘记交易密码？')}</a></p></div>
+	</div>
+</div>
+
+<script>
+//更新支付参数
+function Update() {
+    
+    var id              = $('#id').val();
+    var is_personal     = $('#is_personal').val();
+    var all_money       = $('#all_money').val();
+    var all_pay_num     = $('#all_pay_num').val();
+    var start_time      = $('#start_time').val();
+    var end_time        = $('#end_time').val();
+    var min_money       = $('#min_money').val();
+    var max_money       = $('#max_money').val();
+    var control_status  = $('#control_status').val();
+    var offline_status  = $('#offline_status').val();
+    var paypassword     = $('#paypassword').val();
+
+    if (all_money == ""||all_money == null) {
+        layer.tips('{:L('没有输入最大金额')}', '#all_money', { tips: 3 });
+        return false;
+    }
+
+    if (all_pay_num == ""||all_pay_num == null) {
+        layer.tips('{:L('没有输入最大次数')}', '#all_pay_num', { tips: 3 });
+        return false;
+    }
+
+    if (start_time == ""||start_time == null) {
+        layer.tips('{:L('填写开始时间')}', '#start_time', { tips: 3 });
+        return false;
+    }
+
+    if (end_time == "" || end_time == null) {
+        layer.tips('{:L('填写结束时间')}', '#end_time', { tips: 3 });
+        return false;
+    }
+    
+    if (min_money == "" || min_money == null) {
+        layer.tips('{:L('填写最小金额 ')}', '#min_money', { tips: 3 });
+        return false;
+    }
+
+    if (max_money == "" || max_money == null) {
+        layer.tips('{:L('填写最大金额 ')}', '#max_money', { tips: 3 });
+        return false;
+    }
+
+    if (control_status == "" || control_status == null) {
+        layer.tips('{:L('选择风控状态')}', '#control_status', { tips: 3 });
+        return false;
+    }
+
+    if (offline_status == "" || offline_status == null) {
+        layer.tips('{:L('选择上线状态 ')}', '#offline_status', { tips: 3 });
+        return false;
+    }
+
+    if (paypassword == "" || paypassword == null) {
+        layer.tips('{:L('输入支付密码 ')}', '#paypassword', { tips: 3 });
+        return false;
+    }
+
+    $.post("{:U('Exchange/upControlEdit')}", {id:id, all_money:all_money, all_pay_num:all_pay_num, start_time:start_time, end_time:end_time, min_money:min_money, max_money:max_money,control_status:control_status,offline_status:offline_status,paypassword:paypassword}, function(data) {
+        if (data.status == 1) {
+            layer.msg(data.info, { icon: 1 });
+            if(is_personal == 1){
+                window.location = "{:U('Exchange/payPersonalParams')}";
+            }else{
+                window.location = "{:U('Exchange/editOrganizationParams')}";
+            }
+        } else {
+            layer.msg(data.info, { icon: 2 });
+            if (data.url) {
+                window.location = data.url;
+            }
+        }
+    }, "json");
+}
+</script>
+</body>
+</html>

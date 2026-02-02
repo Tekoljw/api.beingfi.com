@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+	<title>上传二维码</title>
+	<include file="Public:head" />
+</head>
+<body>
+<header class="mui-bar mui-bar-bg mui-bar-nav">
+	<a class="mui-icon mui-icon-left-nav mui-pull-left" href="{:U('Exchange/payPersonalParams',array('channelid'=>$channelid))}"></a>
+	<h1 class="mui-title color_white">上传二维码</h1>
+</header>
+
+<div class="mui-content" style="margin-top:20px;">
+	<div class="mui-control-content form-bank mui-active">
+        <div class="mui-input-row mui-input-row-g">
+            <td class="item-label">上传二维码 :</td>
+            <td>
+                <img id="up_img" onclick="getElementById('inputfile').click()" style="cursor:pointer;max-width:100px;" title="点击添加码" alt="点击添加码" src="__PUBLIC__/Admin/images/addimg.png"> 
+                <input type="hidden" id="qrcode" name="qrcode" value="{$qrcode}">
+                <input type="file" id="inputfile" style="height:0;width:0;z-index:-1;position:absolute;left:10px;top:5px;" value=""/>
+            </td>
+        </div>
+        <div class="mui-input-row mui-input-row-g">
+            <label style="color: blue">码类型</label>
+            <td>
+                <select style="width: 160px; height: 20px; margin-right: 10px;" id="channelid">
+                    <option value="">--{:L('选择类型')}--</option>
+                    <volist name="PayChannels" id="v">
+                        <option value="{$v.channelid}" <eq name="v.channelid" value="$info['channelid']">selected</eq>>{$v.channel_title}</option>
+                    </volist>
+                </select>
+            </td>
+        </div>
+		<div class="mui-input-row mui-input-row-g">
+			<label style="color: blue">账号</label>
+			<input type="text" autocomplete="off" placeholder="填写正确的账号" id="mch_id" value="{$mch_id}">
+		</div>
+		<div class="mui-input-row mui-input-row-g">
+			<label style="color: blue">账户人姓名</label>
+			<input type="text" autocomplete="off" placeholder="填写对应账户的拥有人姓名" id="truename" value="{$truename}">
+		</div>
+		<div class="mui-input-row mui-input-row-g">
+			<label style="color: blue">交易密码</label>
+			<input type="password" autocomplete="off" placeholder="输入支付密码" id="paypassword">
+		</div>
+		<button type="button" class="mui-btn mui-btn-default" href="javascript:void(0)" onclick="Update()">保存</button>
+		<div><p class="forget tc"><a href="{:U('Login/findpaypwd')}">{:L('1.忘记交易密码？')}</a></p></div>
+        <p></p>
+        <div><p class="forget tc"><a href="https://www.sojson.com/deqr.html">{:L('2.无法上传个码，请点击？')}</a></p></div>
+        <div><p>{:L('通过该地址解析二维码，并通过参数上传')}</p>
+            <span class="loading"></span>
+        </div>
+	</div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //响应文件添加成功事件
+        $("#inputfile").change(function () {
+            //创建FormData对象
+            var data = new FormData();
+            //为FormData对象添加数据
+            $.each($('#inputfile')[0].files, function (i, file) {
+                data.append('upload_file' + i, file);
+            });
+
+            //发送数据
+            $.ajax({
+                url: '/Mobile/Exchange/saveQrcode',
+                type: 'POST',
+                data: data,
+                cache: false,
+                contentType: false, //不可缺参数
+                processData: false, //不可缺参数
+                success: function (data) {
+                    if (data) {
+                        $('#up_img').attr("src", '/Upload/qrcode/personal/' + data);
+                        $('#qrcode').val(data);
+                        $('#up_img').show();
+                    }
+                },
+                error: function () {
+                    alert('上传出错');
+                    $(".loading").hide(); //加载失败移除加载图片
+                }
+            });
+
+        });
+    });
+</script> 
+<script>
+//更新支付参数
+function Update() {
+
+    var qrcode          = $('#qrcode').val();
+    var mch_id          = $('#mch_id').val();
+    var channelid       = $('#channelid').val();
+    var paypassword     = $('#paypassword').val();
+    var truename        = $('#truename').val();
+
+    if (qrcode == ""||qrcode == null) {
+        layer.tips('{:L('没有上传二维码')}', '#qrcode', { tips: 3 });
+        return false;
+    }
+
+    if (mch_id == ""||mch_id == null) {
+        layer.tips('{:L('填写正确的账号')}', '#mch_id', { tips: 3 });
+        return false;
+    }
+
+    if (channelid == ""||channelid == null) {
+        layer.tips('{:L('请选择对应的码类型')}', '#mch_id', { tips: 3 });
+        return false;
+    }
+
+    if (truename == "" || truename == null) {
+        layer.tips('{:L('填写对应账户的拥有人姓名')}', '#truename', { tips: 3 });
+        return false;
+    }
+	
+    if (paypassword == "" || paypassword == null) {
+        layer.tips('{:L('输入支付密码 ')}', '#paypassword', { tips: 3 });
+        return false;
+    }
+
+    $(".loading").show();   //显示加载图片
+
+    $.post("{:U('Exchange/upPersonalCode')}", {qrcode:qrcode, mch_id:mch_id, channelid:channelid, truename:truename, paypassword:paypassword}, function(data) {
+        if (data.status == 1) {
+            layer.msg(data.info, { icon: 1 });
+            $(".loading").hide();   //加载成功移除加载图片
+            window.location = "{:U('Exchange/payPersonalParams')}";
+        } else {
+            layer.msg(data.info, { icon: 2 });
+            if (data.url) {
+                $(".loading").hide();   //加载成功移除加载图片
+                window.location = data.url;
+            }
+        }
+    }, "json");
+}
+</script>
+</body>
+</html>

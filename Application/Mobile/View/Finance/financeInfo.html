@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file="Public:header2" />
+    <script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Home/js/jquery.cookies.2.2.0.js"></script>
+</head>
+<body class="blackbg">
+    <div id="container" class="logbg">
+        <div class="log_title">
+            <span class="back"><a href="javascript:history.go(-1)"></a></span>
+            {:L('交易详情')}
+        </div>
+        <div class="ifor_flow">
+            <p>{:L('今日币币交易：')}<span style="color: #73bee4">{$trade_sum_today}</span></p>
+            <p>{:L('币币交易总额：')}<span style="color: #73bee4">{$trade_sum_total}</span></p>
+            <p>{:L('今日c2c交易额：')}<span style="color: #73bee4">{$exchange_sum_today}</span></p>
+            <p>{:L('今日c2c成功额：')}<span style="color: #73bee4">{$exchange_sum_today_success}</span></p>
+            <p>{:L('c2c交易总额：')}<span style="color: #73bee4">{$exchange_sum_total}</span></p>
+            <p>{:L('c2c成功总额：')}<span style="color: #73bee4">{$exchange_sum_total_success}</span></p>
+            <p>{:L('今日手续费：')}<span style="color: #73bee4">{$today_poundage}</span></p>
+            <p>{:L('总手续费：')}<span style="color: #73bee4">{$total_poundage}</span></p>
+            <p>{:L('今日利润：')}<span style="color: #73bee4">{$today_profit}</span></p>
+            <p>{:L('总利润：')}<span style="color: #73bee4">{$total_profit}</span></p>
+        </div>
+    </div>
+<script>
+</script>
+</body>
+</html>

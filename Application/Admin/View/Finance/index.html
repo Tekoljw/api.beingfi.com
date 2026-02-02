@@ -1,0 +1,124 @@
+<include file="Public:header"/>
+<script src="__PUBLIC__/Admin/js/layer/laydate/laydate.js"></script>
+<div id="main-content">
+    <div id="top-alert" class="fixed alert alert-error" style="display: none;">
+        <button class="close fixed" style="margin-top: 4px;">&times;</button>
+        <div class="alert-content">警告内容</div>
+    </div>
+    <div id="main" class="main">
+        <div class="main-title-h">
+            <span class="h1-title">财务明细--只统计人民币部分（默认显示<b style="color: red">今天信息</b>，更多通过时间筛选）</span>
+        </div>
+        <div class="cf">
+            <div class="fl tongji">
+                <span>符合的数量：<b style="color:#F98A3F">{$tongji['conditin_fee']}</b></span>
+                <span>符合的笔数：<b style="color:#219B20">{$tongji['conditin_count']}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;
+                【<a style="margin-right: 10px; width: 120px; color:blue; font-size: 16px" href="{:U('Finance/fianceExcel')}">{:L('导出Excel')}</a>】
+            </div>
+            <div class="search-form fr cf">
+                <div class="sleft">
+                    <form name="formSearch" id="formSearch" method="get" name="form1" >
+                        <!-- 时间筛选 -->
+                        <script type="text/javascript" src="/Public/layer/laydate/laydate.js"></script>
+                        <input type="text" class="form-control" style=" width: 170px; float: left; margin-right: 10px;" name="starttime" value="{:I('get.starttime')}" placeholder="开始日期" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">
+                        <input type="text" class="form-control" style=" width: 170px; float: left; margin-right: 10px;" name="endtime" value="{:I('get.endtime')}" placeholder="结束日期" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">
+                        <select style="width: 110px; float: left; margin-right: 10px;" name="type" class="form-control">
+                            <option value="" <empty name="Think.get.type">selected</empty> >操作类型</option>
+                            <option value="0" <eq name="Think.get.type" value="0">selected</eq> >支出</option>
+                            <option value="1" <eq name="Think.get.type" value="1">selected</eq> >收入</option>
+                        </select>
+                        <select style=" width: 160px; float: left; margin-right: 10px;" name="field" class="form-control">
+                            <option value="username" <eq name="Think.get.field" value="username">selected</eq>>用户名</option>
+                            <option value="userid" <eq name="Think.get.field" value="userid">selected</eq>>用户ID</option>
+                        </select>
+                        <input type="text" name="name" class="search-input form-control  " value="{$Think.get.name}" placeholder="请输入查询内容" style="">
+                        <a class="sch-btn" href="javascript:;" id="search"> <i class="btn-search"></i> </a>
+                    </form>
+                    <script>
+                        //搜索功能
+                        $(function(){
+                            $('#search').click(function(){
+                                $('#formSearch').submit();
+                            });
+                        });
+                        //回车搜索
+                        $(".search-input").keyup(function(e){
+                            if(e.keyCode===13){
+                                $("#search").click();
+                                return false;
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="data-table table-striped">
+            <table class="">
+                <thead>
+                <tr>
+                    <th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
+                    <th class="">ID</th>
+                    <th class="">用户名</th>
+                    <th class="">用户ID</th>
+                    <th class="">操作币种</th>
+                    <th class="">操作数量</th>
+                    <th class="">操作类型</th>
+                    <th class="">操作之前</th>
+                    <th class="">操作之后</th>
+                    <th class="">操作说明</th>
+                    <th class="">确认时间</th>
+                    <th class="">状态</th>
+                </tr>
+                </thead>
+                <tbody>
+                <notempty name="list">
+                    <volist name="list" id="vo">
+                        <tr>
+                            <td><input class="ids" type="checkbox" name="id[]" value="{$vo.id}"/></td>
+                            <td>{$vo['id']}</td>
+                            <td>{$vo['username']}</td>
+                            <td>{$vo['userid']}</td>
+                            <td>{$vo['coinname']}</td>
+                            <td>{$vo['fee']}</td>
+                            <td>{$vo['type']}</td>
+                            <td>正常 : {$vo['num_a']}<br>
+                                冻结 : {$vo['num_b']}<br>
+                                总计 : {$vo['num']}<br>
+                            </td>
+                            <td>正常 : {$vo['mum_a']}<br>
+                                冻结 : {$vo['mum_b']}<br>
+                                总计 : {$vo['mum']}<br>
+                            </td>
+                            <td>名称 : {$vo['name']}<br>
+                                详情 :
+                                <empty name="vo['nameid']"><font color="red">有异常</font>
+                                <else/>操作ID：{$vo['nameid']}</empty>
+                                <br>备注 : {$vo['remark']}<br>
+                            </td>
+                            <td>{$vo['addtime']}</td>
+                            <td>
+                                正常
+<!--                                <eq name="vo['status']" value="1">正常
+                                <else/><font color="red">比对上次记录<br>发现异常<br>误差大于1</font></eq>-->
+                            </td>
+                        </tr>
+                    </volist>
+                    <else/>
+                    <td colspan="12" class="text-center empty-info"><i class="glyphicon glyphicon-exclamation-sign"></i>暂无数据</td>
+                </notempty>
+                </tbody>
+            </table>
+            <div class="page">
+                <div>{$page}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<include file="Public:footer"/>
+<block name="script">
+    <script type="text/javascript" charset="utf-8">
+        //导航高亮
+        highlight_subnav("{:U('Finance/index')}");
+    </script>
+</block>

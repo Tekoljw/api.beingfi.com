@@ -1,0 +1,115 @@
+<include file="Public:header_new" />
+<style>
+	body {background:#283046;}
+</style>
+<link rel="stylesheet" href="__PUBLIC__/Home/ecshe_css/exchange.css">
+<script type="text/javascript" src="__PUBLIC__/Home/js/cityselect.js"></script>
+<style>
+	.payment_content .xzbank{
+		padding-left: 10px;
+		padding-right: 10px;
+		width: 65.5%;
+		height: 42px;
+		line-height: 42px;
+		font-size: 16px;
+		color: #333;
+		border:1px solid #D4D4D4;
+		border-radius: 3px;
+		transition: all,.3s;
+		box-sizing: border-box;
+	}
+	.payment_content .controls{
+		display: inline-block;
+		float: right;
+		margin-right: 16.5px;
+		width: 65.5%;
+		font-size: 16px;
+		color: #333;
+		border-radius: 3px;
+		transition: all,.3s;
+		box-sizing: border-box;
+	}
+	.payment_content .controls .prov{
+		padding-left: 10px;
+		padding-right: 10px;
+		width: 45%;
+		height: 42px;
+		line-height: 42px;
+		font-size: 16px;
+		color: #333;
+		border:1px solid #D4D4D4;
+		border-radius: 3px;
+		transition: all,.3s;
+		box-sizing: border-box;
+	}
+	.payment_content .controls .city{
+		margin-left: 20px;
+		padding-left: 10px;
+		padding-right: 10px;
+		width: 45%;
+		height: 42px;
+		line-height: 42px;
+		font-size: 16px;
+		color: #333;
+		border:1px solid #D4D4D4;
+		border-radius: 3px;
+		transition: all,.3s;
+		box-sizing: border-box;
+	}
+</style>
+
+
+<div class="C2C_mian_box" style="margin-bottom: 50px;">
+	<div class="column">
+		<switch name="is_personal">
+            <case value="0">
+				<a href="{:U('Exchange/bank?is_personal=1')}"><h1 style="text-transform:uppercase;">{:L('个人账户')}</h1></a>
+				<a href="{:U('Exchange/bank?is_personal=0')}"><h2 style="text-transform:uppercase;">{:L('机构账户')}</h2></a>
+			</case>
+			<case value="1">
+				<a href="{:U('Exchange/bank?is_personal=1')}"><h2 style="text-transform:uppercase;">{:L('个人账户')}</h2></a>
+				<a href="{:U('Exchange/bank?is_personal=0')}"><h1 style="text-transform:uppercase;">{:L('机构账户')}</h1></a>
+			</case>
+			<default />
+				<a href="{:U('Exchange/bank?is_personal=1')}"><h2 style="text-transform:uppercase;">{:L('个人账户')}</h2></a>
+				<a href="{:U('Exchange/bank?is_personal=0')}"><h1 style="text-transform:uppercase;">{:L('机构账户')}</h1></a>
+		</switch>
+		<div class="navs">
+			<a href="{:U('Exchange/index')}" style="font-size: 22px; color: #ffffff;"> {:L('返回')}</a>
+		</div>
+	</div>
+
+	<div class="bank_list">
+		<empty name="UserAccountTypes">
+			<eq name="is_personal" value="1">
+            	<span class="tc" style="margin-top: 50px; margin-left: 10px;font-size: 22px;color: #ffffff;">{:L('暂无开通的个人通道，请联系平台开通')}</span>
+            <else/>
+            	<span class="tc" style="margin-top: 50px; margin-left: 10px;font-size: 22px;color: #ffffff;">{:L('暂无开通的机构通道，请联系平台开通')}</span>
+        	</eq>
+        <else/>
+			<ul>
+				<volist name="UserAccountTypes" id="vo">
+					<li>
+						<h3>{$vo['paytype']|getPayTypeName=###}【{$vo.channel_num}】</h3>
+						<p>{$vo.channel_title}</p>
+						<p><span style="color: green">自动卖出优惠</span>：{$vo.sale_sell_rate}</p>
+						<p><span style="color: red">自动买入费率</span>：{$vo.auto_buy_rate}</p>
+						<eq name="is_personal" value="1">
+							<a class="setting" title="{:L('编辑')}" href="{:U('Exchange/payPersonalParams?channelid=' .$vo['channelid'])}"></a>
+						<else/>
+							<a class="setting" title="{:L('编辑')}" href="{:U('Exchange/payOrganizationParams?channelid=' .$vo['channelid'])}"></a>
+						</eq>
+					</li>
+				</volist>
+			</ul>
+		</empty>
+	</div>
+</div>
+
+<script>
+//菜单高亮
+$('#user_box').addClass('on');
+$('#user_bank').addClass('on');
+//$('#user_bank i').attr('class','coin_menu_op_13');
+</script>
+<include file="Public:footer" />

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file="Public:header2" />
+    <script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Home/js/jquery.cookies.2.2.0.js"></script>
+</head>
+<body class="blackbg">
+    <div id="container" class="logbg">
+        <div class="log_title">
+            <span class="back"><a href="javascript:history.go(-1)"></a></span>
+            {:L('机构认证')}
+        </div>
+        <div class="useifor">
+            <if condition="$user.kyc_lv eq 2 AND $user.idstate eq 2">
+                <if condition="$organization_status eq 8" >
+                    <p style="margin:20px 20px;line-height:25px;padding:20px;background-color:#fff1e0;font-size:1rem;color:#d89c2a;">{:L('认证驳回原因')} : {$user_kyc.organization_info}</p>
+                    {:L('企业名称')}{$user_kyc.organization_name}<br/>
+                    {:L('企业社会信用代码')}{$user_kyc.organization_id}<br/>
+                    {:L('法人姓名')}{$user_kyc.organization_legalperson}<br/>
+                    {:L('证件类型：身份证')}<br/>
+                    {:L('法人证件号码')}{$user_kyc.organization_legalperson_id}<br/>
+                    {:L('认证时间：')}{$user_kyc['organization_time']|addtime}
+                <elseif condition="$organization_status eq 1">
+                    <p class="price"><b>{:L('审核中')}</b></p>
+                    {:L('企业名称')}{$user_kyc.organization_name}<br/>
+                    {:L('企业社会信用代码')}{$user_kyc.organization_id}<br/>
+                    {:L('法人姓名')}{$user_kyc.organization_legalperson}<br/>
+                    {:L('证件类型：身份证')}<br/>
+                    {:L('法人证件号码')}{$user_kyc.organization_legalperson_id}<br/>
+                    {:L('认证时间：')}{$user_kyc['organization_time']|addtime}
+                <elseif condition="$organization_status eq 2"/>
+                    <p class="price green"><b>{:L('已通过')}</b></p>
+                    {:L('企业名称')}{$user_kyc.organization_name}<br/>
+                    {:L('企业社会信用代码')}{$user_kyc.organization_id}<br/>
+                    {:L('法人姓名')}{$user_kyc.organization_legalperson}<br/>
+                    {:L('证件类型：身份证')}<br/>
+                    {:L('法人证件号码')}{$user_kyc.organization_legalperson_id}<br/>
+                    {:L('认证时间：')}{$user_kyc['organization_time']|addtime}
+                <else/>
+                    <p class="price red"><b>{:L('未认证')}</b></p>
+                    <p class="price">{:L('请前往PC网站提交资料')}</p>
+                </if>
+            <else/>
+                <p class="price red">{:L('需实名高级认证通过')}</p>
+            </if>
+        </div>
+        <div class="ifor_flow">
+            <h2>{:L('机构认证信息流程：')}</h2>
+            <p>1.{:L('<b style="color: green">机构认证</b>需提交照片，请前往<b style="color: green">PC网站</b>提交或联系网站客服人员,推荐PC网站。')}
+            <p>{:L('手持证件照示例：')}
+                <img src="__PUBLIC__/Mobile/images/pic.jpg" style="display: block;max-width: 60%;margin:0 auto;margin-top: 10px;">
+            </p>
+            <p>2.{:L('申请提交后，工作人员会在两小时内会进行审核。（注：工作时间）')}</p>
+            <p>3.{:L('申请通过，证件认证处会显示审核认证成功。')}<br/>{:L('申请失败，则请您根据提示信息重新提交申请')}</p>
+        </div>
+    </div>
+</body>
+</html>

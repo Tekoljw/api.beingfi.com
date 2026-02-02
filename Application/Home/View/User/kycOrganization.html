@@ -1,0 +1,404 @@
+<include file="Public:header_new" />
+<link rel="stylesheet" href="__PUBLIC__/Home/ecshe_css/user.css">
+
+<div class="infoBox">
+	<include file="Public:top" />
+</div>
+
+<div class="UserBox" style="margin-top:20px;margin-bottom:40px;">
+	<div class="fl SettingLeft">
+		 <include file="User:left" />
+	</div>
+	<div class="fr SettingRight">
+		<div class="titles"><h3>{:L('账户信息')} &gt; {:L('资质认证')} &gt; {:L('机构认证')}</h3></div>
+		<div class="Column_identity">
+			<eq name="user_kyc.organization_status" value="8">
+				<p style="margin:20px 20px;line-height:25px;padding:20px;background-color:#fff1e0;font-size:1rem;color:#d89c2a;">{:L('认证驳回原因')} : {$user.organization_info}</p>
+			</eq>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tbody>
+					<tr>
+						<th style="color: #ded6d6;">{:L('企业名称')}</th>
+						<td><input type="text" id="organization_name" class="select-1" value="{$user_kyc['organization_name']}"></td>
+						<th style="color: #ded6d6;">{:L('企业社会信用代码')}</th>
+						<td><input type="text" id="organization_id" class="select-1" value="{$user_kyc['organization_id']}"></td>
+					</tr>
+					<tr>
+						<th style="color: #ded6d6;">{:L('法人姓名')}</th>
+						<td><input type="text" id="organization_legalperson" class="select-1" value="{$user_kyc['organization_legalperson']}"></td>
+						<th style="color: #ded6d6;">{:L('证件类型')}</th>
+						<td>
+							<select name="type" id="organization_legalperson_idtype" class="select-1">
+								<option value="1" selected="selected">{:L('身份证')}</option>
+								<option value="2">{:L('护照')}</option>
+								<option value="3">{:L('驾驶证')}</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th style="color: #ded6d6;">{:L('法人证件号码')}</th>
+						<td><input type="text" id="organization_legalperson_id" class="select-1" value="{$user_kyc['organization_legalperson_id']}"></td>
+					<tr>
+						<th style="color: #ded6d6;">{:L('证件照片')}</th>
+						<td colspan="3" style="padding:20px 0;">
+							<style>
+								.imgs img{width:200px!important;height:100px!important;}
+							</style>				
+							<div class="upload-img">
+								<div class="upload-box">
+									<div class="imgs">
+										<notempty name="user_kyc.organization_img1">
+											<img id="up_img_idimg1" onclick="getElementById('organization_img1').click()" title="{:L('点击添加图片')}" alt="{:L('点击添加图片')}" src="/Upload/organization_image/{$user_kyc['organization_img1']}">
+										<else/>
+											<img id="up_img_idimg1" onclick="getElementById('organization_img1').click()" title="{:L('点击添加图片')}" alt="{:L('点击添加图片')}" src="__PUBLIC__/Home/ecshe_img/user_icon/idcard4.jpg">
+										</notempty>
+									</div>
+									<input type="hidden" id="organization_img1" name="organization_img1" value="{$user_kyc.organization_img1}">
+									<input type="file" id="file_idimg1"accept="image/gif, image/jpeg, image/jpg, image/png" value=""/>
+								</div>
+								<p class="title" style="color: #ded6d6;">{:L('营业执照')}</p>
+							</div>
+							<div class="upload-img">
+								<div class="upload-box">	
+									<div class="imgs">
+										<notempty name="user_kyc.organization_img2">
+											<img id="up_img_idimg2" onclick="getElementById('organization_img2').click()" title="{:L('点击添加图片')}" alt="{:L('点击添加图片')}" src="/Upload/organization_image/{$user_kyc['organization_img2']}">
+										<else/>
+											<img id="up_img_idimg2" onclick="getElementById('organization_img2').click()" title="{:L('点击添加图片')}" alt="{:L('点击添加图片')}" src="__PUBLIC__/Home/ecshe_img/user_icon/idcard2.jpg">
+										</notempty>
+									</div>
+									<input type="hidden" id="organization_img2" name="organization_img2" value="{$user_kyc.organization_img2}">
+									<input type="file" id="file_idimg2"accept="image/gif, image/jpeg, image/jpg, image/png" value=""/>
+								</div>
+								<p class="title" style="color: #ded6d6;">{:L('银行开户许可证[非必传]')}</p>
+							</div>
+							<div class="upload-img">
+								<div class="upload-box">
+									<div class="imgs">
+										<notempty name="user_kyc.organization_img3">
+											<img id="up_img_idimg3" onclick="getElementById('organization_img3').click()" title="{:L('点击添加图片')}" alt="{:L('点击添加图片')}" src="/Upload/organization_image/{$user_kyc['organization_img3']}">
+										<else/>
+											<img id="up_img_idimg3" onclick="getElementById('organization_img3').click()" title="{:L('点击添加图片')}" alt="{:L('点击添加图片')}" src="__PUBLIC__/Home/ecshe_img/user_icon/idcard1.jpg">
+										</notempty>
+									</div>
+									<input type="hidden" id="organization_img3" name="organization_img3" value="{$user_kyc.organization_img3}">
+									<input type="file" id="file_idimg3"accept="image/gif, image/jpeg, image/jpg, image/png" value=""/>
+								</div>
+								<p class="title" style="color: #ded6d6;">{:L('法人身份证/护照正面')}</p>
+							</div>
+							<div class="upload-img">
+								<div class="upload-box">
+									<div class="imgs">
+										<notempty name="user_kyc.organization_img4">
+											<img id="up_img_idimg4" onclick="getElementById('organization_img4').click()" title="{:L('点击添加图片')}" alt="{:L('点击添加图片')}" src="/Upload/organization_image/{$user_kyc['organization_img4']}">
+										<else/>
+											<img id="up_img_idimg4" onclick="getElementById('organization_img4').click()" title="{:L('点击添加图片')}" alt="{:L('点击添加图片')}" src="__PUBLIC__/Home/ecshe_img/user_icon/idcard2.jpg">
+										</notempty>
+									</div>
+									<input type="hidden" id="organization_img4" name="organization_img4" value="{$user_kyc.organization_img4}">
+									<input type="file" id="file_idimg4"accept="image/gif, image/jpeg, image/jpg, image/png" value=""/>
+								</div>
+								<p class="title" style="color: #ded6d6;">{:L('法人身份证/护照反面')}</p>
+							</div>
+							<div class="upload-img">
+								<div class="upload-box">
+									<div class="imgs">
+										<notempty name="user_kyc.organization_img5">
+											<img id="up_img_idimg5" onclick="getElementById('organization_img5').click()" title="{:L('点击添加图片')}" alt="{:L('点击添加图片')}" src="/Upload/organization_image/{$user_kyc['organization_img5']}">
+										<else/>
+											<img id="up_img_idimg5" onclick="getElementById('organization_img5').click()" title="{:L('点击添加图片')}" alt="{:L('点击添加图片')}" src="__PUBLIC__/Home/ecshe_img/user_icon/idcard3.jpg">
+										</notempty>
+									</div>
+									<input type="hidden" id="organization_img5" name="organization_img5" value="{$user_kyc.organization_img5}">
+									<input type="file" id="file_idimg5"accept="image/gif, image/jpeg, image/jpg, image/png" value=""/>
+								</div>
+								<p class="title" style="color: #ded6d6;">{:L('法人手持证件照')}</p>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td colspan="3" style="padding-top:20px;">
+							<div class="Tips">
+								<div class="icons">
+									<h3 style="color: #ded6d6;">{:L('重要提示：')}</h3>
+								</div>
+								<div class="TextContent">
+									<p style="color: #ded6d6;">1. {:L('请上传清晰的证件照片')}</p>
+									<p style="color: #ded6d6;">2. {:L('图片支持JPG/PNG/JPEG格式，大小不超过1M')}</p>
+									<p style="color: #ded6d6;">3. {:L('手持证件照通过标准，信息清晰，需包括“RHEX”字样和当天日期')}</p>
+									<p style="color: #ded6d6;">4. {:L('遇到问题联系客服')} <b style="color: #4f64dc;">01OTCMaster@gmail.com</b></p>
+								</div>
+							</div>
+							<p><a class="btns" href="javascript:void(0)" onclick="Update()">{:L('提交')}</a></p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script charset="utf-8" src="__PUBLIC__/kindeditorv4/kindeditor-all-min.js"></script>
+<script charset="utf-8" src="__PUBLIC__/kindeditorv4/lang/zh-CN.js"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+	//响应文件添加成功事件
+	$("#file_idimg1").change(function () {
+		
+		if ({:APP_DEMO}) {
+			return alert('测试站暂时不能修改！');
+		}
+		
+		//创建FormData对象
+		var data = new FormData();
+		//为FormData对象添加数据
+		$.each($('#file_idimg1')[0].files, function (i, file) {
+			data.append('upload_file' + i, file);
+		});
+
+		//发送数据
+		$.ajax({
+			url: '/Ajax/imgOrganization',
+			type: 'POST',
+			data: data,
+			cache: false,
+			contentType: false, //不可缺参数
+			processData: false, //不可缺参数
+			success: function (data) {
+				if (data) {
+					$('#up_img_idimg1').attr("src", '/Upload/organization_image/' + $.trim(data));
+					$('#organization_img1').val($.trim(data));
+					$('#up_img_idimg1').show();
+				}
+			},
+			error: function () {
+				alert('上传出错');
+				$(".loading").hide(); //加载失败移除加载图片
+			}
+		});
+
+	});
+});
+	
+$(document).ready(function () {
+	//响应文件添加成功事件
+	$("#file_idimg2").change(function () {
+		
+		if ({:APP_DEMO}) {
+			return alert('测试站暂时不能修改！');
+		}
+		
+		//创建FormData对象
+		var data = new FormData();
+		//为FormData对象添加数据
+		$.each($('#file_idimg2')[0].files, function (i, file) {
+			data.append('upload_file' + i, file);
+		});
+
+		//发送数据
+		$.ajax({
+			url: '/Ajax/imgOrganization',
+			type: 'POST',
+			data: data,
+			cache: false,
+			contentType: false, //不可缺参数
+			processData: false, //不可缺参数
+			success: function (data) {
+				if (data) {
+					$('#up_img_idimg2').attr("src", '/Upload/organization_image/' + $.trim(data));
+					$('#organization_img2').val($.trim(data));
+					$('#up_img_idimg2').show();
+				}
+			},
+			error: function () {
+				alert('上传出错');
+				$(".loading").hide(); //加载失败移除加载图片
+			}
+		});
+
+	});
+});
+	
+$(document).ready(function () {
+	//响应文件添加成功事件
+	$("#file_idimg3").change(function () {
+		
+		if ({:APP_DEMO}) {
+			return alert('测试站暂时不能修改！');
+		}
+		
+		//创建FormData对象
+		var data = new FormData();
+		//为FormData对象添加数据
+		$.each($('#file_idimg3')[0].files, function (i, file) {
+			data.append('upload_file' + i, file);
+		});
+
+		//发送数据
+		$.ajax({
+			url: '/Ajax/imgOrganization',
+			type: 'POST',
+			data: data,
+			cache: false,
+			contentType: false, //不可缺参数
+			processData: false, //不可缺参数
+			success: function (data) {
+				if (data) {
+					$('#up_img_idimg3').attr("src", '/Upload/organization_image/' + $.trim(data));
+					$('#organization_img3').val($.trim(data));
+					$('#up_img_idimg3').show();
+				}
+			},
+			error: function () {
+				alert('上传出错');
+				$(".loading").hide(); //加载失败移除加载图片
+			}
+		});
+
+	});
+});
+
+$(document).ready(function () {
+	//响应文件添加成功事件
+	$("#file_idimg4").change(function () {
+		
+		if ({:APP_DEMO}) {
+			return alert('测试站暂时不能修改！');
+		}
+		
+		//创建FormData对象
+		var data = new FormData();
+		//为FormData对象添加数据
+		$.each($('#file_idimg4')[0].files, function (i, file) {
+			data.append('upload_file' + i, file);
+		});
+
+		//发送数据
+		$.ajax({
+			url: '/Ajax/imgOrganization',
+			type: 'POST',
+			data: data,
+			cache: false,
+			contentType: false, //不可缺参数
+			processData: false, //不可缺参数
+			success: function (data) {
+				if (data) {
+					$('#up_img_idimg4').attr("src", '/Upload/organization_image/' + $.trim(data));
+					$('#organization_img4').val($.trim(data));
+					$('#up_img_idimg4').show();
+				}
+			},
+			error: function () {
+				alert('上传出错');
+				$(".loading").hide(); //加载失败移除加载图片
+			}
+		});
+
+	});
+});
+
+$(document).ready(function () {
+	//响应文件添加成功事件
+	$("#file_idimg5").change(function () {
+		
+		if ({:APP_DEMO}) {
+			return alert('测试站暂时不能修改！');
+		}
+		
+		//创建FormData对象
+		var data = new FormData();
+		//为FormData对象添加数据
+		$.each($('#file_idimg5')[0].files, function (i, file) {
+			data.append('upload_file' + i, file);
+		});
+
+		//发送数据
+		$.ajax({
+			url: '/Ajax/imgOrganization',
+			type: 'POST',
+			data: data,
+			cache: false,
+			contentType: false, //不可缺参数
+			processData: false, //不可缺参数
+			success: function (data) {
+				if (data) {
+					$('#up_img_idimg5').attr("src", '/Upload/organization_image/' + $.trim(data));
+					$('#organization_img5').val($.trim(data));
+					$('#up_img_idimg5').show();
+				}
+			},
+			error: function () {
+				alert('上传出错');
+				$(".loading").hide(); //加载失败移除加载图片
+			}
+		});
+
+	});
+});
+</script>
+
+<script type="text/javascript">
+function Update(){
+	var name 		= $("#organization_name").val();
+	var org_id 		= $("#organization_id").val();
+	var person 		= $("#organization_legalperson").val();
+	var person_id 	= $("#organization_legalperson_id").val();
+	var id_type 	= $("#organization_legalperson_idtype").val();
+	var idimg1 		= $("#organization_img1").val();
+	var idimg2 		= $("#organization_img2").val();
+	var idimg3 		= $("#organization_img3").val();
+	var idimg4 		= $("#organization_img4").val();
+	var idimg5 		= $("#organization_img5").val();
+	
+	if(name == "" || name == null) {
+		layer.tips('{:L(' 请填写企业名称 ')}', '#organization_name', { tips: 3 });
+		return false;
+	}
+	if(org_id == "" || org_id == null) {
+		layer.tips('{:L(' 请填写企业社会信用代码 ')}', '#organization_id', { tips: 3 });
+		return false;
+	}
+	if(person == "" || person == null) {
+		layer.tips('{:L(' 请填写法人姓名 ')}', '#organization_legalperson', { tips: 3 });
+		return false;
+	}
+	if(person_id == "" || person_id == null) {
+		layer.tips('{:L(' 请填写法人证件号码 ')}', '#organization_legalperson_id', { tips: 3 });
+		return false;
+	}
+	if(idimg1 == "" || idimg1 == null) {
+		layer.tips('{:L(' 请上传营业执照照片 ')}', '#file_idimg1', { tips: 3 });
+		return false;
+	}
+	if(idimg3 == "" || idimg3 == null) {
+		layer.tips('{:L(' 请上传法人证件正面照片 ')}', '#file_idimg3', { tips: 3 });
+		return false;
+	}
+	if(idimg4 == "" || idimg4 == null) {
+		layer.tips('{:L(' 请上传法人证件反面照片 ')}', '#file_idimg4', { tips: 3 });
+		return false;
+	}
+	if(idimg5 == "" || idimg5 == null) {
+		layer.tips('{:L(' 请上传法人手持证件照片 ')}', '#file_idimg5', { tips: 3 });
+		return false;
+	}
+
+	$.post("{:U('User/kycOrganization_Handle')}",{name:name, org_id:org_id, person:person, person_id:person_id,id_type:id_type, idimg1: idimg1, idimg2: idimg2, idimg3: idimg3,idimg4: idimg4,idimg5: idimg5 },function(data){
+		if(data.status == 1){
+			layer.msg(data.info, { icon: 1 });
+			window.setTimeout('window.location="{:U('User/index')}"',1000);
+		}else{
+			layer.msg(data.info, { icon: 2 });
+			if (data.url) {
+				window.location = data.url;
+			}
+		}
+	},"json");
+}
+</script>
+
+<script>
+$("title").html("{:L('实名认证')} - {:C('web_title')}");
+</script>
+<include file="Public:footer" />

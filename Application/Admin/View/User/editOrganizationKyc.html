@@ -1,0 +1,210 @@
+<include file="Public:header"/>
+<script type="text/javascript" src="__PUBLIC__/layer/laydate/laydate.js"></script>
+<div id="main-content">
+	<div id="top-alert" class="fixed alert alert-error" style="display: none;">
+		<button class="close fixed" style="margin-top: 4px;">&times;</button>
+		<div class="alert-content">警告内容</div>
+	</div>
+	<div id="main" class="main">
+		<div class="main-title-h">
+			<span class="h1-title"><a href="{:U('User/index')}">用户管理</a> &gt;&gt;</span>
+			<span class="h1-title">机构认证</span>
+		</div>
+		<div class="tab-wrap">
+			<div class="tab-content">
+				<form id="form" action="{:U('User/editOrganizationKyc')}" method="post" class="form-horizontal">
+					<div id="tab" class="tab-pane in tab">
+						<div class="form-item cf">
+							<table>
+								<tr class="controls">
+									<td class="item-label">企业名称 :</td>
+									<td>
+										<eq name="data.organization_name" value="">
+											<b style="color:#FC383C">未填写</b>
+										<else/>
+											{$data.organization_name}
+										</eq>
+									</td>
+									<td class="item-note"></td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">企业社会信用代码 :</td>
+									<td>
+										<eq name="data.organization_id" value="">
+											<b style="color:#FC383C">未填写</b>
+										<else/>
+											{$data.organization_id}
+										</eq>
+									</td>
+									<td class="item-note"></td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">法人姓名 :</td>
+									<td>
+										<eq name="data.organization_legalperson" value="">
+											<b style="color:#FC383C">未填写</b>
+										<else/>
+											{$data.organization_legalperson}
+										</eq>
+									</td>
+									<td class="item-note"></td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">证件类型 :</td>
+									<td>
+										<select name="organization_legalperson_idtype" class="form-control input-10x">
+											<option value="1"
+											<eq name="data.organization_legalperson_idtype" value="0">selected</eq>
+											>未选择</option>
+											<option value="1"
+											<eq name="data.organization_legalperson_idtype" value="1">selected</eq>
+											>身份证</option>
+											<option value="2"
+											<eq name="data.organization_legalperson_idtype" value="2">selected</eq>
+											>护照</option>
+											<option value="3"
+											<eq name="data.organization_legalperson_idtype" value="3">selected</eq>
+											>驾驶证</option>
+										</select>
+									</td>
+									<td class="item-note"></td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">法人证件号码 :</td>
+									<td>
+										<eq name="data.organization_legalperson_id" value="">
+											<b style="color:#FC383C">未填写</b>
+										<else/>
+											{$data.organization_legalperson_id}
+										</eq>
+									</td>
+									<td class="item-note"></td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">证件照片 :</td>
+									<td>
+										<style>
+											.controls img{width:155px;height:110px;padding:10px;border:2px dashed #bdc3c7;}
+										</style>
+										<eq name="data.organization_img1" value="">
+											<img src="__PUBLIC__/Home/ecshe_img/user_icon/idcard4.jpg" style="margin-right:12px;" onclick="showImg('__PUBLIC__/Home/ecshe_img/user_icon/idcard4.jpg');" />
+											<p class="title" style="color: #000000;">{:L('营业执照')}</p>
+										<else />
+											<img src="/Upload/organization_image/{$data.organization_img1}"  style="margin-right:12px;" onclick="showImg('/Upload/organization_image/{$data.organization_img1}');" />
+											<p class="title" style="color: #000000;">{:L('营业执照')}</p>
+										</eq>
+										
+										<eq name="data.organization_img2" value="">
+											<img src="__PUBLIC__/Home/ecshe_img/user_icon/idcard2.jpg" style="margin-right:12px;" onclick="showImg('__PUBLIC__/Home/ecshe_img/user_icon/idcard2.jpg');" />
+											<p class="title" style="color: #000000;">{:L('银行开户许可证[非必传]')}</p>
+										<else />
+											<img src="/Upload/organization_image/{$data.organization_img2}" style="margin-right:12px;" onclick="showImg('/Upload/organization_image/{$data.organization_img2}');" />
+											<p class="title" style="color: #000000;">{:L('银行开户许可证[非必传]')}</p>
+										</eq>
+										
+										<eq name="data.organization_img3" value="">
+											<img src="__PUBLIC__/Home/ecshe_img/user_icon/idcard1.jpg" style="margin-right:12px;" onclick="showImg('__PUBLIC__/Home/ecshe_img/user_icon/idcard3.jpg');" />
+											<p class="title" style="color: #000000;">{:L('法人身份证/护照正面')}</p>
+										<else />
+											<img src="/Upload/organization_image/{$data.organization_img3}" style="margin-right:15px;" onclick="showImg('/Upload/organization_image/{$data.organization_img3}');" />
+											<p class="title" style="color: #000000;">{:L('法人身份证/护照正面')}</p>
+										</eq>
+
+										<eq name="data.organization_img4" value="">
+											<img src="__PUBLIC__/Home/ecshe_img/user_icon/idcard2.jpg" style="margin-right:12px;" onclick="showImg('__PUBLIC__/Home/ecshe_img/user_icon/idcard3.jpg');" />
+											<p class="title" style="color: #000000;">{:L('法人身份证/护照反面')}</p>
+										<else />
+											<img src="/Upload/organization_image/{$data.organization_img4}" style="margin-right:15px;" onclick="showImg('/Upload/organization_image/{$data.organization_img4}');" />
+											<p class="title" style="color: #000000;">{:L('法人身份证/护照反面')}</p>
+										</eq>
+
+										<eq name="data.organization_img5" value="">
+											<img src="__PUBLIC__/Home/ecshe_img/user_icon/idcard3.jpg" style="margin-right:12px;" onclick="showImg('__PUBLIC__/Home/ecshe_img/user_icon/idcard3.jpg');" />
+											<p class="title" style="color: #000000;">{:L('法人手持证件照')}</p>
+										<else />
+											<img src="/Upload/organization_image/{$data.organization_img5}" style="margin-right:15px;" onclick="showImg('/Upload/organization_image/{$data.organization_img5}');" />
+											<p class="title" style="color: #000000;">{:L('法人手持证件照')}</p>
+										</eq>
+									</td>
+									<td class="item-note"></td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label" style="padding:10px 0;color: #1B58FD;">认证驳回原因 :</td>
+									<td style="padding:10px 0;">
+										<textarea name="organization_info" class="form-control input-10x" style="height:120px;">{$data.organization_info}</textarea>
+									</td>
+									<td class="item-note" style="padding:10px 0;">填写未通过认证原因</td>
+								</tr>
+								
+								<tr class="controls">
+									<td class="item-label">认证状态 :</td>
+									<td>
+										<select name="organization_status" class="form-control input-10x">
+											<option value="0"
+											<eq name="data.organization_status" value="0">selected</eq>
+											>未提交</option>
+											<option value="1"
+											<eq name="data.organization_status" value="1">selected</eq>
+											>待审核</option>
+											<option value="2"
+											<eq name="data.organization_status" value="2">selected</eq>
+											>审核通过</option>
+											<option value="8"
+											<eq name="data.organization_status" value="8">selected</eq>
+											>未通过</option>
+										</select>
+									</td>
+									<td class="item-note"></td>
+								</tr>
+
+								<tr class="controls">
+									<td class="item-label"></td>
+									<td>
+										<div class="form-item cf">
+											<button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">提交</button>
+											<a class="btn btn-return" href="{$Think.server.HTTP_REFERER}">返 回</a>
+											<notempty name="data.userid"><input type="hidden" name="userid" value="{$data.userid}"/>
+											</notempty>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+//提交表单
+$('#submit').click(function () {
+	$('#form').submit();
+});
+	
+function showImg(url){
+    var img = "<img src='" + url + "' />";  
+	layer.open({  
+	    type: 1,  
+	    //shade: false,
+	    title: false,
+		loseBtn: 0,
+	    area:['auto','auto'],  
+	    /*area: [img.width + 'px', img.height+'px'],  */
+		area: [img.width + 'px', '650px'],  
+		/*skin: 'layui-layer-nobg', //没有背景色*/
+		shadeClose: true,
+	    content: img, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响  
+/*	    cancel: function () {  
+	        layer.msg('图片查看结束！', { time: 5000, icon: 6 });  
+	    }*/  
+	}); 
+}
+</script>
+<include file="Public:footer"/>
+<block name="script">
+<script type="text/javascript" charset="utf-8">
+	//导航高亮
+	highlight_subnav("{:U('User/index')}");
+</script>
+</block>

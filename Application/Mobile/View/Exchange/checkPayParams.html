@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file="Public:head" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+</head>
+<body style="background-color:#f3f4f6;">
+    <div class="log_title">
+        <span class="back"><a href="{:U('Exchange/bank')}"></a></span>
+        {:L('检查账户状态')}
+    </div>
+    <div class="mui-content cur-padding-bottom" style="margin-top:10px;">
+        <div class="trade_record">
+            <div><span>说明：点击对应账户的【检查状态】按钮，切换到对应app，根据提示判断账户状态</span></div>
+            <ul class="list-exchange">
+                <empty name="list">
+                    {:L('暂无需要检查账户，请添加')}
+                <else/>
+                    <volist name="list" id="vo">
+                        <li>
+                            <div class="stream-info">
+                                <div class="tl"><p class="title">账户名</p><p>{$vo.title}</p></div>
+                                <div class="tr"><a style="color: #ed2929" target="_blank" href="{$vo.link}">{:L('检查状态')}</a></div>
+                            </div>
+                        </li>
+                    </volist>
+                </empty>
+            </ul>
+        </div>
+        <script>
+        </script>
+        <include file="Public:footer" />
+    </div>
+</body>
+</html>

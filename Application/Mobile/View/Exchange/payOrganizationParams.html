@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file="Public:head" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+</head>
+<body style="background-color:#f3f4f6;">
+    <div class="log_title">
+        <span class="back"><a href="{:U('Exchange/bank')}"></a></span>
+        {:L('机构账户')}
+    </div>
+    <div class="mui-content cur-padding-bottom" style="margin-top:10px;">
+        <div class="trade_record">
+            <div class="titlehead">{$payTitle.channel_title}<span class="fr state"><a href="{:U('Exchange/editOrganizationParams',array('id'=>0, 'channelid'=>$payTitle['channelid']))}" class="fr">{:L('添加账户')}</a></span><span class="fr state"><a href="{:U('Exchange/checkPayParams',array('channelid'=>$payTitle['channelid']))}" class="fr">{:L('检查参数')}</a></span></div>
+            <div><span>（说明：{$payTitle.note}）</span></div>
+            <ul class="list-exchange">
+                <empty name="list">
+                    {:L('暂无机构账户，请添加')}
+                <else/>
+                    <volist name="list" id="vo">
+                        <li>
+                            <div class="column-info">
+                                <h3 class="red" style="width: 120px; text-transform:uppercase;">{$vo['channelid']|getPayChannleTitle=###}</h3>
+                                <span class="fc time">{$vo.addtime|date='m-d H:i',###}</span>
+                                <span class="fr state"><a class="btns_cz" style="color: #ed2929" href="javascript:void(0)" onclick="deletePayParams({$vo['id']})">{:L('删除')}</a></span>
+                                <eq name="vo.status" value="1">
+                                    <span class="fr state"><a style="color: #ed2929" href="javascript:void(0)" onclick="setPayParamsStatus({$vo['id']})">{:L('关闭')}</a><s>|</s>
+                                    </span>
+                                <else/>
+                                    <span class="fr state"><a style="color: green" href="javascript:void(0)" onclick="setPayParamsStatus({$vo['id']})">{:L('开启')}</a><s>|</s>
+                                    </span>
+                                </eq>
+                                <eq name="vo.is_defined" value="1">
+                                    <span class="fr state"><a class="btns_cz" style="color: #7399ef" href="{:U('Exchange/editControl',array('id'=>$vo['id']))}">{:L('风控')}</a><s>|</s></span>
+                                </eq>
+                                <span class="fr state"><a class="btns_cz" style="color: blue" href="{:U('Exchange/editOrganizationParams',array('id'=>$vo['id']))}">{:L('编辑')}</a><s>|</s></span>
+                            </div>
+                            <div class="stream-info" style="text-transform:uppercase;">
+                                <empty name="payTitle">
+                                    <div class="tl"><p class="title">商户号</p><p>
+                                        <eq name="vo.max_fail_status" value="1">
+                                            <b style="color: red">{$vo.mch_id}</b>
+                                        <else/>
+                                            {$vo.mch_id}
+                                        </eq>
+                                    </p></div>
+                                <else/>
+                                    <div class="tl"><p class="title">{$payTitle.mch_id}</p><p>
+                                        <eq name="vo.max_fail_status" value="1">
+                                            <b style="color: red">{$vo.mch_id}</b>
+                                        <else/>
+                                            {$vo.mch_id}
+                                        </eq>
+                                    </p></div>
+                                </empty>
+                                <empty name="payTitle">
+                                    <div class="tc"><p class="title">签文密钥</p><p>{$vo.signkey}</p></div>
+                                <else/>
+                                    <div class="tc"><p class="title">{$payTitle.signkey}</p><p>{$vo.signkey}</p></div>
+                                </empty>
+                                <div class="tr"><p class="title">风控模式</p><p><eq name="vo.is_defined" value="0">系统默认<else/>自定义</eq></p></div>
+                            </div>
+                            <div class="stream-info" style="text-transform:uppercase;">
+                                <div class="tl"><p class="title">手动交易</p>
+                                    <p>
+                                        <eq name="vo.is_manual_account" value="1">
+                                            是
+                                        <else/>
+                                            否
+                                        </eq>
+                                    </p>
+                                </div>
+                                <div class="tc"><p class="title">状态</p>
+                                    <p>
+                                        <eq name="vo.status" value="1">
+                                            <span style="color: green">开启</span>
+                                        <else/>
+                                            关闭
+                                        </eq>
+                                    </p>
+                                </div>
+                                <div class="tr"><p class="title">审核状态</p>
+                                    <p>
+                                        <eq name="vo.check_status" value="1">
+                                            <span style="color: green">通过</span>
+                                        <else/>
+                                            <span style="color: red">未通过</span>
+                                        </eq>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    </volist>
+                </empty>
+            </ul>
+        </div>
+
+        <script>
+
+        //设置支付参数的状态
+        function setPayParamsStatus(id) {
+            layer.config({
+                extend: 'extend/layer.ext.js'
+            });
+            layer.ready(function() {
+                //默认prompt
+                layer.prompt({
+                    title: '{:L(' 输入交易密码， 并确认')}',
+                    formType: 1
+                }, function(val) {
+                    if (val) {
+                        //需要执行的方法
+                        $.post("{:U('Exchange/setPayParamsStatus')}", {
+                            id: id,
+                            paypassword: val
+                        }, function(data) {
+                            if (data.status == 1) {
+                                layer.msg(data.info, { icon: 1 });
+                                window.location.reload();
+                            } else {
+                                layer.msg(data.info, { icon: 2 });
+                                if (data.url) {
+                                    window.location = data.url;
+                                }
+                            }
+                        }, "json");
+                    };
+                });
+            });
+        }
+
+        //删除支付参数
+        function deletePayParams(id) {
+            layer.config({
+                extend: 'extend/layer.ext.js'
+            });
+            layer.ready(function() {
+                //默认prompt
+                layer.prompt({
+                    title: '{:L(' 输入交易密码， 并确认 ')}',
+                    formType: 1
+                }, function(val) {
+                    if (val) {
+                        //需要执行的方法
+                        $.post("{:U('Exchange/delPayParams')}", {
+                            id: id,
+                            paypassword: val
+                        }, function(data) {
+                            if (data.status == 1) {
+                                layer.msg(data.info, { icon: 1 });
+                                window.location.reload();
+                            } else {
+                                layer.msg(data.info, { icon: 2 });
+                                if (data.url) {
+                                    window.location = data.url;
+                                }
+                            }
+                        }, "json");
+                    };
+                });
+            });
+        }
+        </script>
+        <include file="Public:footer" />
+    </div>
+</body>
+</html>

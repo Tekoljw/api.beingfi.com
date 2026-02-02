@@ -1,0 +1,109 @@
+﻿
+
+
+<style>
+	*{
+		margin: 0;
+	}
+	
+	#box{
+		position: relative;
+		width: 960px;
+		height: 480px;
+		margin:200px auto 0;
+	}
+	#box img{
+		position: absolute;
+	}
+	#box img:nth-child(1){
+		/*left:-8px;*/
+		top:0px;
+		left:-1000px;
+	}
+	#box img:nth-child(1).on{
+		left:-8px;
+		transition: 0.5s 1s;
+	}
+	#box img:nth-child(2){
+		/*left:163px;*/
+		top:10px;
+		left:-1000px;
+	}
+	#box img:nth-child(2).on{
+		left:163px;
+		transition: 0.5s 0.5s;
+	}
+	#box img:nth-child(3){
+		left:310px;
+		top:0px;
+		animation: shake 0.8s linear;
+	}
+	@keyframes shake {
+		0%{
+			transform: scale(0);
+		}
+		30%{
+			transform: scale(1.2);
+		}
+		40%{
+			transform: scale(0.8);
+		}
+		50%{
+			transform: scale(1.15);
+		}
+		60%{
+			transform: scale(0.9);
+		}
+		70%{
+			transform: scale(1.1);
+		}
+		80%{
+			transform: scale(0.95);
+		}
+		90%{
+			transform: scale(1.05);
+		}
+		100%{
+			transform: scale(1);
+		}
+	}
+
+	#box img:nth-child(4){
+		/*left:510px;*/
+		top:10px;
+		left:1500px;
+	}
+	#box img:nth-child(4).on{
+		left:510px;
+		transition: 0.5s 0.5s;
+	}
+	#box img:nth-child(5){
+		/*left:656px;*/
+		top:0px;
+		left:1500px;
+	}
+	#box img:nth-child(5).on{
+		left:656px;
+		transition: 0.5s 1s;
+	}
+</style>
+
+
+
+<div id="box">
+	<img src="images/top1.png">
+	<img src="images/top2.png">
+	<img src="images/top3.png">
+	<img src="images/top4.png">
+	<img src="images/top5.png">
+</div>
+
+<script>
+	var box = document.getElementById("box");
+	var aImgs= box.getElementsByTagName("img");
+	window.onload = function(){
+		for(var i=0;i<aImgs.length;i++){
+			aImgs[i].className="on";
+		}
+	}
+</script>

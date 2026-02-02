@@ -1,0 +1,108 @@
+<include file="Public:header_new" />
+<style>
+    body {background:#283046;}
+</style>
+<link rel="stylesheet" href="__PUBLIC__/Home/ecshe_css/exchange.css">
+<style>
+    .copy_button{float:right;margin-top:5px;margin-right:10px;padding:0 10px;height:30px;}
+</style>
+
+<div class="C2C_order_list" style="min-height: 500px; margin-bottom: 20px">
+    <input type="hidden" id="channelid" name="channelid" />
+	<div class="column">
+        <a href="javascript:void(0)"><h2 style="text-transform:uppercase;">{:L('账户成功率')}</h2></a><span style="color: white; font-size: 13px">（说明：仅展示开启账户的<span style="color: red">最近1小时</span>的成功率）</span>
+        <div class="navs">
+            <eq name="is_personal" value="1">
+                <a href="{:U('Exchange/payPersonalParams',array('channelid'=>$channelid))}" style="font-size: 20px; color: #ffffff;"> {:L('返回')}</a>
+            <else/>
+                <a href="{:U('Exchange/payOrganizationParams',array('channelid'=>$channelid))}" style="font-size: 20px; color: #ffffff;"> {:L('返回')}</a>
+            </eq>
+        </div>
+	</div>
+	<ul class="table-head">
+        <li style="width: 16%" class="tc">{:L('账户类型')}</li>
+        <li style="width: 20%" class="tc">{:L('账户名')}</li>
+        <li style="width: 8%" class="tc">{:L('0-500')}</li>
+        <li style="width: 8%" class="tc">{:L('500-1500')}</li>
+        <li style="width: 8%" class="tc">{:L('1500-5000')}</li>
+        <li style="width: 8%" class="tc">{:L('5000-10000')}</li>
+        <li style="width: 8%" class="tc">{:L('10000以上')}</li>
+        <li style="width: 8%" class="tc">{:L('总体')}</li>
+        <li style="width: 10%" class="tc">{:L('连续失败次数')}</li>
+    </ul>
+    <ul class="table-list" border="0" cellspacing="0" cellpadding="0">
+        <empty name="list">
+            <span class="tc" style="margin-top: 50px; font-size: 24px">{:L('该类型暂无账户，请添加')}</span>
+        <else/>
+            <volist name="list" id="vo">
+                <li>
+                     <dl>
+                        <dd class="fl tc" style="width: 16%">{$vo['channelid']|getPayChannleTitle=###}</dd>
+                        <dd class="fl tc" style="width: 20%">{$vo.truename}</dd>
+                        <dd class="fl tc" style="width: 8%">
+                            <if condition="$vo['success_rate1'] lt 0">
+                                无订单
+                            <else/>
+                                {$vo.success_rate1}%
+                            </if>
+                        </dd>
+                        <dd class="fl tc" style="width: 8%">
+                            <if condition="$vo['success_rate2'] lt 0">
+                                无订单
+                            <else/>
+                                {$vo.success_rate2}%
+                            </if>
+                        </dd>
+                        <dd class="fl tc" style="width: 8%">
+                            <if condition="$vo['success_rate3'] lt 0">
+                                无订单
+                            <else/>
+                                {$vo.success_rate3}%
+                            </if>
+                        </dd>
+                        <dd class="fl tc" style="width: 8%">
+                            <if condition="$vo['success_rate4'] lt 0">
+                                无订单
+                            <else/>
+                                {$vo.success_rate4}%
+                            </if>
+                        </dd>
+                        <dd class="fl tc" style="width: 8%">
+                            <if condition="$vo['success_rate5'] lt 0">
+                                无订单
+                            <else/>
+                                {$vo.success_rate5}%
+                            </if>
+                        </dd>
+                        <dd class="fl tc" style="width: 8%">
+                            <if condition="$vo['success_rate6'] lt 0">
+                                无订单
+                            <elseif condition="$vo['success_rate6'] elt 10 AND $vo['success_rate6'] gt 0"/>
+                                <span style="color: red">{$vo.success_rate6}%</span>
+                            <elseif condition="$vo['success_rate6'] gt 10 AND $vo['success_rate6'] lt 40"/>
+                                <span style="color: #F98A3F">{$vo.success_rate6}%</span>
+                            <else/>
+                                {$vo.success_rate6}%
+                            </if>
+                        </dd>
+                        <dd class="fl tc" style="width: 10%">
+                            <if condition="$vo['max_fail_count'] egt 8">
+                                <span style="color: red">{$vo.max_fail_count}</span>
+                            <elseif condition="$vo['max_fail_count'] egt 4"/>
+                                <span style="color: #F98A3F">{$vo.max_fail_count}</span>
+                            <else/>
+                                {$vo.max_fail_count}
+                            </if>
+                        </dd>
+                    </dl>
+                </li>
+            </volist>
+        </empty>
+    </ul>
+	<div class="pages">{$page}</div>
+</div>
+
+<script>
+$("title").html("{:L('账户成功率')} - {:C('web_title')}");
+</script>
+<include file="Public:footer" />

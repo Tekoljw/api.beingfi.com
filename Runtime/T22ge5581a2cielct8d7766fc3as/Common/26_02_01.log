@@ -1,0 +1,186 @@
+[ 2026-02-01T10:30:53+08:00 ] 13.115.53.86 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000031s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:30:55+08:00 ] 13.115.53.86 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000028s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:31:18+08:00 ] 176.65.148.161 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000143s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:31:18+08:00 ] 176.65.148.161 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000149s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:31:19+08:00 ] 176.65.148.161 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000026s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:31:57+08:00 ] 176.65.148.161 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000147s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:31:57+08:00 ] 176.65.148.161 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000004s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000144s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:32:11+08:00 ] 13.115.53.86 /pay/payexchange/autoExchangePaymentNotify
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000024s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:33:15+08:00 ] 13.115.53.86 /pay/payexchange/autoExchangePaymentNotify
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000024s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:34:00+08:00 ] 13.115.53.86 /pay/payexchange/autoExchangePaymentNotify
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000004s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000025s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:46:28+08:00 ] 54.234.221.49 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000006s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000145s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:46:28+08:00 ] 54.234.221.49 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000027s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:46:29+08:00 ] 54.234.221.49 /favicon.png
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000004s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000026s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:53:45+08:00 ] 91.231.89.124 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000144s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T10:53:45+08:00 ] 91.231.89.124 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000004s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000053s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:15:20+08:00 ] 96.41.38.202 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000144s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:15:20+08:00 ] 96.41.38.202 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000033s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:15:20+08:00 ] 96.41.38.202 /@vite/env
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000026s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:15:20+08:00 ] 96.41.38.202 /@vite/env
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000024s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:15:20+08:00 ] 96.41.38.202 /actutor/env
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000026s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:15:20+08:00 ] 96.41.38.202 /actutor/env
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000004s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000025s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:15:21+08:00 ] 96.41.38.202 /.vscode/sftp.json
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000025s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:15:21+08:00 ] 96.41.38.202 /.vscode/sftp.json
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000025s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:15:21+08:00 ] 96.41.38.202 /.env
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000026s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:15:21+08:00 ] 96.41.38.202 /.git/config
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000027s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:25:47+08:00 ] 103.4.251.149 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000006s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000158s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:25:47+08:00 ] 103.4.251.149 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000026s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:25:47+08:00 ] 154.28.229.147 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000145s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:25:47+08:00 ] 154.28.229.147 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000024s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:25:59+08:00 ] 104.164.126.224 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000151s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+
+[ 2026-02-01T11:25:59+08:00 ] 104.164.126.224 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000005s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000025s ]
+NOTIC: [2] file_get_contents(./404.html): failed to open stream: No such file or directory /www/wwwroot/test-otc-api.beingfi.com/core/ThinkPHP.php 第 126 行.
+

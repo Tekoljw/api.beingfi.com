@@ -1,0 +1,311 @@
+<include file="Public:header" />
+<style>
+	.table-striped tbody tr:hover {
+		background-color: #CDDEFB;
+	}
+	.data-table tbody td {
+		height: 40px;
+		line-height: 40px;
+	}
+	.btn-primary {
+		background-color: #1abc9c;
+	}
+	.tongji span{margin-right:10px;font-size:14px;}
+</style>
+
+<div id="main-content">
+	<div id="top-alert" class="fixed alert alert-error" style="display: none;">
+		<button class="close fixed" style="margin-top: 4px;">&times;</button>
+		<div class="alert-content">警告内容</div>
+	</div>
+	<div id="main" class="main">
+		<div class="main-title-h">
+			<span class="h1-title">C2C买入记录</span>
+		</div>
+		<div class="cf">
+<!--			<div class="fl">
+				<button class="btn ajax-post confirm btn-danger" url="{:U('Exchange/orderStatus',array('type'=>'del'))}" target-form="ids">删除</button>
+			</div>-->
+			<div class="fl tongji">
+				<span>交易中金额：<b style="color:#F98A3F">{$tongji['finance']}</b></span>
+				<span>待处理金额：<b style="color:#F98A3F">{$tongji['dcl']}</b></span>
+				<span>处理中金额：<b style="color:#F98A3F">{$tongji['financing']}</b></span>
+				<span>已完成金额：<b style="color:#219B20">{$tongji['ywc']}</b></span>
+				<span>取消订单金额：<b style="color:#FF474A">{$tongji['cx']}</b></span>
+				<span>今日手续费：<b style="color:#F98A3F">{$tongji['today_profit']}</b></span>
+				<span>总手续费：<b style="color:#219B20">{$tongji['total_profit']}</b></span>
+				<span>今日订单数：<b style="color:#F98A3F">{$tongji['today_order_count']}</b></span>
+				<span>总订单数：<b style="color:#F98A3F">{$tongji['total_order_count']}</b></span>
+				<br>
+				<span>今日成功订单数：<b style="color:#219B20">{$tongji['today_order_success']}</b></span>
+				<span>总成功订单数：<b style="color:#219B20">{$tongji['total_order_success']}</b></span>
+				<span>今日总金额：<b style="color:#F98A3F">{$tongji['today_order_sum']}</b></span>
+				<span>今日成功金额：<b style="color:#219B20">{$tongji['today_success_sum']}</b></span>
+				<span>符合条件手续费：<b style="color:#F98A3F">{$tongji['condition_profit']}</b></span>
+				<span>符合条件金额：<b style="color:#106EFF">{$tongji['condition_order_sum']}</b></span>
+				<span>符合条件数量：<b style="color:#219B20">{$tongji['condition_order_count']}</b></span>
+			</div>
+
+			<div class="search-form fr cf">
+				<div class="sleft">
+					<form name="formSearch" id="formSearch" method="get" name="form1">
+						<!-- 时间筛选 -->
+                        <script type="text/javascript" src="/Public/layer/laydate/laydate.js"></script>
+                        <input type="text" class="form-control" style=" width: 170px; float: left; margin-right: 10px;" name="starttime" value="{:I('get.starttime')}" placeholder="开始日期" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">
+                        <input type="text" class="form-control" style=" width: 170px; float: left; margin-right: 10px;" name="endtime" value="{:I('get.endtime')}" placeholder="结束日期" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">
+						<select style="width: 110px; float: left; margin-right: 10px;" name="status" class="form-control">
+							<option value="" <empty name="Think.get.status">selected</empty> >处理状态</option>
+							<option value="99" <eq name="Think.get.status" value="99">selected</eq> >全部状态</option>
+							<option value="0" <eq name="Think.get.status" value="0">selected</eq> >交易中</option>
+							<option value="1" <eq name="Think.get.status" value="1">selected</eq> >待处理</option>
+							<option value="2" <eq name="Think.get.status" value="2">selected</eq> >处理中</option>
+							<option value="3" <eq name="Think.get.status" value="3">selected</eq> >已到账</option>
+							<option value="8" <eq name="Think.get.status" value="8">selected</eq> >取消订单</option>
+						</select>
+						<select style=" width: 100px; float: left; margin-right: 10px;" name="field" class="form-control">
+							<option value="username" <eq name="Think.get.field" value="username">selected</eq> >用户名</option>
+							<option value="userid" <eq name="Think.get.field" value="userid">selected</eq> >用户ID</option>
+							<option value="orderid" <eq name="Think.get.field" value="orderid">selected</eq> >订单号</option>
+						</select>
+						<input type="text" name="name" class="search-input form-control  " value="{$Think.get.name}" placeholder="请输入查询内容" style="">
+						<a class="sch-btn" href="javascript:;" id="search"> <i class="btn-search"></i> </a>
+					</form>
+					<script>
+						//搜索功能
+						$(function () {
+							$('#search').click(function () {
+								$('#formSearch').submit();
+							});
+						});
+						//回车搜索
+						$(".search-input").keyup(function (e) {
+							if (e.keyCode === 13) {
+								$("#search").click();
+								return false;
+							}
+						});
+					</script>
+				</div>
+			</div>
+		</div>
+		<div class="data-table table-striped">
+			<form id="form" action="{:U('Exchange/myczExcel')}" method="post" class="form-horizontal">
+				<table class="">
+					<thead>
+					<tr>
+						<th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
+						<th width="">编号</th>
+						<th width="">订单号</th>
+						<th width="">外部订单号</th>
+						<th width="">账户类型</th>
+						<th width="">用户ID</th>
+						<th width="">用户名</th>
+						<th width="">币种</th>
+						<th width="">数量</th>
+						<th width="">支付数量</th>
+						<th width="">单价</th>
+						<th width="">实际汇款</th>
+						<th width="">利润</th>
+						<th width="">总优惠</th>
+						<th width="">卖家优惠</th>
+						<th width="">自动卖出费率</th>
+						<th width="">汇款备注</th>
+						<th width="">卖方</th>
+						<th width="">申请时间</th>
+						<th width="">确认时间</th>
+						<th width="">状态</th>
+						<th width="">惩罚状态</th>
+						<th width="">订单标记</th>
+						<th width="">操作</th>
+					</tr>
+					</thead>
+					<tbody>
+					<notempty name="list">
+						<volist name="list" id="vo">
+							<tr>
+								<td><input class="ids" type="checkbox" name="id[]" value="{$vo.id}"/></td>
+								<td>{$vo.id}</td>
+								<td><b style="color:#106EFF;">{$vo.orderid}</b></td>
+								<td><b style="color: #A98A3F">{$vo.out_order_id}</b></td>
+								<td><b style="color: #FC8A3F">{$vo['pay_channelid']|getPayChannleTitle=###}</b></td>
+								<td>{$vo.userid}</td>
+								<td><a target="_blank" href="{:U('User/index')}?status=&field=username&starttime=&endtime=&name={$vo['username']}">{$vo['username']}</a></td>
+								<td>{$vo.type}</td>
+								<td>{$vo.num}</td>
+								<td><b style="color: #A98A3F">{$vo.obtain_num}</b></td>
+								<td>{$vo.uprice}</td>
+								<td><b style="color: #106EFF;">{$vo.mum}</b></td>
+								<td><b style="color: #219B20;">{$vo.fee}</b></td>
+								<td>{$vo.all_scale}</td>
+								<td>{$vo.scale_amount}</td>
+								<td>{$vo.sell_fee}</td>
+								<td style="color:#E96703;">{$vo.remarks}</td>
+								<td><a target="_blank" href="{:U('Exchange/agent')}?status=&field=username&starttime=&endtime=&name={$vo['agent']}">{$vo['agent']} ({$vo['aid']})</a></td>
+								<td>{$vo.addtime|addtime}</td>
+								<td>{$vo.endtime|addtime}</td>
+								<td>
+									<eq name="vo.status" value="0">交易中</eq>
+									<eq name="vo.status" value="1">待处理</eq>
+									<eq name="vo.status" value="2">处理中</eq>
+									<eq name="vo.status" value="3">已到账</eq>
+									<eq name="vo.status" value="8">取消订单</eq>
+								</td>
+								<td>
+									<eq name="vo.punishment_level" value="0">未惩罚</eq>
+									<eq name="vo.punishment_level" value="1"><b style="color: #F98A3F">已惩罚</b></eq>
+									<eq name="vo.punishment_level" value="2"><b style="color: #FF474A">已取消并惩罚</b>，<b style="color: green">可指派</b></eq>
+								</td>
+								<td>{$vo.remarks}</td>
+								<td>
+									<eq name="vo.status" value="1">
+										<a href="{:U('Exchange/myczChuli?orderid='.$vo['orderid'])}" class="ajax-get btn btn-primary btn-xs">处理 </a>
+										<if condition="$vo['punishment_level'] elt 0">
+											<a href="{:U('Exchange/myczChexiao?orderid='.$vo['orderid'])}" class="ajax-get btn btn-info btn-xs">撤销 </a>
+										</if>
+										<a href="javascript:void(0)" onclick="resetOrderBuyUser('{$vo['orderid']}')" style="background-color: #F98A3F;color:white" class="ajax-get btn btn-info btn-xs">切换买家</a>
+									</eq>
+									<eq name="vo.status" value="2">
+										<a href="{:U('Exchange/myczQueren?orderid='.$vo['orderid'])}" class="ajax-get btn btn-xs btn-primary">到账</a>
+										<a href="{:U('Exchange/myczChexiao?orderid='.$vo['orderid'])}" class="ajax-get btn btn-info btn-xs">撤销 </a>
+									</eq>
+									<eq name="vo.status" value="3">
+										<if condition="$vo['punishment_level'] elt 0">
+											<a href="{:U('Exchange/myczPunishment?orderid='.$vo['orderid'])}" style="background-color: #F98A3F" class="ajax-get btn btn-info btn-xs">惩罚</a>
+										</if>
+										<a href="javascript:void(0)" onclick="myczCXAndPunishment('{$vo['orderid']}')" style="background-color: #FF474A;color:white" class="ajax-get btn btn-info btn-xs">取消并惩罚</a>
+									</eq>
+									<eq name="vo.status" value="8">
+										<if condition="$vo['punishment_level'] elt 0">
+											<a href="{:U('Exchange/myczPunishment?orderid='.$vo['orderid'])}" style="background-color: #F98A3F" class="ajax-get btn btn-info btn-xs">惩罚</a>
+										</if>
+									</eq>
+									<notempty name="vo.notifyurl">
+										<a href="javascript:;" onclick="showNotifyurl('{$vo['notifyurl']}');">通知地址</a>
+									</notempty>
+								</td>
+							</tr>
+						</volist>
+						<else/>
+						<td colspan="12" class="text-center empty-info"><i class="glyphicon glyphicon-exclamation-sign"></i>暂无数据</td>
+					</notempty>
+					</tbody>
+				</table>
+			</form>
+            <div class="page">
+                <div>{$page}</div>
+            </div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+//提交表单
+$('#submit').click(function () {
+	$('#form').submit();
+});
+
+//显示通知地址
+function showNotifyurl(notifyurl){
+    layer.open({
+        type:1,
+        skin:'layui-layer-rim', //加上边框
+        area:['800px','100px'], //宽高
+        title:'通知地址', //不显示标题
+        closeBtn: 0,
+        shadeClose: true,
+        content:notifyurl
+    });
+}
+
+//重置买家
+function resetOrderBuyUser(orderid) {
+    layer.config({
+        extend: 'extend/layer.ext.js'
+    });
+    layer.ready(function() {
+        //默认prompt
+        layer.prompt({
+            title: '{:L(' 输入新买家ID， 并确认 ')}',
+            formType: 0
+        }, function(val) {
+            if (val) {
+                //需要执行的方法
+                $.post("{:U('Exchange/myczResetBuyUser')}", {
+                    orderid: orderid,
+                    buy_userid: val
+                }, function(data) {
+                    if (data.status == 1) {
+                        layer.msg(data.info, { icon: 1 }, function (){ 
+                            window.location.reload();
+                        });
+                    } else {
+                        layer.msg(data.info, { icon: 2 });
+                        if (data.url) {
+                            window.location = data.url;
+                        }
+                    }
+                }, "json");
+            };
+        });
+    });
+}
+
+//订单取消并惩罚
+function myczCXAndPunishment(orderid) {
+    layer.config({
+        extend: 'extend/layer.ext.js'
+    });
+    layer.ready(function() {
+        //默认prompt
+        layer.prompt({
+            title: '{:L(' 输入账户密码， 并确认 ')}',
+            formType: 1
+        }, function(val) {
+            if (val) {
+                //需要执行的方法
+                $.post("{:U('Exchange/myczCXAndPunishment')}", {
+                    orderid: orderid,
+                    password: val
+                }, function(data) {
+                    if (data.status == 1) {
+                        layer.msg(data.info, { icon: 1 }, function (){ 
+                            window.location.reload();
+                        });
+                    } else {
+                        layer.msg(data.info, { icon: 2 });
+                        if (data.url) {
+                            window.location = data.url;
+                        }
+                    }
+                }, "json");
+            };
+        });
+    });
+}
+
+$(".page > div").children("a").each(function(){
+	var ahref = $(this).attr('href');
+	var ahrefarr = ahref.split("/");
+	var ahlength = ahrefarr.length;
+	var newhref = '';
+	for(var i=0;i<ahlength;i++){
+		if(i<3 && i>0){
+			newhref += "/"+ahrefarr[i];
+		}
+		if(i==3){
+			newhref += "/"+ahrefarr[i]+".html?";
+		}
+		if(i>=4 && i%2==0){
+			newhref += "&"+ahrefarr[i]+"="+ahrefarr[i+1];
+		}
+	}
+	$(this).attr("href",newhref);
+});
+</script>
+<include file="Public:footer"/>
+<block name="script">
+<script type="text/javascript" charset="utf-8">
+	//导航高亮
+	highlight_subnav("{:U('Exchange/mycz')}");
+	$('title').html('C2C充值记录-'+'__WEBTITLE__');
+</script>
+</block>

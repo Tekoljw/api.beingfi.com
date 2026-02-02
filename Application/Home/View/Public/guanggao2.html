@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jQuery左右全屏多图动画焦点图代码</title>
+<link href="css/guanggao2.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<!-- 代码部分begin -->
+<div id="js_banner" class="banner">
+	<ul id="js_banner_img" class="banner_img clear">
+<!--		<li class="bgli01">
+			<div class="banner_inner">
+				<div class="child child1" data-z="2"><img src="images/guanggao2/1-1.png" /></div>
+				<div class="child child2" data-z="3"><a href="http://www.lanrenzhijia.com" target="_blank"><img src="images/guanggao2/1-2.png" /></a></div>
+			</div>
+		</li>
+		<li class="bgli02">
+			<div class="banner_inner">
+				<div class="child child1" data-z="2"><img src="images/guanggao2/2-1.png" /></div>
+				<div class="child child2" data-z="3"><a href="http://www.lanrenzhijia.com" target="_blank"><img src="images/guanggao2/2-2.png" /></a></div>
+			</div>
+		</li>     -->
+		<li class="bgli03">
+			<div class="banner_inner">
+				<div class="child child1" data-z="2"><img src="images/guanggao2/3-1.png" /></div><!-- data-z="2"与data-z="3"表示两个图层进退场的顺序有区别 -->
+				<div class="child child2" data-z="3"><a href="http://www.lanrenzhijia.com" target="_blank"><img src="images/guanggao2/3-2.png" /></a></div>
+			</div>
+		</li>
+		<li class="bgli04">
+			<div class="banner_inner">
+				<div class="child child1" data-z="2"><img src="images/guanggao2/4-1.png" /></div><!-- data-z="2"与data-z="3"表示两个图层进退场的顺序有区别 -->
+				<div class="child child2" data-z="3"><a href="http://www.lanrenzhijia.com" target="_blank"><img src="images/guanggao2/4-2.png" /></a></div>
+			</div>
+		</li>
+	</ul>
+	<div class="banner_common">
+		<a id="js_banner_pre" href="javascript:;" class="banner_pre"></a>
+		<a id="js_banner_next" href="javascript:;" class="banner_next"></a>
+	</div>
+</div>
+<script src="js/guanggao2-1.js"></script>
+<script src="js/guanggao2.js"></script>
+<script>
+	$(function(){
+		var $window = $(window),
+			window_width = $window.width();
+		$('#js_banner, #js_banner_img li').width(window_width);
+
+		var urlParam = G.util.parse.url(),
+			startFrame = 0;
+		if (urlParam.search && ('banner' in urlParam.search)) {
+			startFrame = (parseInt(urlParam.search['banner'])-1) || 0;
+		}
+
+		new $.Tab({/*添加圆点按钮*/
+			target: $('#js_banner_img li'),
+			effect: 'slide3d',
+			animateTime: 1000,
+			stay: 5000,
+			playTo: startFrame,
+			autoPlay: true,
+			merge: true,
+			prevBtn: $('#js_banner_pre'),
+			nextBtn: $('#js_banner_next')
+		});
+		$('#js_banner_img').css('left','-' + (window_width * startFrame) + 'px');
+	})
+</script>
+<!-- 代码部分end -->
+
+</body>
+</html>

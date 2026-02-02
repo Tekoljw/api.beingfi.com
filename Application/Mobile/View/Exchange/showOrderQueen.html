@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+	<title>确认订单成功</title>
+	<include file="Public:head" />
+</head>
+<body>
+<header class="mui-bar mui-bar-bg mui-bar-nav">
+	<a class="mui-icon mui-icon-left-nav mui-pull-left" href="{:U('Exchange/index')}"></a>
+	<h1 class="mui-title color_white">确认订单成功</h1>
+</header>
+
+<div class="mui-content" style="margin-top:20px;">
+	<div class="mui-control-content form-bank mui-active">
+		<div class="mui-input-row mui-input-row-g">
+			<label>交易密码</label>
+			<input type="hidden" id="orderid" value="{$orderid}"/>
+			<input type="password" autocomplete="off" placeholder="请输入交易密码" id="paypassword">
+		</div>
+		<button type="button" class="mui-btn mui-btn-default" href="javascript:void(0)" onclick="Update()">确认</button>
+	</div>
+</div>
+
+<script>
+function Update() {
+    
+    var orderid = $('#orderid').val();
+    var paypassword = $('#paypassword').val();
+
+	if(paypassword=="" || paypassword==null){
+		layer.tips("{:L('请输入交易密码')}",'#bank_paypassword',{tips:3});
+		return false;
+	}
+
+    $.post("{:U('Exchange/orderQueren')}", { orderid: orderid, paypassword: paypassword }, function(data) {
+        if (data.status == 1) {
+            layer.msg(data.info, { icon: 1 });
+            setTimeout("window.location="+'\"'+"{:U('Exchange/index')}"+'\"', 2000);
+        } else {
+            layer.msg(data.info, { icon: 2 });
+            if (data.url) {
+                window.location = data.url;
+            }
+        }
+    }, "json");
+}
+</script>
+</body>
+</html>

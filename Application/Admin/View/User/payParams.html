@@ -1,0 +1,241 @@
+<include file="Public:header"/>
+<div id="main-content">
+	<div id="top-alert" class="fixed alert alert-error" style="display: none;">
+		<button class="close fixed" style="margin-top: 4px;">&times;</button>
+		<div class="alert-content">警告内容</div>
+	</div>
+	<div id="main" class="main">
+		<div>
+			<div class="main-title-h">
+				<span class="h1-title">收款账户列表</span>
+			</div>
+			<div class="cf">
+				<div class="fl">
+					<a class="btn btn-success " href="{:U('User/payParamsEdit')}">新 增</a>
+					<button class="ajax-post btn  btn-info " url="{:U('User/payParamsStatus',array('type'=>'resume'))}" target-form="ids">启 用</button>
+					<button class="ajax-post btn  btn-warning  ajax-post" url="{:U('User/payParamsStatus',array('type'=>'forbid'))}" target-form="ids">禁 用</button>
+					<button class="btn ajax-post confirm btn-danger " url="{:U('Article/payParamsStatus',array('type'=>'del'))}" target-form="ids">删 除</button>
+				</div>
+				<div class="search-form fr cf">
+					<div class="sleft">
+						<form name="formSearch" id="formSearch" method="get" name="form1">
+
+							<select style="width: 160px; float: left; margin-right: 10px;" name="status" class="form-control">
+								<option value=""
+								<empty name="Think.get.status">selected</empty>
+								>全部状态</option>
+								<option value="1"
+								<eq name="Think.get.status" value="1">selected</eq>
+								>禁用状态</option>
+								<option value="2"
+								<eq name="Think.get.status" value="2">selected</eq>
+								>正常状态</option>
+							</select>
+							<select style=" width: 160px; float: left; margin-right: 10px;" name="field" class="form-control">
+								<option value="username"
+								<eq name="Think.get.field" value="username">selected</eq>
+								>用户名</option>
+								<option value="channelid"
+								<eq name="Think.get.field" value="channelid">selected</eq>
+								>账户类型ID</option>
+								<option value="low_money_count"
+								<eq name="Think.get.field" value="low_money_count">selected</eq>
+								>低收入次数</option>
+								<option value="max_fail_count"
+								<eq name="Think.get.field" value="max_fail_count">selected</eq>
+								>失败次数</option>
+							</select>
+							<input type="text" name="name" class="search-input form-control  " value="{$Think.get.name}" placeholder="请输入查询内容" style="">
+							<a class="sch-btn" href="javascript:;" id="search"> <i class="btn-search"></i> </a>
+						</form>
+						<script>
+							//搜索功能
+							$(function () {
+								$('#search').click(function () {
+									$('#formSearch').submit();
+								});
+							});
+							//回车搜索
+							$(".search-input").keyup(function (e) {
+								if (e.keyCode === 13) {
+									$("#search").click();
+									return false;
+								}
+							});
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="data-table table-striped">
+			<table class="table-ellipsis">
+				<thead>
+				<tr>
+					<th style="width: 40px" class="row-selected row-selected">
+						<input class="check-all" type="checkbox"/>
+					</th>
+					<th width="60px">用户ID</th>
+					<th width="130px">用户名</th>
+					<th width="130px">账户分类</th>
+					<th width="180px">账户类型</th>
+					<th width="130px">账户名</th>
+					<th width="130px">商户号</th>
+					<th width="200px">签文密钥</th>
+					<th width="200px">应用APPID</th>
+					<th width="200px">应用Appsecret</th>
+					<th width="130px">备案域名</th>
+					<th width="130px">支付商品名称</th>
+					<th width="130px">添加时间</th>
+					<th width="80px">指定商户</th>
+					<th width="80px">是否个人</th>
+					<th width="80px">手动交易</th>
+					<th width="80px">审核状态</th>
+					<th width="80px">风控模式</th>
+					<th width="80px">风控状态</th>
+					<th width="80px">风控上线</th>
+					<th width="80px">当前权重</th>
+					<th width="80px">上次权重</th>
+					<th width="90px">低收入次数</th>
+					<th width="80px">失败次数</th>
+					<th width="80px">限额状态</th>
+					<th width="160px">成功率列表</th>
+					<th width="100px">金额列表</th>
+					<th width="60px">状态</th>
+					<th width="230px">操作</th>
+				</tr>
+				</thead>
+				<tbody>
+				<notempty name="list">
+					<volist name="list" id="vo">
+						<tr>
+							<td><input class="ids" type="checkbox" name="id[]" value="{$vo.id}"/></td>
+							<td>{$vo.userid}</td>
+							<td>{$vo.username}</td>
+							<td>{$vo['paytype']|getPayTypeName=###}</td>
+							<td>{$vo['channelid']|getPayChannleTitle=###}</td>
+							<td>{$vo.truename}</td>
+							<td>{$vo.mch_id}</td>
+							<td>{$vo.signkey}</td>
+							<td>{$vo.appid}</td>
+							<td>{$vo.appsecret}</td>
+							<td>{$vo.domain_record}</td>
+							<td>{$vo.subject}</td>
+							<td>{$vo.addtime|addtime}</td>
+							<td>
+								<eq name="vo.select_memberid" value="0">
+									未指定
+								<else/>
+									{$vo.select_memberid}
+								</eq>
+							</td>
+							<td>
+								<eq name="vo.is_personal" value="1">
+									是
+								<else/>
+								    否
+								</eq>
+							</td>
+							<td>
+								<eq name="vo.is_manual_account" value="1">
+									是
+								<else/>
+								    否
+								</eq>
+							</td>
+							<td>
+								<eq name="vo.check_status" value="1">
+									<span style="color: green">已通过</span>
+								<else/>
+								    <span style="color: red">未通过</span>
+								</eq>
+							</td>
+							<td>
+								<eq name="vo.is_defined" value="1">
+									自定义
+								<else/>
+								    系统默认
+								</eq>
+							</td>
+							<td>
+								<eq name="vo.control_status" value="1">
+									开启
+								<else/>
+								    关闭
+								</eq>
+							</td>
+							<td>
+								<eq name="vo.offline_status" value="1">
+									上线
+								<else/>
+								    <span style="color: red">下线</span>
+								</eq>
+							</td>
+							<td>{$vo.weight}</td>
+							<td>{$vo.before_weight}</td>
+							<td>{$vo.low_money_count}</td>
+							<td>{$vo.max_fail_count}</td>
+							<td>
+								<eq name="vo.limit_amount_status" value="1">
+									是
+								<else/>
+								    否
+								</eq>
+							</td>
+							<td>{$vo.success_rate_list}</td>
+							<td>{$vo.pay_amount_list}</td>
+							<td>
+								<eq name="vo.status" value="1">
+									可用
+								<else/>
+								    禁用
+								</eq>
+							</td>
+							<td>
+								<a href="{:U('User/payParamsEdit?id='.$vo['id'])}" class="btn btn-primary btn-xs">编辑</a>
+								<a href="{:U('User/payParamsControl?id='.$vo['id'])}" class="btn btn-primary btn-xs">风控</a>
+								<eq name="vo.check_status" value="1">
+									<button class="ajax-post btn  btn-warning  ajax-post" url="{:U('User/payParamsCheck',array('id'=>$vo['id']))}" target-form="ids">审核关闭</button>
+								<else/>
+									<button class="ajax-post btn  btn-info " url="{:U('User/payParamsCheck',array('id'=>$vo['id']))}" target-form="ids">审核通过</button>
+								</eq>
+							</td>
+						</tr>
+					</volist>
+					<else/>
+					<td colspan="12" class="text-center empty-info"><i class="glyphicon glyphicon-exclamation-sign"></i>暂无数据</td>
+				</notempty>
+				</tbody>
+			</table>
+			<div class="page">
+				<div>{$page}</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(".page > div").children("a").each(function(){
+		var ahref = $(this).attr('href');
+		var ahrefarr = ahref.split("/");
+		var ahlength = ahrefarr.length;
+		var newhref = '';
+		for(var i=0;i<ahlength;i++){
+			if(i<3 && i>0){
+				newhref += "/"+ahrefarr[i];
+			}
+			if(i==3){
+				newhref += "/"+ahrefarr[i]+".html?";
+			}
+			if(i>=4 && i%2==0){
+				newhref += "&"+ahrefarr[i]+"="+ahrefarr[i+1];
+			}
+		}
+		$(this).attr("href",newhref);
+	});
+</script>
+<include file="Public:footer"/>
+<block name="script">
+	<script type="text/javascript" charset="utf-8">
+		//导航高亮
+		highlight_subnav("{:U('User/payParams')}");
+	</script>
+</block>

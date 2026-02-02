@@ -1,0 +1,218 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+	<title>机构账户编辑</title>
+	<include file="Public:head" />
+</head>
+<body>
+<header class="mui-bar mui-bar-bg mui-bar-nav">
+	<a class="mui-icon mui-icon-left-nav mui-pull-left" href="{:U('Exchange/payOrganizationParams?channelid=' .$channelid)}"></a>
+	<h1 class="mui-title color_white">机构账户编辑</h1>
+</header>
+
+<div class="mui-content" style="margin-top:20px;">
+	<div class="mui-control-content form-bank mui-active">
+		<empty name="payTitle">
+            <div class="mui-input-row mui-input-row-g">
+                <label style="color: blue">账户渠道</label>
+                <td>
+                    <select style="width: 160px; height: 20px; margin-right: 10px;" id="channelid">
+                        <option value="">--{:L('选择渠道')}--</option>
+                        <volist name="PayChannels" id="v">
+                            <option value="{$v.channelid}" <eq name="v.channelid" value="$info['channelid']">selected</eq>>{$v.channel_title}</option>
+                        </volist>
+                    </select>
+                </td>
+            </div>
+        <else/>
+            <div class="mui-input-row mui-input-row-g">
+                <label style="color: blue">账户渠道</label>
+                <input type="hidden" id="channelid" value="{$payTitle.channelid}"/>
+                <input style="color: red" type="text" autocomplete="off" placeholder="对应的账户渠道" id="channel_title" readonly value="{$payTitle.channel_title}">
+            </div>
+        </empty>
+        <div class="mui-input-row mui-input-row-g">
+            <label style="color: blue">账户名</label>
+            <input type="hidden" id="id" value="{$info.id}"/>
+            <input type="text" autocomplete="off" placeholder="填写正确的账户拥有者名称" id="truename" value="{$info.truename}">
+        </div>
+		<empty name="payTitle">
+            <div class="mui-input-row mui-input-row-g">
+                <label style="color: blue">商户号</label>
+                <input type="text" autocomplete="off" placeholder="填写正确的商户号" id="mch_id" value="{$info.mch_id}">
+            </div>
+            <div class="mui-input-row mui-input-row-g">
+                <label style="color: blue">签文密钥</label>
+                <input type="text" autocomplete="off" placeholder="填写正确的signkey" id="signkey" value="{$info.signkey}">
+            </div>
+            <div class="mui-input-row mui-input-row-g">
+                <label style="color: blue">APPID</label>
+                <input type="text" autocomplete="off" placeholder="填写正确的Appid" id="appid" value="{$info.appid}">
+            </div>
+            <div class="mui-input-row mui-input-row-g">
+                <label style="color: blue">Appsecret</label>
+                <input type="text" autocomplete="off" placeholder="填写正确的Appsecret" id="appsecret" value="{$info.appsecret}">
+            </div>
+            <div class="mui-input-row mui-input-row-g">
+                <label style="color: blue">支付商品名称</label>
+                <input type="text" autocomplete="off" placeholder="填写对应匹配的商品名称" id="subject" value="{$info.subject}">
+            </div>
+            <div class="mui-input-row mui-input-row-g">
+                <label style="color: blue">备案域名</label>
+                <input type="text" autocomplete="off" placeholder="填写对应的备案域名" id="domain_record" value="{$info.domain_record}">
+            </div>
+        <else/>
+            <notempty name="payTitle.mch_id">
+                <div class="mui-input-row mui-input-row-g">
+                    <label style="color: blue">{$payTitle.mch_id}</label>
+                    <input type="text" autocomplete="off" placeholder="填写正确的{$payTitle.mch_id}" id="mch_id" value="{$info.mch_id}">
+                </div>
+            <else/>
+                <input type="hidden" id="mch_id" />
+            </notempty>
+            <notempty name="payTitle.signkey">
+                <div class="mui-input-row mui-input-row-g">
+                    <label style="color: blue">{$payTitle.signkey}</label>
+                    <input type="text" autocomplete="off" placeholder="填写正确的{$payTitle.signkey}" id="signkey" value="{$info.signkey}">
+                </div>
+            <else/>
+                <input type="hidden" id="signkey" />
+            </notempty>
+            <notempty name="payTitle.appid">
+                <div class="mui-input-row mui-input-row-g">
+                    <label style="color: blue">{$payTitle.appid}</label>
+                    <input type="text" autocomplete="off" placeholder="填写正确的{$payTitle.appid}" id="appid" value="{$info.appid}">
+                </div>
+            <else/>
+                <input type="hidden" id="appid" />
+            </notempty>
+            <notempty name="payTitle.appsecret">
+                <div class="mui-input-row mui-input-row-g">
+                    <label style="color: blue">{$payTitle.appsecret}</label>
+                    <input type="text" autocomplete="off" placeholder="填写正确的{$payTitle.appsecret}" id="appsecret" value="{$info.appsecret}">
+                </div>
+            <else/>
+                <input type="hidden" id="appsecret" />
+            </notempty>
+            <notempty name="payTitle.subject">
+                <div class="mui-input-row mui-input-row-g">
+                    <label style="color: blue">{$payTitle.subject}</label>
+                    <input type="text" autocomplete="off" placeholder="填写正确的{$payTitle.subject}" id="subject" value="{$info.subject}">
+                </div>
+            <else/>
+                <input type="hidden" id="subject" />
+            </notempty>
+            <notempty name="payTitle.domain_record">
+                <div class="mui-input-row mui-input-row-g">
+                    <label style="color: blue">{$payTitle.domain_record}</label>
+                    <input type="text" autocomplete="off" placeholder="填写正确的{$payTitle.domain_record}" id="domain_record" value="{$info.domain_record}">
+                </div>
+            <else/>
+                <input type="hidden" id="domain_record" />
+            </notempty>
+        </empty>
+        <div class="mui-input-row mui-input-row-g">
+            <label style="color: blue">手动交易账户</label>
+            <td>
+                <select style="width: 160px; height: 20px; margin-right: 10px;" id="is_manual_account" name="is_manual_account">
+                    <option value="">--{:L('选择手动交易')}--</option>
+                    <option value="1" <eq name="info.is_manual_account" value="1">selected</eq> >是
+                    </option>
+                    <option value="0" <eq name="info.is_manual_account" value="0">selected</eq> >否
+                    </option>
+                </select>
+            </td>
+        </div>
+        <div class="mui-input-row mui-input-row-g">
+            <label style="color: blue">风控模式</label>
+            <td>
+                <select style="width: 160px; height: 20px; margin-right: 10px;" id="is_defined" name="is_defined">
+                    <option value="">--{:L('选择风控模式')}--</option>
+                    <option value="1" <eq name="info.is_defined" value="1">selected</eq> >自定义
+                    </option>
+                    <option value="0" <eq name="info.is_defined" value="0">selected</eq> >系统默认
+                    </option>
+                </select>
+            </td>
+        </div>
+		<div class="mui-input-row mui-input-row-g">
+			<label style="color: blue">交易密码</label>
+			<input type="password" autocomplete="off" placeholder="输入支付密码" id="paypassword">
+		</div>
+		<button type="button" class="mui-btn mui-btn-default" href="javascript:void(0)" onclick="Update()">保存</button>
+		<div><p class="forget tc"><a href="{:U('Login/findpaypwd')}">{:L('忘记交易密码？')}</a></p></div>
+	</div>
+</div>
+
+<script>
+//更新支付参数
+function Update() {
+    
+    var id                  = $('#id').val();
+    var channelid           = $('#channelid').val();
+    var truename            = $('#truename').val();
+    var mch_id              = $('#mch_id').val();
+    var signkey             = $('#signkey').val();
+    var appid               = $('#appid').val();
+    var appsecret           = $('#appsecret').val();
+    var paypassword         = $('#paypassword').val();
+    var subject             = $('#subject').val();
+    var domain_record       = $('#domain_record').val();
+    var is_manual_account   = $('#is_manual_account').val();
+    var is_defined          = $('#is_defined').val();
+    var status              = '0';  //默认关闭
+
+    if (channelid == "" || channelid == null) {
+        layer.tips('{:L('请选择账户渠道')}', '#channelid', { tips: 3 });
+        return false;
+    }
+
+    if (truename == "" || truename == null) {
+        layer.tips('{:L('请填写账户名')}', '#truename', { tips: 3 });
+        return false;
+    }
+
+    if ((mch_id == ""||mch_id == null) && (signkey == ""||signkey == null) && (appid == ""||appid == null) &&(appsecret == ""||appsecret == null) 
+        &&(domain_record == ""||domain_record == null) &&(subject == ""||subject == null)) {
+        layer.tips('{:L('请填写账户参数')}', '#mch_id', { tips: 3 });
+        return false;
+    }
+
+    if (is_manual_account == "" || is_manual_account == null) {
+        layer.tips('{:L('请选择是否手动交易')}', '#is_manual_account', { tips: 3 });
+        return false;
+    }
+
+    if (is_defined == "" || is_defined == null) {
+        layer.tips('{:L('请选择风控状态')}', '#is_defined', { tips: 3 });
+        return false;
+    }
+
+    if (status == "" || status == null) {
+        layer.tips('{:L('请选择状态')}', '#status', { tips: 3 });
+        return false;
+    }
+	
+    if (paypassword == "" || paypassword == null) {
+        layer.tips('{:L('请输入交易密码 ')}', '#paypassword', { tips: 3 });
+        return false;
+    }
+
+    $.post("{:U('Exchange/upPayParams')}", {id:id, channelid:channelid, truename:truename, mch_id:mch_id, signkey:signkey, appid:appid,appsecret:appsecret,domain_record:domain_record,subject:subject,is_manual_account:is_manual_account,is_defined:is_defined,status:status,paypassword:paypassword}, function(data) {
+        if (data.status == 1) {
+            layer.msg(data.info, { icon: 1 });
+            setTimeout("window.location="+'\"'+"{:U('Exchange/payOrganizationParams?channelid=' .$channelid)}"+'\"', 2000);
+        } else {
+            layer.msg(data.info, { icon: 2 });
+            if (data.url) {
+                window.location = data.url;
+            }
+        }
+    }, "json");
+}
+</script>
+</body>
+</html>

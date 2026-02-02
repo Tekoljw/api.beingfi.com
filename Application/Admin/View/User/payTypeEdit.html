@@ -1,0 +1,195 @@
+<include file="Public:header"/>
+<script type="text/javascript" src="__PUBLIC__/layer/laydate/laydate.js"></script>
+<div id="main-content">
+	<div id="top-alert" class="fixed alert alert-error" style="display: none;">
+		<button class="close fixed" style="margin-top: 4px;">&times;</button>
+		<div class="alert-content">警告内容</div>
+	</div>
+	<div id="main" class="main">
+		<div class="main-title-h">
+			<span class="h1-title"><a href="{:U('User/payType')}">账户类型</a> >></span>
+			 <span class="h1-title"><empty name="data">添加类型<else/>编辑类型</empty></span>
+		</div>
+		<div class="tab-wrap">
+			<div class="tab-content">
+				<form id="form" action="{:U('User/payTypeEdit')}" method="post" class="form-horizontal">
+					<div id="tab" class="tab-pane in tab">
+						<div class="form-item cf">
+							<table>
+								<tr class="controls">
+									<td class="item-label">账户分类 :</td>
+									<td>
+										<select class="form-control input-10x" name="paytype" id="paytype">
+											<option value="0">--{:L('选择分类')}--</option>
+											<volist name="PayTypes" id="v">
+												<option value="{$v.id}" <eq name="v.id" value="$data['paytype']">selected</eq>>{$v.name}</option>
+											</volist>
+										</select>
+									</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">账户类型ID :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="channelid" value="{$data.channelid}">
+									</td>
+									<td class="item-note">注意账户类型ID为数字，不可重复</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">账户类型名称 :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="channel_title" value="{$data.channel_title}">
+									</td>
+									<td class="item-note">注意尽量可读性</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">处理代码code :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="code" value="{$data.code}">
+									</td>
+									<td class="item-note">注意用于处理订单逻辑的代码名</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">自动卖出优惠 :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="sale_sell_rate" value="{$data.sale_sell_rate}">
+									</td>
+									<td class="item-note">填写优惠率最小千分位，0.001</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">自动买入费率 :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="auto_buy_rate" value="{$data.auto_buy_rate}">
+									</td>
+									<td class="item-note">填写收费率最小千分位，0.001</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">商户号说明 :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="mch_id" value="{$data.mch_id}">
+									</td>
+									<td class="item-note">填写该账户类型的商户号代表含义</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">签文密钥说明 :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="signkey" value="{$data.signkey}">
+									</td>
+									<td class="item-note">填写该账户类型的签文密钥代表含义</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">应用AppId说明 :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="appid" value="{$data.appid}">
+									</td>
+									<td class="item-note">填写该账户类型的AppId代表含义</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">Appsecret说明 :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="appsecret" value="{$data.appsecret}">
+									</td>
+									<td class="item-note">填写该账户类型的Appsecret代表含义</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">备案域名说明 :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="domain_record" value="{$data.domain_record}">
+									</td>
+									<td class="item-note">填写该账户类型的备案域名代表含义</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">商品名称说明 :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="subject" value="{$data.subject}">
+									</td>
+									<td class="item-note">填写该账户类型的商品名称代表含义</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">默认权重 :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="default_weight" value="{$data.default_weight}">
+									</td>
+									<td class="item-note">填写该账户类型的默认的检索权重</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">备注说明 :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="note" value="{$data.note}">
+									</td>
+									<td class="item-note">填写该账户类型的备注说明</td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">添加时间 :</td>
+									<td>
+										<input type="text" class="form-control input-10x" name="addtime" value="{$data['addtime']|addtime}" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">
+									</td>
+									<td class="item-note"></td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">是否个人 :</td>
+									<td><select name="is_personal" class="form-control input-10x">
+										<option value="1"
+										<eq name="data.is_personal" value="1">selected</eq>
+										>是</option>
+										<option value="0"
+										<eq name="data.is_personal" value="0">selected</eq>
+										>否</option>
+									</select></td>
+									<td class="item-note"></td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">是否自动通知 :</td>
+									<td><select name="is_auto_notify" class="form-control input-10x">
+										<option value="1"
+										<eq name="data.is_auto_notify" value="1">selected</eq>
+										>是</option>
+										<option value="0"
+										<eq name="data.is_auto_notify" value="0">selected</eq>
+										>否</option>
+									</select></td>
+									<td class="item-note"></td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label">状态 :</td>
+									<td><select name="status" class="form-control input-10x">
+										<option value="1"
+										<eq name="data.status" value="1">selected</eq>
+										>正常</option>
+										<option value="0"
+										<eq name="data.status" value="0">selected</eq>
+										>禁用</option>
+									</select></td>
+									<td class="item-note"></td>
+								</tr>
+								<tr class="controls">
+									<td class="item-label"></td>
+									<td>
+										<div class="form-item cf">
+											<button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">提交</button>
+											<a class="btn btn-return" href="{:U('User/payType')}">返 回</a>
+											<notempty name="data.id"><input type="hidden" name="id" value="{$data.id}"/>
+											</notempty>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	//提交表单
+	$('#submit').click(function () {
+		$('#form').submit();
+	});
+</script>
+<include file="Public:footer"/>
+<block name="script">
+	<script type="text/javascript" charset="utf-8">
+		//导航高亮
+		highlight_subnav("{:U('User/payType')}");
+	</script>
+</block>

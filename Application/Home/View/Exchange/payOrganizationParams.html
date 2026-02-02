@@ -1,0 +1,689 @@
+<include file="Public:header_new" />
+<style>
+    body {background:#283046;}
+</style>
+<link rel="stylesheet" href="__PUBLIC__/Home/ecshe_css/exchange.css">
+<style>
+    .copy_button{float:right;margin-top:5px;margin-right:10px;padding:0 10px;height:30px;}
+</style>
+
+<div class="C2C_order_list" style="min-height: 500px; margin-bottom: 20px">
+    <input type="hidden" id="payTitle" name="payTitle" />
+    <input type="hidden" id="channelid" name="channelid" />
+	<div class="column">
+        <empty name="payTitle">
+            <a href="javascript:void(0)"><h2 style="text-transform:uppercase;">{:L('机构账户管理')}</h2></a>
+        <else/>
+            <a href="javascript:void(0)"><h2 style="text-transform:uppercase;">{$payTitle.channel_title}</h2></a><span style="color: white">（说明：{$payTitle.note}）</span>
+        </empty>
+        <div class="navs">
+            <a href="{:U('Exchange/successRateList',array('channelid'=>$channelid))}" style="font-size: 20px; color: #ffffff;"> {:L('查看成功率')}</a>
+            <a href="javascript:void(0)" onclick="addPayParams()" style="font-size: 20px; color: #ffffff;"> {:L('新增账户')}</a>
+            <a href="{:U('Exchange/bank?is_personal=0')}" style="font-size: 20px; color: #ffffff;"> {:L('返回')}</a>
+        </div>
+	</div>
+	<ul class="table-head">
+        <empty name="payTitle">
+            <li style="width: 10%" class="tc">{:L('商户号')}</li>
+            <li style="width: 12%" class="tc">{:L('签文密钥')}</li>
+            <li style="width: 12%" class="tc">{:L('应用APPID')}</li>
+            <li style="width: 11%" class="tc">{:L('应用')}Appsecret</li>
+            <li style="width: 11%" class="tc">{:L('支付商品名称')}</li>
+        <else/>
+            <notempty name="payTitle.mch_id">
+                <li style="width: 10%" class="tc">{$payTitle.mch_id}</li>
+            </notempty>
+            <notempty name="payTitle.signkey">
+                <li style="width: 12%" class="tc">{$payTitle.signkey}</li>
+            </notempty>
+            <notempty name="payTitle.appid">
+                <li style="width: 12%" class="tc">{$payTitle.appid}</li>
+            </notempty>
+            <notempty name="payTitle.appsecret">
+                <li style="width: 11%" class="tc">{$payTitle.appsecret}</li>
+            </notempty>
+            <notempty name="payTitle.subject">
+                <li style="width: 11%" class="tc">{$payTitle.subject}</li>
+            </notempty>
+        </empty>
+        <li style="width: 9%" class="tc">{:L('账户名')}</li>
+        <li style="width: 10%" class="tc">{:L('添加时间')}</li>
+        <li style="width: 5%" class="tc">{:L('手动交易')}</li>
+        <li style="width: 5%" class="tc">{:L('审核')}</li>
+        <li style="width: 3%" class="tc">{:L('状态')}</li>
+        <li style="width: 12%" class="tc">{:L('操作')}</li>
+    </ul>
+    <ul class="table-list" border="0" cellspacing="0" cellpadding="0">
+        <empty name="list">
+            <span class="tc" style="margin-top: 50px; font-size: 24px">{:L('暂无个人账户，请添加')}</span>
+        <else/>
+            <volist name="list" id="vo">
+                <li>
+                     <dl>
+                        <empty name="payTitle">
+                            <dd class="fl tc" style="width: 10%">
+                                <eq name="vo.max_fail_status" value="1">
+                                    <b style="color: red">{$vo.mch_id}</b>
+                                <else/>
+                                    {$vo.mch_id}
+                                </eq>
+                            </dd>
+                            <dd class="fl tc" style="width: 12%">{$vo.signkey}</dd>
+                            <dd class="fl tc" style="width: 12%">{$vo.appid}</dd>
+                            <dd class="fl tc" style="width: 11%">{$vo.appsecret}</dd>
+                            <dd class="fl tc" style="width: 11%">{$vo.subject}</dd>
+                        <else/>
+                            <notempty name="payTitle.mch_id">
+                                <dd class="fl tc" style="width: 10%"><empty name="vo.mch_id">无<else/>
+                                    <eq name="vo.max_fail_status" value="1">
+                                        <b style="color: red">{$vo.mch_id}</b>
+                                    <else/>
+                                        {$vo.mch_id}
+                                    </eq>
+                                </empty></dd>
+                            </notempty>
+                            <notempty name="payTitle.signkey">
+                                <dd class="fl tc" style="width: 12%"><empty name="vo.signkey">无<else/>{$vo.signkey}</empty></dd>
+                            </notempty>
+                            <notempty name="payTitle.appid">
+                                <dd class="fl tc" style="width: 12%"><empty name="vo.appid">无<else/>{$vo.appid}</empty></dd>
+                            </notempty>
+                            <notempty name="payTitle.appsecret">
+                                <dd class="fl tc" style="width: 11%"><empty name="vo.appsecret">无<else/>{$vo.appsecret}</empty></dd>
+                            </notempty>
+                            <notempty name="payTitle.subject">
+                                <dd class="fl tc" style="width: 11%"><empty name="vo.subject">无<else/>{$vo.subject}</empty></dd>
+                            </notempty>
+                        </empty>
+                        <dd class="fl tc" style="width: 9%">
+                            <eq name="vo.max_fail_status" value="1">
+                                <b style="color: red">{$vo.truename}</b>
+                            <else/>
+                                {$vo.truename}
+                            </eq>
+                        </dd>
+                        <dd class="fl tc" style="width: 10%">{$vo.addtime|date='Y-m-d H:i',###}</dd>
+                        <dd class="fl tc" style="width: 5%">
+                            <eq name="vo.is_manual_account" value="1">
+                                是
+                            <else/>
+                                否
+                            </eq>
+                        </dd>
+                        <dd class="fl tc" style="width: 5%">
+                            <eq name="vo.check_status" value="1">
+                                通过
+                            <else/>
+                                <span style="color: red">未通过</span>
+                            </eq>
+                        </dd>
+                        <dd class="fl tc" style="width: 3%">
+                            <eq name="vo.status" value="1">
+                                <span style="color: green">启用</span>
+                            <else/>
+                                禁用
+                            </eq>
+                        </dd>
+                        <dd class="fl tc" style="width: 12%">
+                            <a class="btns_cz" style="color: #7399ef" href="javascript:void(0)" onclick="UpdateEdit({$vo['id']})">{:L('编辑')}</a>
+                            <eq name="vo.is_defined" value="1">
+                                <a class="btns_cz" style="color: #7399ef" href="javascript:void(0)" onclick="ControlEdit({$vo['id']})">{:L('风控')}</a>
+                            </eq>
+                            <eq name="vo.status" value="1">
+                                <a class="btns_cz" style="color: #7399ef" href="javascript:void(0)" onclick="setPayParamsStatus({$vo['id']})">{:L('关闭')}</a>
+                            <else/>
+                                <a class="btns_cz" style="color: #7399ef" href="javascript:void(0)" onclick="setPayParamsStatus({$vo['id']})">{:L('开启')}</a>
+                            </eq>
+                            <a class="btns_cz" style="color: #ed2929" href="javascript:void(0)" onclick="deletePayParams({$vo['id']})">{:L('删除')}</a>
+                        </dd>
+                    </dl>
+                </li>
+            </volist>
+        </empty>
+    </ul>
+	<div class="pages">{$page}</div>
+</div>
+
+
+<div class="float_win_pay" id="PurseAddress" style="display:none;">
+    <div class="tan_title">
+        <h4 id="title"></h4>
+        <span class="close-btn" onclick="closeCharge();">x</span>
+    </div>
+    <div class="payment_content">
+		<ul>
+            <empty name="payTitle">
+                <li>
+                    <span class="label-1">{:L('账户渠道')}</span>
+                    <td>
+                        <select style="width: 160px; height: 20px; margin-right: 10px;" id="personal_channelid">
+                            <option value="">--{:L('选择渠道')}--</option>
+                            <volist name="PayChannels" id="v">
+                                <option value="{$v.channelid}">{$v.channel_title}</option>
+                            </volist>
+                        </select>
+                    </td>
+                </li>
+            <else/>
+                <li>
+                    <span class="label-1">{:L('账户渠道')}</span>
+                    <input type="hidden" id="personal_channelid" value="{$payTitle.channelid}"/>
+                    <input style="color: red" type="text" autocomplete="off" id="channel_title" readonly value="{$payTitle.channel_title}" class="input-1" placeholder="{:L('对应的账户渠道')}" />
+                </li>
+            </empty>
+            <li>
+                <span class="label-1">{:L('账户名')}</span>
+                <input type="hidden" id="index_id"/>
+                <input type="text" autocomplete="off" id="truename" class="input-1" placeholder="{:L('填写正确的账户拥有者名称')}" />
+            </li>
+			 <empty name="payTitle">
+                <li>
+                    <span class="label-1">{:L('商户号')}</span>
+                    <input type="text" autocomplete="off" id="mch_id" class="input-1" placeholder="{:L('填写正确的商户号')}" />
+                </li>
+                <li>
+                    <span class="label-1">{:L('签文密钥')}</span>
+                    <input type="text" autocomplete="off" id="signkey" class="input-1" placeholder="{:L('填写正确的signkey')}" />
+                </li>
+                <li>
+                    <span class="label-1">{:L('应用APPID')}</span>
+                    <input type="text" autocomplete="off" id="appid" class="input-1" placeholder="{:L('填写正确的Appid')}" />
+                </li>
+                <li>
+                    <span class="label-1">{:L('应用Appsecret')}</span>
+                    <input type="text" autocomplete="off" id="appsecret" class="input-1" placeholder="{:L('填写正确的Appsecret')}" />
+                </li>
+                <li>
+                    <span class="label-1">{:L('支付商品名称')}</span>
+                    <input type="text" autocomplete="off" id="subject" class="input-1" placeholder="{:L('填写对应匹配的商品名称')}" />
+                </li>
+                <li>
+                    <span class="label-1">{:L('备案域名')}</span>
+                    <input type="text" autocomplete="off" id="domain_record" class="input-1" placeholder="{:L('填写备案域名(非必填)')}" />
+                </li>
+            <else/>
+                <notempty name="payTitle.mch_id">
+                    <li>
+                        <span class="label-1">{$payTitle.mch_id}</span>
+                        <input type="text" autocomplete="off" id="mch_id" class="input-1" placeholder="{:L('填写正确的')}{$payTitle.mch_id}" />
+                    </li>
+                <else/>
+                    <input type="hidden" id="mch_id" />
+                </notempty>
+                <notempty name="payTitle.signkey">
+                    <li>
+                        <span class="label-1">{$payTitle.signkey}</span>
+                        <input type="text" autocomplete="off" id="signkey" class="input-1" placeholder="{:L('填写正确的')}{$payTitle.signkey}" />
+                    </li>
+                <else/>
+                    <input type="hidden" id="signkey" />
+                </notempty>
+                <notempty name="payTitle.appid">
+                    <li>
+                        <span class="label-1">{$payTitle.appid}</span>
+                        <input type="text" autocomplete="off" id="appid" class="input-1" placeholder="{:L('填写正确的')}{$payTitle.appid}" />
+                    </li>
+                <else/>
+                    <input type="hidden" id="appid" />
+                </notempty>
+                <notempty name="payTitle.appsecret">
+                    <li>
+                        <span class="label-1">{$payTitle.appsecret}</span>
+                        <input type="text" autocomplete="off" id="appsecret" class="input-1" placeholder="{:L('填写正确的')}{$payTitle.appsecret}" />
+                    </li>
+                <else/>
+                    <input type="hidden" id="appsecret" />
+                </notempty>
+                <notempty name="payTitle.subject">
+                    <li>
+                        <span class="label-1">{$payTitle.subject}</span>
+                        <input type="text" autocomplete="off" id="subject" class="input-1" placeholder="{:L('填写正确的')}{$payTitle.subject}" />
+                    </li>
+                <else/>
+                    <input type="hidden" id="subject" />
+                </notempty>
+                <notempty name="payTitle.domain_record">
+                    <li>
+                        <span class="label-1">{$payTitle.domain_record}</span>
+                        <input type="text" autocomplete="off" id="domain_record" class="input-1" placeholder="{:L('填写正确的')}{$payTitle.domain_record}" />
+                    </li>
+                <else/>
+                    <input type="hidden" id="domain_record" />
+                </notempty>
+            </empty>
+            <li>
+                <span class="label-1">{:L('是否手动交易账户')}</span>
+                <td>
+                    <select style="width: 160px; height: 20px; margin-right: 10px;" id="is_manual_account" name="is_manual_account" >
+                        <option value="">--{:L('选择手动交易')}--</option>
+                        <option value="1" <eq name="is_manual_account" value="1">selected</eq> >是
+                        </option>
+                        <option value="0" <eq name="is_manual_account" value="0">selected</eq> >否
+                        </option>
+                    </select>
+                </td>
+            </li>
+            <li>
+                <span class="label-1">{:L('风控模式')}</span>
+                <td>
+                    <select style="width: 160px; height: 20px; margin-right: 10px;" id="is_defined" name="is_defined">
+                        <option value="">--{:L('选择风控模式')}--</option>
+                        <option value="1" <eq name="is_defined" value="1">selected</eq> >自定义
+                        </option>
+                        <option value="0" <eq name="is_defined" value="0">selected</eq> >系统默认
+                        </option>
+                    </select>
+                </td>
+            </li>
+			<li>
+				<span class="label-1">{:L('交易密码')}</span>
+				<input type="password" autocomplete="off" id="paypassword" class="input-1" />
+			</li>
+            <li style="margin-top:30px;">
+                <a href="javascript:void(0)" onclick="Update()" class="btns">{:L('保存')}</a>
+            </li>
+			<li><p class="forget tc"><a href="{:U('Login/findpaypwd')}">{:L('忘记交易密码？')}</a></p></li>
+		</ul>
+    </div>
+</div>
+
+<!--编辑风控参数 -->
+<div class="float_win_pay" id="upControlEdit" style="display:none;">
+    <div class="tan_title">
+        <h4 id="title_control"></h4>
+        <span class="close-btn" onclick="closeCharge();">x</span>
+    </div>
+    <div class="payment_content">
+        <ul>
+            <li>
+                <span class="label-1">{:L('每日总金额')}</span>
+                <input type="text" autocomplete="off" id="control_all_money" class="input-1" placeholder="{:L('注意填写金额整数，不限制填写0')}" />
+            </li>
+            <li>
+                <span class="label-1">{:L('每日总次数')}</span>
+                <input type="text" autocomplete="off" id="control_all_num" class="input-1" placeholder="{:L('注意填写次数需整数，不限制填写0')}" />
+            </li>
+            <li>
+                <span class="label-1">{:L('开始时间')}</span>
+                <input type="text" autocomplete="off" id="control_start_time" class="input-1" placeholder="{:L('注意填写时间整数，不限制填写0')}" />
+            </li>
+            <li>
+                <span class="label-1">{:L('结束时间')}</span>
+                <input type="text" autocomplete="off" id="control_end_time" class="input-1" placeholder="{:L('注意填写时间整数，不限制填写0')}" />
+            </li>
+            <li>
+                <span class="label-1">{:L('最小金额')}</span>
+                <input type="text" autocomplete="off" id="control_min_money" class="input-1" placeholder="{:L('注意填写金额整数，不限制填写0')}" />
+            </li>
+            <li>
+                <span class="label-1">{:L('最大金额')}</span>
+                <input type="text" autocomplete="off" id="control_max_money" class="input-1" placeholder="{:L('注意填写金额整数，不限制填写0')}" />
+            </li>
+            <li>
+                <span class="label-1">{:L('风控状态')}</span>
+                <td>
+                    <select style="width: 160px; height: 20px; margin-right: 10px;" id="control_status" name="control_status">
+                        <option value="">--{:L('选择风控状态')}--</option>
+                        <option value="1" <eq name="control_status" value="1">selected</eq>>开启</option>
+                        <option value="0" <eq name="control_status" value="0">selected</eq>>关闭</option>
+                    </select>
+                </td>
+            </li>
+            <li>
+                <span class="label-1">{:L('上线状态')}</span>
+                <td>
+                    <select style="width: 160px; height: 20px; margin-right: 10px;" id="offline_status" name="offline_status">
+                        <option value="">--{:L('选择上线状态')}--</option>
+                        <option value="1" <eq name="offline_status" value="1">selected</eq>>上线</option>
+                        <option value="0" <eq name="offline_status" value="0">selected</eq>>下线</option>
+                    </select>
+                </td>
+            </li>
+            <li>
+                <span class="label-1">{:L('交易密码')}</span>
+                <input type="password" autocomplete="off" id="control_paypassword" class="input-1" />
+            </li>
+            <li style="margin-top:30px;">
+                <a href="javascript:void(0)" onclick="upControlEdit()" class="btns">{:L('保存')}</a>
+            </li>
+            <li><p class="forget tc"><a href="{:U('Login/findpaypwd')}">{:L('1.忘记交易密码？')}</a></p></li>
+        </ul>
+    </div>
+</div>
+
+<div id="dialogBoxShadow" style="position: absolute; top: 0px; left: 0px; z-index: 100; background-color: rgb(0, 0, 0); opacity: 0.4; width: 100%; background-position: initial initial; background-repeat: initial initial; display: none;"></div>
+
+<script>
+
+$('#dialogBoxShadow').height($(document).height());
+
+//添加支付参数
+function addPayParams() {
+
+    $('#title').html('新增账户');
+    $('#index_id').val(null);
+    $('#truename').val(null);
+    $('#mch_id').val(null);
+    $('#signkey').val(null);
+    $('#appid').val(null);
+    $('#appsecret').val(null);
+    $('#subject').val(null);
+    $('#domain_record').val(null);
+    $('#is_manual_account').val(null);
+    $('#is_defined').val(null);
+    layer.open({
+        type: 1,
+        title: false,
+        closeBtn: 0,
+        area: 'autos',
+        skin: 'layui-layer-nobg',
+        shadeClose: true,
+        content: $('#PurseAddress')
+    });
+}
+
+//编辑支付参数
+function UpdateEdit(id){
+
+    layer.config({
+        extend: 'extend/layer.ext.js'
+    });
+    layer.ready(function() {
+
+        //需要执行的方法
+        $.post("{:U('Exchange/getPayParams')}", {
+            id: id
+        }, function(data) {
+            if (data.status == 1) {
+                //打开编辑页面
+                $('#title').html('编辑账户(编辑后需重新审核)');
+                $('#index_id').val(data.id);
+                $('#personal_channelid').val(data.channelid);
+                $('#truename').val(data.truename);
+                $('#mch_id').val(data.mch_id);
+                $('#signkey').val(data.signkey);
+                $('#appid').val(data.appid);
+                $('#appsecret').val(data.appsecret);
+                $('#subject').val(data.subject);
+                $('#domain_record').val(data.domain_record);
+                $('#is_manual_account').val(data.is_manual_account);
+                $('#is_defined').val(data.is_defined);
+                layer.open({
+                    type: 1,
+                    title: false,
+                    closeBtn: 0,
+                    area: 'autos',
+                    skin: 'layui-layer-nobg',
+                    shadeClose: true,
+                    content: $('#PurseAddress')
+                });
+            } else {
+                layer.msg(data.info, { icon: 2 });
+                if (data.url) {
+                    window.location = data.url;
+                }
+            }
+        }, "json");
+    });
+}
+
+//编辑风控参数
+function ControlEdit(id){
+
+    layer.config({
+        extend: 'extend/layer.ext.js'
+    });
+    layer.ready(function() {
+
+        //需要执行的方法
+        $.post("{:U('Exchange/getPayParams')}", {
+            id: id
+        }, function(data) {
+            if (data.status == 1) {
+                //打开编辑页面
+                $('#title_control').html('编辑风控');
+                $('#index_id').val(data.id);
+                $('#control_all_money').val(data.all_money);
+                $('#control_all_num').val(data.all_pay_num);
+                $('#control_start_time').val(data.start_time);
+                $('#control_end_time').val(data.end_time);
+                $('#control_min_money').val(data.min_money);
+                $('#control_max_money').val(data.max_money);
+                $('#control_status').val(data.control_status);
+                $('#offline_status').val(data.offline_status);
+                layer.open({
+                    type: 1,
+                    title: false,
+                    closeBtn: 0,
+                    area: 'autos',
+                    skin: 'layui-layer-nobg',
+                    shadeClose: true,
+                    content: $('#upControlEdit')
+                });
+            } else {
+                layer.msg(data.info, { icon: 2 });
+                if (data.url) {
+                    window.location = data.url;
+                }
+            }
+        }, "json");
+    });
+}
+
+function closeCharge() {
+    layer.closeAll();
+}
+
+//更新支付参数
+function Update() {
+    var id                  = $('#index_id').val();
+    var channelid           = $('#personal_channelid').val();
+    var truename            = $('#truename').val();
+    var mch_id              = $('#mch_id').val();
+    var signkey             = $('#signkey').val();
+    var appid               = $('#appid').val();
+    var appsecret           = $('#appsecret').val();
+    var paypassword         = $('#paypassword').val();
+    var subject             = $('#subject').val();
+    var domain_record       = $('#domain_record').val();
+    var is_manual_account   = $('#is_manual_account').val();
+    var is_defined          = $('#is_defined').val();
+    var status              = '0';  //默认关闭
+
+    if (channelid == "" || channelid == null) {
+        layer.tips('{:L('请选择账户渠道')}', '#channelid', { tips: 3 });
+        return false;
+    }
+
+    if (truename == "" || truename == null) {
+        layer.tips('{:L('请填写账户名')}', '#truename', { tips: 3 });
+        return false;
+    }
+
+    if ((mch_id == ""||mch_id == null) && (signkey == ""||signkey == null) && (appid == ""||appid == null) && (appsecret == ""||appsecret == null) 
+        && (domain_record == ""||domain_record == null) && (subject == ""||subject == null)) {
+        layer.tips('{:L('请填写账户参数')}', '#mch_id', { tips: 3 });
+        return false;
+    }
+
+    if (is_manual_account == "" || is_manual_account == null) {
+        layer.tips('{:L('请选择是否手动交易账户')}', '#is_manual_account', { tips: 3 });
+        return false;
+    }
+
+    if (is_defined == "" || is_defined == null) {
+        layer.tips('{:L('请选择是否继承风控')}', '#is_defined', { tips: 3 });
+        return false;
+    }
+
+    if (status == "" || status == null) {
+        layer.tips('{:L('请选择状态')}', '#status', { tips: 3 });
+        return false;
+    }
+	
+    if (paypassword == "" || paypassword == null) {
+        layer.tips('{:L('请输入交易密码 ')}', '#paypassword', { tips: 3 });
+        return false;
+    }
+
+    $.post("{:U('Exchange/editPayParams')}", {id:id, channelid:channelid, truename:truename, mch_id:mch_id, signkey:signkey, appid:appid,appsecret:appsecret,domain_record:domain_record,subject:subject, is_manual_account:is_manual_account, is_defined:is_defined, status:status, paypassword:paypassword}, function(data) {
+        if (data.status == 1) {
+
+            layer.msg(data.info, { icon: 1 }, function (){ 
+                window.location.reload();
+            });
+        } else {
+            layer.msg(data.info, { icon: 2 });
+            if (data.url) {
+                window.location = data.url;
+            }
+        }
+    }, "json");
+}
+
+//更新风控参数信息
+function upControlEdit(){
+    var id              = $('#index_id').val();
+    var all_money       = $('#control_all_money').val();
+    var all_pay_num     = $('#control_all_num').val();
+    var start_time      = $('#control_start_time').val();
+    var end_time        = $('#control_end_time').val();
+    var min_money       = $('#control_min_money').val();
+    var max_money       = $('#control_max_money').val();
+    var control_status  = $('#control_status').val();
+    var offline_status  = $('#offline_status').val();
+    var paypassword     = $('#control_paypassword').val();
+
+    if (all_money == ""||all_money == null) {
+        layer.tips('{:L('没有输入最大金额')}', '#control_all_money', { tips: 3 });
+        return false;
+    }
+
+    if (all_pay_num == ""||all_pay_num == null) {
+        layer.tips('{:L('没有输入最大次数')}', '#control_all_num', { tips: 3 });
+        return false;
+    }
+
+    if (start_time == ""||start_time == null) {
+        layer.tips('{:L('填写开始时间')}', '#control_start_time', { tips: 3 });
+        return false;
+    }
+
+    if (end_time == "" || end_time == null) {
+        layer.tips('{:L('填写结束时间')}', '#control_end_time', { tips: 3 });
+        return false;
+    }
+    
+    if (min_money == "" || min_money == null) {
+        layer.tips('{:L('填写最小金额 ')}', '#control_min_money', { tips: 3 });
+        return false;
+    }
+
+    if (max_money == "" || max_money == null) {
+        layer.tips('{:L('填写最大金额 ')}', '#control_max_money', { tips: 3 });
+        return false;
+    }
+
+    if (control_status == "" || control_status == null) {
+        layer.tips('{:L('选择风控状态')}', '#control_status', { tips: 3 });
+        return false;
+    }
+
+    if (offline_status == "" || offline_status == null) {
+        layer.tips('{:L('选择上线状态 ')}', '#offline_status', { tips: 3 });
+        return false;
+    }
+
+    if (paypassword == "" || paypassword == null) {
+        layer.tips('{:L('输入支付密码 ')}', '#control_paypassword', { tips: 3 });
+        return false;
+    }
+
+    $.post("{:U('Exchange/upControlEdit')}", {id:id, all_money:all_money, all_pay_num:all_pay_num, start_time:start_time, end_time:end_time, min_money:min_money, max_money:max_money, control_status:control_status, offline_status:offline_status, paypassword:paypassword}, function(data) {
+        if (data.status == 1) {
+            layer.msg(data.info, { icon: 1 }, function (){ 
+                window.location.reload();
+            });
+        } else {
+            layer.msg(data.info, { icon: 2 });
+            if (data.url) {
+                $(".loading").hide();   //加载成功移除加载图片
+                window.location = data.url;
+            }
+        }
+    }, "json");
+}
+
+//设置支付参数的状态
+function setPayParamsStatus(id) {
+    layer.config({
+        extend: 'extend/layer.ext.js'
+    });
+    layer.ready(function() {
+        //默认prompt
+        layer.prompt({
+            title: '{:L(' 输入交易密码， 并确认')}',
+            formType: 1
+        }, function(val) {
+            if (val) {
+                //需要执行的方法
+                $.post("{:U('Exchange/setPayParamsStatus')}", {
+                    id: id,
+                    paypassword: val
+                }, function(data) {
+                    if (data.status == 1) {
+                        layer.msg(data.info, { icon: 1 }, function (){ 
+                            window.location.reload();
+                        });
+                        
+                    } else {
+                        layer.msg(data.info, { icon: 2 });
+                        if (data.url) {
+                            window.location = data.url;
+                        }
+                    }
+                }, "json");
+            };
+        });
+    });
+}
+
+//删除支付参数
+function deletePayParams(id) {
+    layer.config({
+        extend: 'extend/layer.ext.js'
+    });
+    layer.ready(function() {
+        //默认prompt
+        layer.prompt({
+            title: '{:L(' 输入交易密码， 并确认 ')}',
+            formType: 1
+        }, function(val) {
+            if (val) {
+                //需要执行的方法
+                $.post("{:U('Exchange/delPayParams')}", {
+                    id: id,
+                    paypassword: val
+                }, function(data) {
+                    if (data.status == 1) {
+
+                        layer.msg(data.info, { icon: 1 }, function (){ 
+                            window.location.reload();
+                        });
+                    } else {
+                        layer.msg(data.info, { icon: 2 });
+                        if (data.url) {
+                            window.location = data.url;
+                        }
+                    }
+                }, "json");
+            };
+        });
+    });
+}
+</script>
+<script>
+$("title").html("{:L('机构账户管理')} - {:C('web_title')}");
+$('#menu_4').addClass('on');
+</script>
+<include file="Public:footer" />

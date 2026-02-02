@@ -1,0 +1,77 @@
+<include file="Public:header_new" />
+<link rel="stylesheet" href="__PUBLIC__/Home/ecshe_css/fin.css">
+
+<div class="infoBox">
+	<include file="Finance:top" />
+</div>
+
+<div class="UserBox" style="margin-top:20px;margin-bottom:40px;">
+	<div class="fl SettingLeft">
+		 <include file="Finance:left2" />
+	</div>
+	<div class="fr SettingRight">
+		<div class="titles">
+			<h3 class="fl">{:L('交易详情')}</h3>
+		</div>
+
+		<div class="Column_Coins">
+			<div class="AssetInfo" style="line-height: 40px;">
+				<div style="margin-right: 10px;">{:L('点击可下载： ')}</div>
+				<a style="margin-right: 10px; width: 120px; color:#219B20; font-size: 16px" href="{:U('Finance/excelC2COrderInfo?export_mode=today')}">{:L('导出今日C2C订单')}</a>
+				<a style="margin-right: 10px; width: 120px; color:#219B20; font-size: 16px" href="{:U('Finance/excelC2COrderInfo?export_mode=yesterday')}">{:L('导出昨日C2C订单')}</a>
+				<a style="margin-right: 10px; width: 120px; color:#219B20; font-size: 16px" href="{:U('Finance/excelC2COrderInfo?export_mode=month')}">{:L('导出当月C2C订单')}</a>
+			</div>
+			<div class="AssetInfo" style="line-height: 30px;">
+				<div>{:L('今日币币交易')}<span>{$trade_sum_today}</span></div>
+				<div>{:L('今日c2c交易额')}<span>{$exchange_sum_today}</span></div>
+				<div>{:L('今日c2c成功额')}<span>{$exchange_sum_today_success}</span></div>
+				<div>{:L('今日手续费')}<span>{$today_poundage}</span></div>
+				<div>{:L('今日利润')}<span>{$today_profit}</span></div>
+				<div>{:L('今日成功率')}<span style="color:#F98A3F">{$exchange_today_success_rate}%</span></div>
+			</div>
+			<div class="AssetInfo" style="line-height: 30px;">
+				<div>{:L('币币交易总额')}<span>{$trade_sum_total}</span></div>
+				<div>{:L('c2c交易总额')}<span>{$exchange_sum_total}</span></div>
+				<div>{:L('c2c成功总额')}<span>{$exchange_sum_total_success}</span></div>
+				<div>{:L('总手续费')}<span>{$total_poundage}</span></div>
+				<div>{:L('总利润')}<span>{$total_profit}</span></div>
+				<div>{:L('总成功率')}<span style="color:#F98A3F">{$exchange_total_success_rate}%</span></div>
+			</div>
+		</div>
+		<div class="Column_AssetsList" style="line-height: 40px;">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr class="ColumnTitle">
+					<th width="10%" align="center">{:L('市场')}</th>
+					<th width="11%" align="center">{:L('今日买总额')}</th>
+					<th width="10%" align="center">{:L('今日买数量')}</th>
+					<th width="11%" align="center">{:L('今日卖总额')}</th>
+					<th width="10%" align="center">{:L('今日卖数量')}</th>
+					<th width="13%" align="center">{:L('买入总额')}</th>
+					<th width="11%" align="center">{:L('买入总数量')}</th>
+					<th width="13%" align="center">{:L('卖出总额')}</th>
+					<th width="11%" align="center">{:L('卖出总数量')}</th>
+				</tr>
+				<volist name="list" id="vo" key="k">
+					<tr>
+						<td><b align="center" style="color: #ded6d6;">{$vo['market']}</b></td>
+						<td><b align="center" style="color: #ded6d6;">{$vo['today_buy_sum']}</b></td>
+						<td><b align="center" style="color: #ded6d6;">{$vo['today_buy_num']}</b></td>
+						<td><b align="center" style="color: #ded6d6;">{$vo['today_sell_sum']}</b></td>
+						<td><b align="center" style="color: #ded6d6;">{$vo['today_sell_num']}</b></td>
+						<td><b align="center" style="color: #ded6d6;">{$vo['total_buy_sum']}</b></td>
+						<td><b align="center" style="color: #ded6d6;">{$vo['total_buy_num']}</b></td>
+						<td><b align="center" style="color: #ded6d6;">{$vo['total_sell_sum']}</b></td>
+						<td><b align="center" style="color: #ded6d6;">{$vo['total_sell_num']}</b></td>
+					</tr>
+				</volist>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="__PUBLIC__/Home/js/jquery.qrcode.min.js"></script>
+<script>
+$("title").html("{:L('交易详情')} - {:C('web_title')}");
+$('#menu_8').addClass('on');
+</script>
+<include file="Public:footer" />

@@ -1,0 +1,573 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+	<title>C2C</title>
+	<include file="Public:head" />
+</head>
+<body>
+<header class="mui-bar mui-bar-bg mui-bar-nav">
+	<a class="mui-icon mui-icon-left-nav mui-pull-left" href="{:U('Morefind/index')}"></a>
+	<h1 class="mui-title color_white" style="text-transform:uppercase;">C2C交易 - {:Anchor_CNY}<i class="icons iconfont icon-ai-arrow-down"></i></h1>
+	<a class="mui-btn mui-btn-link mui-pull-right" style="color:#fff;" href="{:U('Exchange/bank')}">{:L('账户管理')}</a>
+</header>
+
+<div class="mui-content">
+	<div id="slider" class="mui-bar" style="padding:0 0;">
+		<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+			<a class="mui-control-item mui-active" href="#item1">{:L('买入')}</a>
+			<a class="mui-control-item" href="#item2">{:L('卖出')}</a>
+		</div>
+	</div>
+</div>
+
+<div class="mui-content cur-padding-bottom" style="margin-top:10px;">
+	<div id="item1" class="mui-control-content form-exchange mui-active">
+		<p class="tl buy-count">{:L('付款期限')} <b class="red">30</b> 分钟</p>
+		<div class="mui-input-row mui-input-row-g">
+			<span class="unit-right">{:Anchor_CNY}</span>
+			<label>{:L('买入价')}</label>
+			<input type="number" name="price" id="buy_price" autocomplete="off" placeholder="{:L('请输入购买价格')}" value="1.00" readonly>
+		</div>
+		<div class="mui-input-row mui-input-row-g">
+			<span class="unit-right" style="text-transform:uppercase;">{:Anchor_CNY}</span>
+			<label>{:L('买入量')}</label>
+			<input type="number" name="num" id="buy_num" class="red" autocomplete="off" placeholder="{:L('请输入购买数量')}">
+		</div>
+		<p class="tr buy-count">{:L('需要')} <b class="red" id="buy_mum">0.00</b> {:Anchor_CNY}</p>
+		<button type="button" class="mui-btn mui-btn-red" onclick="tradeadd_buy();">{:L('立即买入')}</button>
+	</div>
+	<div id="item2" class="mui-control-content form-exchange">
+		<p class="tl buy-count">{:L('可用')} {:Anchor_CNY} <b class="green">{$cny['ky']}</b></p>
+		<div class="mui-input-row mui-input-row-g">
+			<span class="unit-right">{:Anchor_CNY}</span>
+			<label>{:L('卖出价')}</label>
+			<input type="number" name="price" id="sell_price" autocomplete="off" placeholder="{:L('请输入卖出价格')}" value="0.99" readonly>
+		</div>
+		<div class="mui-input-row mui-input-row-g">
+			<span class="unit-right" style="text-transform:uppercase;">{:Anchor_CNY}</span>
+			<label>{:L('卖出量')}</label>
+			<input type="number" name="num" id="sell_num" class="green" autocomplete="off" placeholder="{:L('请输入卖出数量')}">
+		</div>
+		<p class="tr buy-count">{:L('需要')} <b class="green" id="sell_mum">0.00</b> {:Anchor_CNY}</p>
+		<button type="button" class="mui-btn mui-btn-green" onclick="tradeadd_sell();">{:L('立即卖出')}</button>
+
+	</div>
+
+	<div style="margin-left:20px;margin-top:10px;">
+		<eq name="auto_c2c_sell_status" value="1">
+			<input class="ids" title="开启自动卖出交易" type="checkbox" style="zoom:120%;" id="auto_c2c_sell_status" name="auto_c2c_sell_status" value="{$auto_c2c_sell_status}" checked/>
+		<else/>
+			<input class="ids" title="开启自动卖出交易" type="checkbox" style="zoom:120%;" id="auto_c2c_sell_status" name="auto_c2c_sell_status" value="{$auto_c2c_sell_status}"/>
+		</eq>
+		<label>{:L('开启自动卖出')}{:Anchor_CNY}</label>
+	</div>
+	<div style="margin-left:20px;margin-top:10px;">
+		<eq name="auto_c2c_buy_status" value="1">
+			<input class="ids" title="开启自动买入交易" type="checkbox" style="zoom:120%;" id="auto_c2c_buy_status" name="auto_c2c_buy_status" value="{$auto_c2c_buy_status}" checked/>
+		<else/>
+			<input class="ids" title="开启自动买入交易" type="checkbox" style="zoom:120%;" id="auto_c2c_buy_status" name="auto_c2c_buy_status" value="{$auto_c2c_buy_status}"/>
+		</eq>
+		<label>{:L('开启自动买入')}{:Anchor_CNY}</label>
+	</div>
+	<!-- 分割线 -->
+    <HR align=center width="100%" style="color:#987cb9; size:2">
+    <div><p class="tl buy-count" style="margin-left: 15px;"><b class="red">{:L('重要提示:')}</b>{:L($configs['mytx_prompt'])}</p></div>
+	<div id="orderSegmentedControl" class="mui-segmented-control" style="margin-left: 2px;width: 99%;">
+		<eq name="order_mode" value="0">
+			<a style="line-height: 38px; margin-left:16px; border-bottom: #424ec5 2px solid;" href="{:U('Exchange/index?order_mode=0')}">{:L('买市场')}</a>
+		<else/>
+			<a style="line-height: 38px; margin-left:16px;" href="{:U('Exchange/index?order_mode=0')}">{:L('买市场')}</a>
+		</eq>
+		<eq name="order_mode" value="1">
+			<a style="line-height: 38px; margin-left:16px; border-bottom: #424ec5 2px solid;" href="{:U('Exchange/index?order_mode=1')}">{:L('卖市场')}</a>
+		<else/>
+			<a style="line-height: 38px; margin-left:16px;" href="{:U('Exchange/index?order_mode=1')}">{:L('卖市场')}</a>
+		</eq>
+		<eq name="order_mode" value="2">
+			<a style="line-height: 38px; margin-left:16px; border-bottom: #424ec5 2px solid;" href="{:U('Exchange/index?order_mode=2')}">{:L('我的订单')}</a>
+		<else/>
+			<a style="line-height: 38px; margin-left:16px;" href="{:U('Exchange/index?order_mode=2')}">{:L('我的订单')}</a>
+		</eq>
+	</div>
+	<div class="trade_record">
+		<div class="titlehead">{:Anchor_CNY}{:L('交易')}<a href="#modal" class="fr"><i class="iconfont icon-jingshigantanhao"></i>{:L('买卖说明')}</a></div>
+		<switch name="order_mode">
+            <case value="0">
+				<ul class="list-exchange">
+					<volist name="list" id="vo">
+						<li>
+							<div class="column-info">
+								<h3 class="green" style="text-transform:uppercase;">{:L('买入')} {$vo['type']}</h3>
+								<span class="time">{$vo.addtime|date='Y-m-d H:i:s',###}</span>
+								<if condition="($userid eq $vo['userid'])">
+									<span class="fr state red">{:L('自有订单')}</span>
+								<else/>
+									<span class="fr state"><a style="color: red" href="javascript:void(0);" onclick="tradeadd_sell('{$vo['orderid']}')">卖出</a></span>
+								</if>
+								<span class="fr state blue"><i class="iconfont icon-shijian"></i>{:L('交易中')}<s>|</s></span>
+							</div>
+							<div class="stream-info" style="text-transform:uppercase;">
+								<div class="tl"><p class="title">数量({$vo['type']})</p><p>{$vo.num}</p></div>
+								<div class="tc"><p class="title">价格({:Anchor_CNY})</p><p>{$vo.uprice}</p></div>
+								<div class="tr"><p class="title">实际成交({:Anchor_CNY})</p><p>{$vo.mum}</p></div>
+							</div>
+							<div class="stream-info">
+								<div class="tl"><p class="title">订单号</p><p>{$vo.orderid}</p></div>
+								<div class="tc"><p class="title">用户名</p><p>{$vo.userid|getFuzzyUserName=###}</p></div>
+								<div class="tr"><p class="title">账号</p><p>下单后可见</p></div>
+							</div>
+						</li>
+					</volist>
+				</ul>
+			</case>
+			<case value="1">
+				<ul class="list-exchange">
+					<volist name="list" id="vo">
+						<li>
+							<div class="column-info">
+								<h3 class="red" style="text-transform:uppercase;">{:L('卖出')} {$vo['type']}</h3>
+								<span class="time">{$vo.addtime|date='Y-m-d H:i:s',###}</span>
+								<if condition="($userid eq $vo['userid'])">
+									<span class="fr state red">{:L('自有订单')}</span>
+								<else/>
+									<span class="fr state"><a style="color: green" href="javascript:void(0);" onclick="tradeadd_buy('{$vo['orderid']}')">购买</a></span>
+								</if>
+								<span class="fr state blue"><i class="iconfont icon-shijian"></i>{:L('交易中')}<s>|</s></span>
+							</div>
+							<div class="stream-info" style="text-transform:uppercase;">
+								<div class="tl"><p class="title">数量({$vo['type']})</p><p>{$vo.num}</p></div>
+								<div class="tc"><p class="title">价格({:Anchor_CNY})</p><p>{$vo.uprice}</p></div>
+								<div class="tr"><p class="title">实际成交({:Anchor_CNY})</p><p>{$vo.mum}</p></div>
+							</div>
+							<div class="stream-info">
+								<div class="tl"><p class="title">订单号</p><p>{$vo.orderid}</p></div>
+								<div class="tc"><p class="title">用户名</p><p>{$vo.userid|getFuzzyUserName=###}</p></div>
+								<div class="tr"><p class="title">账号</p><p>下单后可见</p></div>
+							</div>
+						</li>
+					</volist>
+				</ul>
+			</case>
+			<case value="2">
+				<ul class="list-exchange">
+					<volist name="list" id="vo">
+						<li>
+							<div class="column-info">
+								<if condition="($vo['otype'] eq 1 AND $userid eq $vo['userid']) OR ($vo['otype'] eq 2 AND $userid eq $vo['aid'])">
+									<h3 class="green" style="text-transform:uppercase;">{:L('买入')} {$vo['type']}</h3>
+								<else />
+									<h3 class="red" style="text-transform:uppercase;">{:L('卖出')} {$vo['type']}</h3>
+								</if>
+								
+								<span class="time">{$vo.addtime|date='Y-m-d H:i:s',###}</span>
+
+								<if condition="($vo['otype'] eq 1 AND $userid eq $vo['userid']) OR ($vo['otype'] eq 2 AND $userid eq $vo['aid'])"><!--买入-->
+									<if condition="$vo.status eq 0">
+										<span class="fr state"><a style="color: red" href="javascript:void(0);" onclick="cancelOrder('{$vo['orderid']}')">取消</a></span>
+										<span class="fr state blue"><i class="iconfont icon-shijian"></i>{:L('交易中')}<s>|</s></span>
+									<elseif condition="$vo.status eq 1"/>
+										<span class="fr state"><a style="color: green" href="{:U('Exchange/showOrderQueen',array('orderid'=>$vo['orderid']))}">确认付款</a></span>
+										<span class="fr state"><a href="{:U('Exchange/payinfo',array('orderid'=>$vo['orderid'],'type'=>'1'))}">卖家信息</a><s>|</s></span>
+										<span class="fr state blue"><i class="iconfont icon-shijian"></i>{:L('待支付')}<s>|</s></span>
+									<elseif condition="$vo.status eq 2" />
+										<if condition="$vo['rush_status'] eq 0 AND $vo['userid'] gt 0 AND $vo['aid'] gt 0">
+											<span class="fr state"><a style="color: #F98A3F"href="javascript:void(0);" onclick="rushOrder('{$vo['orderid']}')">催单</a></span>
+										<elseif condition="$vo['rush_status'] eq 1 AND $vo['userid'] gt 0 AND $vo['aid'] gt 0"/>
+											<span class="fr state" style="color: #F98A3F">已催单</span>
+										</if>
+										<span class="fr state"><a href="{:U('Exchange/payinfo',array('orderid'=>$vo['orderid'],'type'=>'1'))}">卖家信息</a><s>|</s></span>
+										<span class="fr state blue"><i class="iconfont icon-shijian"></i>{:L('卖家处理中')}<s>|</s></span>
+									<elseif condition="$vo.status eq 3" />
+										<span class="fr state"><a href="{:U('Exchange/payinfo',array('orderid'=>$vo['orderid'],'type'=>'1'))}">卖家信息</a></span>
+										<span class="fr state green"><i class="iconfont icon-yinhangqia2"></i>{:L('交易完成')}<s>|</s></span>
+									<elseif condition="$vo.status eq 8" />
+										<if condition="$vo['otype'] eq 2 AND $vo['rush_status'] eq 0 AND $vo['aid'] gt 0">
+											<span class="fr state"><a style="color: #F98A3F"href="javascript:void(0);" onclick="rushOrder('{$vo['orderid']}')">修改通知</a></span>
+											<span class="fr state red"><i class="iconfont icon-shanchu2"></i>{:L('已取消')}<s>|</s></span>
+										<elseif condition="$vo['otype'] eq 2 AND $vo['rush_status'] eq 1 AND $vo['aid'] gt 0"/>
+											<span class="fr state" style="color: #F98A3F">已通知</span>
+											<span class="fr state red"><i class="iconfont icon-shanchu2"></i>{:L('已取消')}<s>|</s></span>
+										<else/>
+											<span class="fr state red"><i class="iconfont icon-shanchu2"></i>{:L('已取消')}</span>
+										</if>
+									<else />
+										<span class="fr state blue"><i class="iconfont icon-shijian"></i>{:L('交易中')}</span>
+									</if>
+								<else />
+									<if condition="$vo.status eq 0">
+										<span class="fr state"><a style="color: red" href="javascript:void(0);" onclick="cancelOrder('{$vo['orderid']}')">取消</a></span>
+										<span class="fr state blue"><i class="iconfont icon-shijian"></i>{:L('交易中')}<s>|</s></span>
+									<elseif condition="$vo.status eq 1"/>
+										<span class="fr state"><a href="{:U('Exchange/payinfo',array('orderid'=>$vo['orderid'],'type'=>'2'))}">买家信息</a></span>
+										<span class="fr state blue"><i class="iconfont icon-shijian"></i>{:L('待买家付款')}<s>|</s></span>
+									<elseif condition="$vo.status eq 2" />
+										<span class="fr state"><a style="color: green" href="{:U('Exchange/showOrderQueen',array('orderid'=>$vo['orderid']))}">确认收款</a></span>
+										<span class="fr state"><a href="{:U('Exchange/payinfo',array('orderid'=>$vo['orderid'],'type'=>'2'))}">买家信息</a><s>|</s></span>
+										<span class="fr state blue"><i class="iconfont icon-shijian"></i>{:L('买家已付款')}<s>|</s></span>
+									<elseif condition="$vo.status eq 3" />
+										<span class="fr state"><a href="{:U('Exchange/payinfo',array('orderid'=>$vo['orderid'],'type'=>'2'))}">买家信息</a></span>
+										<span class="fr state green"><i class="iconfont icon-yinhangqia2"></i>{:L('交易完成')}<s>|</s></span>
+									<elseif condition="$vo.status eq 8" />
+										<if condition="$vo['otype'] eq 2 AND $vo['rush_status'] eq 1 AND $vo['aid'] gt 0">
+											<span class="fr state" style="color: #F98A3F">到PC重置</span>
+											<span class="fr state red"><i class="iconfont icon-shanchu2"></i>{:L('已取消')}<s>|</s></span>
+										<else/>
+											<span class="fr state red"><i class="iconfont icon-shanchu2"></i>{:L('已取消')}</span>
+										</if>
+										
+									<else />
+										<span class="fr state blue"><i class="iconfont icon-shijian"></i>{:L('交易中')}</span>
+									</if>
+								</if>
+							</div>
+							<div class="stream-info" style="text-transform:uppercase;">
+								<div class="tl"><p class="title">数量({$vo['type']})</p><p>{$vo.num}</p></div>
+								<div class="tc"><p class="title">价格({:Anchor_CNY})</p><p>{$vo.uprice}</p></div>
+								<div class="tr"><p class="title">实际成交({:Anchor_CNY})</p><p>{$vo.mum}</p></div>
+							</div>
+							<div class="stream-info">
+								<div class="tl"><p class="title">订单号</p>
+									<p><if condition="$vo['rush_status'] eq 1 AND ($vo['status'] eq 2 OR $vo['status'] eq 4)">
+										<b style="color: red">{$vo.orderid}</b>
+									<else/>
+										<b>{$vo.orderid}</b>
+									</if></p>
+								</div>
+								<div class="tc"><p class="title">账户名</p><p>{$vo.truename}</p></div>
+								<div class="tr"><p class="title">账号</p><p><empty name="vo.bankcard">{$vo.bank}<else/>{$vo.bankcard}</empty></p></div>
+							</div>
+						</li>
+					</volist>
+				</ul>
+				<div class="pages">{$page}</div>
+			</case>
+		</switch>
+	</div>
+</div>
+
+<div id="modal" class="mui-modal">
+	<header class="mui-bar mui-bar-bg mui-bar-nav">
+		<a class="mui-icon mui-icon-close mui-pull-right" href="#modal"></a>
+		<h1 class="mui-title">{:L('买卖说明')}</h1>
+	</header>
+	<div class="mui-content" style="height:100%;">
+		<div style="margin-top: 20px;padding: 0 15px;">
+			<h3 class="title">{:L('温馨提示')}</h3>
+			<p>为了您的购买可以快速到账，请在交易前仔细阅读以下注意事项：</p>
+			<p>1. 买卖商户均为实名认证商户，并提供保证金，可放心交易；</p>
+			<p>2. 如需申请成为商户请发邮件到 <b style="color:#FF8702">{$configs['contact']}</b> ；</p>
+			<p>3. 请使用本人绑定的银行卡进行汇款，汇款时不允许有备注说明，否则均会退款，退款时间为48小时内；</p>
+			<p>4. 商家处理时间 <b style="color:#097DF7">9:00 - 21:00</b> 非处理时间的订单会在第二天 <b style="color:#097DF7">9:00</b> 开始处理，一般接单后24小时内会完成打款；</p>
+			<p>5. 单笔买入限额 {$configs['mycz_min']} {:Anchor_CNY} ~ {$configs['mycz_max']} {:Anchor_CNY}<span style="margin: 0 15px;">|</span>单笔卖出限额 {$configs['mytx_min']} {:Anchor_CNY} ~ {$configs['mytx_max']} {:Anchor_CNY}；</p>
+			<p>6. 手动CNC交易订单需要在<b style="color:#FF8702">30分钟内</b>成交，如果超过该时间，订单交易<b style="color:#097DF7">自动取消</b>，设置为失败订单。如为卖出订单<b style="color:#097DF7">返还对应CNC</b>；</p>
+			<p>7. 自动CNC交易订单<b style="color:#FF8702">30分钟内</b>未成交，订单交易<b style="color:#097DF7">自动取消</b>，设置为失败订单。如为卖出订单<b style="color:#097DF7">返还对应CNC</b>；</p>
+			<p>8. 确定具体交易订单的时候注意，平台订单的时间会比实际支付时间早。请查看比<b style="color:#FF8702">付款时间早</b>的平台订单来确认。</p>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+var trans_lock = 0;
+	
+$('#buy_num').bind('input propertychange', function () {
+    $("#buy_mum").html((($('#buy_num').val() * $('#buy_price').val()).toFixed(8) * 1).toFixed(2));
+});
+$('#sell_num').bind('input propertychange', function () {
+    $("#sell_mum").html((($('#sell_num').val() * $('#sell_price').val()).toFixed(8) * 1).toFixed(2));
+});
+
+//开启自动卖出CNC的状态
+$('#auto_c2c_sell_status').click(function(){
+	//alert("勾上了");
+	$.post("{:U('Exchange/autoSellCNCstatus')}",{},function(data){
+		layer.closeAll('loading');
+		trans_lock = 0;	
+		if (data.status==1) {		
+			layer.msg(data.info,{icon : 1 });
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 }, function (){ window.location.reload()});
+			return false;
+		}
+	},'json'); 
+});
+
+//开启自动卖出CNC的状态
+$('#auto_c2c_buy_status').click(function(){
+	//alert("勾上了");
+	$.post("{:U('Exchange/autoBuyCNCstatus')}",{},function(data){
+		layer.closeAll('loading');
+		trans_lock = 0;	
+		if (data.status==1) {		
+			layer.msg(data.info,{icon : 1 });
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 }, function (){ window.location.reload()});
+			return false;
+		}
+	},'json'); 
+});
+	
+function tradeadd_buy(orderid){
+	var idcard 			= "{$idcard}";
+	var user_accounts 	= "{$user_accounts}";	
+	var logins 			= "{$logins}";
+	var buy_price 		= $('#buy_price').val();
+	var buy_num 		= $('#buy_num').val();
+
+	//判断是否接单形式，只有下单才进入判断
+	if(!orderid){
+		
+		orderid = 0;
+		var price = parseFloat(buy_price);
+		var num = parseFloat(buy_num);
+		//var paypassword=$('#buy_paypassword').val();
+		var reg = /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/;
+		
+		if(price==""||price==null||!reg.test(price)){
+			layer.tips("{:L('交易价格必须大于')}0",'#buy_price',{tips : 3 });
+			trans_lock = 0;
+			return false;
+		}
+		if(num==""||num==null||!reg.test(num)){
+			layer.tips("{:L('交易数量必须大于')}0",'#buy_num',{tips : 3 });
+			trans_lock = 0;
+			return false;
+		}
+	}
+	
+	if(trans_lock){
+		layer.msg("{:L('不要重复提交')}",{icon : 2 });
+		return;
+	}
+	trans_lock = 1;
+	
+	if(logins == 0){
+		layer.msg("{:L('请先登录！')}");
+		trans_lock = 0;
+		return false;
+	}
+	if(idcard == 0){
+		layer.msg("{:L('请先实名认证！')}");
+		trans_lock = 0;
+		return false;
+	}
+	if(user_accounts == 0){
+		layer.msg("{:L('请先添加手动交易账户！')}");
+		trans_lock = 0;
+		return false;
+	}
+
+	layer.load(2);
+
+	$.post("{:U('Exchange/upTrade')}",{price : buy_price,num : buy_num,otype : 1,orderid:orderid },function(data){
+		layer.closeAll('loading');
+		trans_lock = 0;	
+		if (data.status==1) {
+			$("#buy_num").val('');
+			$("#sell_num").val('');
+			$("#buy_mum").val('0.00');
+			$("#sell_mum").val('0.00');
+			//$('#buy_paypassword').val('');
+						
+			layer.msg(data.info,{icon : 1 });
+            if (orderid) {
+                setTimeout('window.location.reload()', 2000); //延迟
+            }else{
+            	setTimeout('window.location.reload()', 3000); //延迟
+            }
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 });
+			return false;
+		}
+	},'json');
+}
+
+function tradeadd_sell(orderid){
+
+	var idcard 			= "{$idcard}";
+	var user_accounts 	= "{$user_accounts}";	
+	var logins 			= "{$logins}";
+	var sell_price 		= $('#sell_price').val();
+	var sell_num 		= $('#sell_num').val();
+	
+	//判断是否接单形式，只有下单才进入判断
+	if(!orderid){
+
+		orderid = 0;
+		var price=parseFloat(sell_price);
+		var num=parseFloat(sell_num);
+		//var paypassword=$('#sell_paypassword').val();
+		var reg = /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/;
+		
+		if(price==""||price==null||!reg.test(price)){
+			layer.tips("{:L('交易价格必须大于')}0",'#sell_price',{tips : 3 });
+			trans_lock = 0;
+			return false;
+		}
+		if(num==""||num==null||!reg.test(num)){
+			layer.tips("{:L('交易数量必须大于')}0",'#sell_num',{tips : 3 });
+			trans_lock = 0;
+			return false;
+		}
+	}
+
+	if(trans_lock){
+		layer.msg("{:L('不要重复提交')}",{icon : 2 });
+		return;
+	}
+	trans_lock = 1;
+	
+	if(logins == 0){
+		layer.msg("{:L('请先登录！')}");
+		trans_lock = 0;
+		return false;
+	}
+	if(idcard == 0){
+		layer.msg("{:L('请先实名认证！')}");
+		trans_lock = 0;
+		return false;
+	}
+	if(user_accounts == 0){
+		layer.msg("{:L('请先添加手动交易账户！')}");
+		trans_lock = 0;
+		return false;
+	}
+
+	$.post("{:U('Exchange/upMytx')}",{price : sell_price,num : sell_num,otype : 2, orderid:orderid },function(data){
+		layer.closeAll('loading');
+		trans_lock = 0;
+		if (data.status==1) {
+			$("#buy_num").val('');
+			$("#sell_num").val('');
+			$("#buy_mum").html('0.00');
+			$("#sell_mum").html('0.00');
+			//$('#buy_paypassword').val('');
+			
+			layer.msg(data.info,{icon : 1 });
+            if (orderid) {
+                setTimeout('window.location.reload()', 2000); //延迟
+
+            }else{
+            	setTimeout('window.location.reload()', 3000); //延迟
+            }
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 });
+			return false;
+		}
+	},'json');
+}
+
+//取消订单　
+function cancelOrder(orderid){
+	$.post("{:U('Exchange/cancelOrder')}",{orderid : orderid},function(data){
+		layer.closeAll('loading');
+
+		if (data.status==1) {
+			
+			layer.msg(data.info,{icon : 1 });
+			setTimeout('window.location.reload()', 2000); //延迟
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 });
+			return false;
+		}
+	},'json');
+}
+
+//催促订单　
+function rushOrder(orderid){
+	$.post("{:U('Exchange/rushOrder')}",{orderid : orderid},function(data){
+		layer.closeAll('loading');
+
+		if (data.status==1) {
+			
+			layer.msg(data.info,{icon : 1 });
+			setTimeout('window.location.reload()', 2000); //延迟
+			return false;
+		} else {
+			layer.msg(data.info,{icon : 2 });
+			return false;
+		}
+	},'json');
+}
+
+</script>
+	
+<script src="__PUBLIC__/Mobile/ecshe_js/mui.min.js"></script>
+<script src="__PUBLIC__/Front/js/iNotify.js"></script>
+<script type="text/javascript">
+	mui.init();
+</script>
+<script>
+	mui.init({
+		swipeBack: false
+	});
+	(function($) {
+		$('.mui-scroll-wrapper').scroll({
+			indicators: true //是否显示滚动条
+		});
+		var html2 = '';
+		var html3 = '';
+		var item2 = document.getElementById('item2');
+		var item3 = document.getElementById('item3');
+		document.getElementById('slider').addEventListener('slide', function(e) {
+			if (e.detail.slideNumber === 1) {
+				if (item2.querySelector('.mui-loading')) {
+					setTimeout(function() {
+						item2.querySelector('.mui-scroll').innerHTML = html2;
+					}, 500);
+				}
+			} else if (e.detail.slideNumber === 2) {
+				if (item3.querySelector('.mui-loading')) {
+					setTimeout(function() {
+						item3.querySelector('.mui-scroll').innerHTML = html3;
+					}, 500);
+				}
+			}
+		});
+		var sliderSegmentedControl = document.getElementById('sliderSegmentedControl');
+		$('.mui-input-group').on('change', 'input', function() {
+			if (this.checked) {
+				sliderSegmentedControl.className = 'mui-slider-indicator mui-segmented-control mui-segmented-control-inverted mui-segmented-control-' + this.value;
+				//force repaint
+				sliderProgressBar.setAttribute('style', sliderProgressBar.getAttribute('style'));
+			}
+		});
+	})(mui);
+
+	var iNotify = new iNotify({
+	    message: '有消息了。',//标题
+	    effect: 'flash', // flash | scroll 闪烁还是滚动
+	    interval: 300,
+	    audio:{
+	        //file: ['/Public/sound/msg.mp4','/Public/sound/msg.mp3','/Public/sound/msg.wav']
+	        file:'https://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=5&text=有订单需要处理'
+	    }
+	});
+	<eq name="checkNotice" value="1">
+	    setInterval(function() {
+	        $.ajax({
+	            type: "GET",
+	            url: "/Mobile/Exchange/checkNotice",
+	            cache: false,
+	            success: function (res) {
+	                if (res.num>0) {
+	                    iNotify.setFavicon(res.num).setTitle('订单通知').setInterval(300).notify({
+	                        title: "01otc订单通知",
+	                        body: "有新的订单，请及时处理"
+	                    }).player();
+	                }else{
+	                  iNotify.faviconClear().setTitle(false).stopPlay();
+	                }
+	            }
+	        });
+	    },20000);
+	</eq>
+</script>
+</body>
+</html>

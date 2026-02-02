@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include file="Public:header2" />
+    <script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/Home/js/jquery.cookies.2.2.0.js"></script>
+</head>
+<body class="blackbg">
+    <div id="container" class="logbg">
+        <div class="log_title">
+            <span class="back"><a href="javascript:history.go(-1)"></a></span>
+            {:L('API管理')}
+        </div>
+        <div class="ifor_flow">
+                <h2>{:L('用户：')}{$userinfo.id}</h2>
+                <h2>{:L('用户名：')}{$userinfo.username}</h2>
+                <h2>{:L('网关地址：')}{$gateway}</h2>
+                <h2>ApiKey：{$userinfo.apikey}</h2>
+        </div>
+        <div class="ifor_flow">
+            <h2>{:L('在线文档：')}<a href="{$onlineDocumentUrl}" style="color: #de00ff;">在线浏览</a></h2>
+            <h2>{:L('下载文档：')}<a href="{$downloadDocumentUrl}" style="color: #de00ff;">api文档</a></h2>
+        </div>
+    </div>
+</body>
+</html>

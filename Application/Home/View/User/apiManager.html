@@ -1,0 +1,46 @@
+<include file="Public:header_new" />
+<link rel="stylesheet" href="__PUBLIC__/Home/ecshe_css/user.css">
+
+<div class="infoBox">
+	<include file="Public:top" />
+</div>
+
+<div class="UserBox" style="margin-top:20px;margin-bottom:40px;">
+	<div class="fl SettingLeft">
+		 <include file="User:left" />
+	</div>
+	<div class="fr SettingRight">
+		<div class="titles"><h3>{:L('API管理')}</h3></div>
+		<div class="Column_identity">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tbody>
+					<tr>
+						<th style="color: #ded6d6;">{:L('用户ID:')}</th>
+						<td style="color: #ded6d6;">{$userinfo.id}</td>
+						<th style="color: #ded6d6;">{:L('用户名:')}</th>
+						<td style="color: #ded6d6;">{$userinfo.username}</td>
+					</tr>
+					<tr>
+						<th style="color: #ded6d6;">{:L('网关地址:')}</th>
+						<td style="color: #ded6d6;">{$gateway}</td>
+						<th style="color: #ded6d6;">ApiKey:</th>
+						<td style="color: #ded6d6;">{$userinfo.apikey}</td>
+					</tr>
+					<tr>
+						<th style="color: #ded6d6;">{:L('说明文档:')}</th>
+						<td><a href="{$onlineDocumentUrl}" style="color: #de00ff;">在线浏览</a></td>
+					</tr>
+					<tr>
+						<th style="color: #ded6d6;">{:L('下载文档:')}</th>
+						<td><a href="{$downloadDocumentUrl}" style="color: #de00ff;">api文档</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script>
+$("title").html("{:L('API管理')} - {:C('web_title')}");
+</script>
+<include file="Public:footer" />

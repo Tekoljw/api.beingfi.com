@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <include file="Public:header2" />
+</head>
+
+<body class="blackbg">
+    <style type="text/css">
+    .tit_p2 {
+        font-family: '微软雅黑';
+        color: #000;
+        font-size: 22px;
+        line-height: 1.2;
+    }
+
+    .tit_p2 span {
+        display: block;
+        height: 22px;
+        width: 22px;
+        background: #73bee4;
+        float: left;
+        margin-top: 5px;
+        margin-right: 5px;
+    }
+
+    .deal_item_list {
+        background: #fff;
+        margin-bottom: 10px;
+        width: 100%
+    }
+
+    .main_list {
+        border-top: 1px solid #e6e6e6;
+    }
+
+    .deal_item_box {
+        margin: 0 !important;
+        padding: 0 15px 15px;
+    }
+
+    .deals_index {
+        margin-bottom: 50px !important
+    }
+
+    .imgbox {
+        position: relative;
+    }
+
+    .imgbox .span-look {
+        position: absolute;
+        z-index: 10;
+        left: 0;
+        top: 12%;
+    }
+
+    .sizing {
+        font-size: 1em !important;
+    }
+
+    .paiduan {
+        line-height: 20px;
+        color: #A4A4A4;
+        padding: 5px 10px;
+        overflow: hidden;
+    }
+
+    .caption-title {
+        float: none !important;
+    }
+
+    .caption-title {
+        float: left;
+        font-size: 1.2rem;
+    }
+
+    .deal_item_box .deal_content_box {
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .deal_content_box {
+        padding: 0 15px !important;
+    }
+
+    .ui {
+        background: #d5d5d5;
+        height: 5px;
+        position: relative;
+        font-size: 0px;
+        line-height: 0px;
+        overflow: hidden;
+    }
+
+    .blank {
+        height: 0;
+        clear: both;
+        visibility: hidden;
+    }
+
+    .common-success {
+        background: #EE4A45;
+    }
+
+    .f_money {
+        font-size: .8rem;
+        color: #f63;
+    }
+
+    .div_dt span.num {
+        font-size: .8rem;
+        color: #555;
+    }
+
+    .div_dt span {
+        font-family: Arial;
+        /*color: #b7b7b7 !important;*/
+        font-size: .8rem !important;
+    }
+
+    .symbol {
+        font-size: .8rem;
+        color: #f60;
+    }
+
+    .ui span {
+        position: absolute;
+        max-width: 100%;
+        height: 5px;
+        line-height: 0px;
+        display: block;
+        font-size: 0px;
+    }
+
+    .div_dt {
+        float: left;
+        width: 33%;
+        margin-top: 7px;
+        overflow: hidden;
+        text-align: center;
+        border-right: 1px solid #dfdfdf;
+    }
+
+    .deal_item_box {
+        padding-bottom: 15px;
+        background: none;
+        /* border: #e5e5e5 solid 1px; */
+        margin: 0 15px;
+        text-align: center;
+        padding: 0 15px 15px;
+        background: #fff;
+    }
+
+    .deal_title {
+        width: 100%;
+        display: block;
+        padding: 5px 10px;
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: #333;
+        text-decoration: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+    }
+
+    .btn1 {
+        display: block;
+        height: 25px;
+        width: 120px;
+        line-height: 25px;
+        text-align: center;
+        color: #fff;
+        background: #333;
+        float: left;
+        margin-top: 20px;
+        border-radius: 5px;
+        transition: all 0.3s ease-out 0s;
+        letter-spacing: 1.5px;
+        font-family: '微软雅黑';
+        font-size: .8rem;
+    }
+
+    .btn1:hover {
+        background: #da251d;
+        color: red;
+    }
+
+    .btn2 {
+        font-size: .8rem;
+        display: block;
+        height: 25px;
+        width: 120px;
+        line-height: 25px;
+        text-align: center;
+        color: #333;
+        border: 1px solid #999;
+        float: right;
+        margin-top: 20px;
+        border-radius: 5px;
+        font-family: '微软雅黑';
+        transition: all 0.3s ease-out 0s;
+        letter-spacing: 1.5px;
+        background: #fff;
+    }
+
+    .btn2:hover {
+        border: 1px solid #333;
+        color: #000;
+    }
+    </style>
+    <div id="container" class="logbg">
+        <div class="log_title">
+            <span class="back"><a href="javascript:history.go(-1)"></a></span> {:L('认购中心')}
+        </div>
+        <div class="title" style="background-color: #fff;">
+            <p class="tit_p2" style=""><span></span>{:L('头条项目')}</p>
+        </div>
+        <if condition="$show eq 1">
+            <section class="deal_item_list">
+                <a href="{:U('Issue/buy_detail?id='.$tuijian['id'])}" title="{$tuijian.name}">
+                    <div class="deal_item_box">
+                        <!--1-->
+                        <div class="imgbox">
+                            <img src="/upload/public/{$tuijian.image}" alt="{$tuijian.name}" style="width: 100%">
+                            <span class="span-look" style="">
+          <span class="common common-success"   style="background:#EE4A45;height: 22px;line-height:22px;font-size:1.2rem;display:inline-block;padding:0px 5px;color: #fff;margin-left: :15px; "> {$tuijian.zhuangtai}</span>
+                            </span>
+                        </div>
+                        <div class="clear"></div>
+                        <h3 class="deal_title sizing">{$tuijian.name}</h3>
+                        <div class="clear">
+                            <div style="color:red;font-size: 1rem">
+                                {:L('认购比例')}:{$tuijian.duihuan}
+                            </div>
+                        </div>
+                        <!--2-->
+                        <div class="paiduan">
+                            <span class="caption-title">
+                <div style="float: left;font-size: .6rem;">
+                    {:L('已认购：')}
+                    <span class="f_money">{$tuijian.deal}</span>
+                            <!-- <span class="symbol">{$tuijian['buycoin']|strtoupper}</span> -->
+                            &nbsp;&nbsp;
+                        </div>
+                        <div style="float: right;font-size: .6rem;">
+                            {:L('认购总量：')}
+                            <span class="f_money" style="color:#333">{$tuijian.num}</span>
+                            <!-- <span class="symbol" style="color:#333">{$tuijian['buycoin']|strtoupper}</span> -->
+                            &nbsp;&nbsp;
+                        </div>
+                        </span>
+                        <!--  <span class="f_r ">
+                                                                 <span class="common common-success">已成功</span>
+                                                         </span> -->
+                    </div>
+                    <div class="clear"></div>
+                    <!--3-->
+                    <div class="deal_content_box pd">
+                        <div class="ui">
+                            <span class="common-success" style="width:{$tuijian.bili}%;"></span>
+                        </div>
+                        <div class="blank">
+                        </div>
+                        <div class="div_dt">
+                            <span class="num">{$tuijian.bili}%</span>
+                            <br>
+                            <span class="til">{:L('进度')}</span>
+                        </div>
+                        <div class="div_dt">
+                            <span class="num">{$tuijian.addtime|date='Y/m/d',###}</span>
+                            <br>
+                            <span class="til">{:L('开始时间')}</span>
+                        </div>
+                        <div class="div_dt" style="border:none;">
+                            <span class="" style="color:red;">{$tuijian.buycoin}</span>
+                            <br>
+                            <span class="til">{:L('支付币种')}</span>
+                        </div>
+                        <a href="/Issue/buy_detail/id/{$tuijian.id}" class="btn1">{:L('立即参与')}</a>
+                        <a href="/Issue/buy_detail_article/id/{$tuijian.id}" class="btn2">{:L('查看详情')}</a>
+                        <div class="blank">
+                        </div>
+                    </div>
+    </div>
+    </a>
+    </section>
+    <else/>
+    <section class="deal_item_list"> {:L('暂无数据')} </section>
+    </if>
+    <span class="layout" style="">
+                                    <a href="{:U('Issue/buy_list')}">{:L('认购列表')}</a>
+                                </span>
+    <span class="layout">
+                                    <a href="{:U('Issue/log')}">{:L('认购记录')}</a>
+                                </span>
+    </div>
+    <include file="Public:footer" />
+</body>
+
+</html>

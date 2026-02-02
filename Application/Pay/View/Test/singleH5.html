@@ -1,0 +1,52 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <title>向商家付款&shy;</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+        <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+        <meta name="Keywords" content="" />
+        <meta name="Description" content="" />
+        <!-- Mobile Devices Support @begin -->
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type">
+        <meta content="no-cache,must-revalidate" http-equiv="Cache-Control">
+        <meta content="no-cache" http-equiv="pragma">
+        <meta content="0" http-equiv="expires">
+        <meta content="telephone=no, address=no" name="format-detection">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <!-- apple devices fullscreen -->
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="alternate icon" type="image/png" href="/Public/img/head.png">
+        <link rel="shortcut icon" href="/Public/img/head.png" type="image/x-icon" />
+        <link rel="icon" href="/Public/img/head.png" sizes="32x32" />
+        <link rel="icon" href="/Public/img/head.png" sizes="64x64" />
+        <link rel="icon" href="/Public/img/head.png" sizes="128x128" />
+        <!-- Mobile Devices Support @end -->
+        <link rel="stylesheet" href="/Public/Pay/css/style.min.css?v=20171124" type="text/css" />
+        <link rel="stylesheet" href="/Public/Pay/css/base.min.css?v=20171124" />
+        <link rel="stylesheet" href="/Public/Front/js/plugins/layui/css/layui.css">
+        <link rel="stylesheet" href="Public/Pay/css/payOrder.min.css" />
+        <style>
+            a[target=_blank][title='站长统计']{
+                display: none;
+            }
+            .layui-form-label {width:110px;padding:4px}
+            .layui-form-item .layui-form-checkbox[lay-skin="primary"]{margin-top:0;}
+            .layui-form-switch {width:54px;margin-top:0px;}
+        </style>
+    </head>
+    <body>
+        <!--自动跳转-->
+        <meta http-equiv='Refresh' content='2;URL={$pay_url}'>
+        <div align="center">
+            <h2>&nbsp;</h2>
+            <h2>跳转地址：{$pay_url}</h2>
+            <h2>正在匹配账户，将在<b style="color:red">2秒</b>之后自动跳转！</h2>
+            <h2>跳转后，填写支付金额:￥<b style="color:green">{$pay_params.amount}</b></h2>
+            <h3>&nbsp;</h3>
+            <h2><span style="color: red">注意:</span>输入金额必须与此金额相同，否则无法成功！</h2>
+        </div>
+    </body>
+    <script type="text/javascript" src="Public/Pay/js/payOrderSimpfilied.min.js?v=20171124"></script>
+</html>
