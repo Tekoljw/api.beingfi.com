@@ -3440,6 +3440,185 @@ class IndexController extends BaseController
 		}
 	}
 	
+	public function getPrompt () {
+	    $result = M('ai_prompt')->select();
+        $this->successJson($result);
+	}
+	
+	// 设置提示词
+	public function setPrompt ()
+	{
+	    $where['id'] = $this->inputData['id'];
+        $prompt = M('ai_prompt')->where($where)->find();
+        if (!$prompt) {
+    	    $this->errorJson('未知数据！');
+        } else {
+            $res = M('ai_prompt')->where($where)->save($this->inputData);
+        }
+        
+        if ($res) {
+			$this->successJson('编辑成功！');
+		} else {
+			$this->errorJson('编辑失败！');
+		}
+	}
+	
+	public function getUserWebsiteConfig () {
+	    $result = [
+	        "browserbase_key" => $this->user['browserbase_key'],
+	        "browserbase_projectid" => $this->user['browserbase_projectid'],
+        ];
+        $this->successJson($result);
+	}
+	
+	// 设置Browserbase配置
+	public function setUserWebsiteConfig ()
+	{
+	    $res = M('PeAdmin')->where(['id' => $this->user['id']])->save([
+	        'id' => $this->user['id'],
+	        'browserbase_key' => $this->inputData['browserbase_key'],
+	        'browserbase_projectid' => $this->inputData['browserbase_projectid'],
+        ]);
+        
+        if ($res) {
+			$this->successJson('编辑成功！');
+		} else {
+			$this->errorJson('编辑失败！');
+		}
+	}
+	
+	public function getUserVmosConfig () {
+	    $result = [
+	        "vmos_key" => $this->user['vmos_key'],
+	        "vmos_access_key" => $this->user['vmos_access_key'],
+        ];
+        $this->successJson($result);
+	}
+	
+	// 设置Vmos配置
+	public function setUserVmosConfig ()
+	{
+	    $res = M('PeAdmin')->where(['id' => $this->user['id']])->save([
+	        'id' => $this->user['id'],
+	        'vmos_key' => $this->inputData['vmos_key'],
+	        'vmos_access_key' => $this->inputData['vmos_access_key'],
+        ]);
+        
+        if ($res) {
+			$this->successJson('编辑成功！');
+		} else {
+			$this->errorJson('编辑失败！');
+		}
+	}
+	
+	// 获取设备
+	public function getUserExample () {
+	    $where['userid'] = $this->user['id'];
+	    $where['type'] = $this->inputData['type'];
+	    
+	    $count = M('user_example')->where($where)->count();
+	    $total = $count;
+        $currentPage = $this->inputData['pageNum'] ? $this->inputData['pageNum'] : 1;
+        $pageSize = $this->inputData['pageSize'] ? $this->inputData['pageSize'] : 15;
+        $total = $count;
+        $allPage = ceil($total / $pageSize);
+        $offset = ($currentPage - 1) * $pageSize;
+		$Page = new \Think\Page($count, $pageSize);
+		$show = $Page->show();
+		
+		$list = M('user_example')->where($where)->order('id desc')->limit($offset . ',' . $pageSize)->select();
+		
+		$result = [];
+		
+		foreach ($list as $key => $value) {
+		    $result[$key] = $value;
+		    $result[$key]['device_count'] = 0;
+		    $deviceCount = M('payparams_list')->where(['vmosid' => $value['key']])->count();
+		    if ($deviceCount > 0) {
+		        $result[$key]['device_count'] = $deviceCount;
+		    }
+		    
+		}
+		$this->successJson([
+            'page' => [
+                'total' => (int)$total,
+                'all_page' => (int)$allPage,
+                'current_page' => (int)$currentPage,
+                'page_size' => (int)$pageSize,
+            ],
+            'list' => $result
+        ]);
+	}
+	
+	// 添加设备
+	public function addUserExample () {
+	    $addData = [
+	        'userid' => $this->user['id'],
+	        'type' => $this->inputData['type'],
+	        'key' => $this->inputData['key'],
+	        'addtime' => time()
+        ];
+        
+        if (M('user_example')->add($addData)) {
+			$this->successJson('添加成功！');
+		} else {
+			$this->errorJson('添加失败！');
+		}
+	}
+	
+	// 删除设备
+	public function delUserExample () {
+        if (M('user_example')->where(['id' => $this->inputData['id']])->delete()) {
+			$this->successJson('删除成功！');
+		} else {
+			$this->errorJson('删除失败！');
+		}
+	}
+	
+	// 获取系统配置
+	public function getSysAutoConfig () {
+	    $count = M('auto_script_config')->count();
+	    $total = $count;
+        $currentPage = $this->inputData['pageNum'] ? $this->inputData['pageNum'] : 1;
+        $pageSize = $this->inputData['pageSize'] ? $this->inputData['pageSize'] : 15;
+        $total = $count;
+        $allPage = ceil($total / $pageSize);
+        $offset = ($currentPage - 1) * $pageSize;
+		$Page = new \Think\Page($count, $pageSize);
+		$show = $Page->show();
+		
+		$list = M('auto_script_config')->order('id desc')->limit($offset . ',' . $pageSize)->select();
+		
+		$result = [];
+		
+		foreach ($list as $key => $value) {
+		    $result[$key] = $value;
+		    
+		}
+		$this->successJson([
+            'page' => [
+                'total' => (int)$total,
+                'all_page' => (int)$allPage,
+                'current_page' => (int)$currentPage,
+                'page_size' => (int)$pageSize,
+            ],
+            'list' => $result
+        ]);
+	}
+	
+	// 添加设备
+	public function editSysAutoConfig () {
+        $saveData = [
+	        'id' => $this->inputData['id'],
+		    'value' => $this->inputData['value']
+	    ];
+        if (M('auto_script_config')->save($saveData)) {
+			$this->successJson('编辑成功！');
+		} else {
+			$this->errorJson('编辑失败！');
+		}
+	}
+	
 	public function testAdbInfo () {
         //   $signer = new \Common\Service\VmosAPISigner(
         //     "02nytsN365w0IxX0184L1cSBNFvTgP5q",  // Access Key ID
