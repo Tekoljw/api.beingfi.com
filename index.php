@@ -1,18 +1,20 @@
 <?php
+// PHP 8.0 compatibility shims
+require __DIR__ . '/compat_php8.php';
 // 定义系统编码
 header("Content-Type: text/html;charset=utf-8");
 // 定义应用路径
-define('APP_PATH', './Application/');
+define('APP_PATH', __DIR__ . '/Application/');
 //定义根路径
 define('APP_REALPATH',dirname(__FILE__));
 // 定义缓存路径
-define('RUNTIME_PATH', './Runtime/');
+define('RUNTIME_PATH', __DIR__ . '/Runtime/');
 // 定义备份路径
-define('DATABASE_PATH', './Database/');
+define('DATABASE_PATH', __DIR__ . '/Database/');
 // 定义钱包路径
-define('COIN_PATH', './Coin/');
+define('COIN_PATH', __DIR__ . '/Coin/');
 // 定义备份路径
-define('UPLOAD_PATH', './Upload/');
+define('UPLOAD_PATH', __DIR__ . '/Upload/');
 
 // 后台安全入口
 //define('ADMIN_KEY', 'starexchange');
@@ -27,7 +29,7 @@ $inputString = file_get_contents('php://input');
 if (json_decode($inputString, true)) {
     $inputStringData = json_decode($inputString, true);
 } else {
-    $inputStringData = parse_str($inputString);
+    parse_str($inputString, $inputStringData);
 }
 if (!$inputStringData) {
     $inputStringData = [];
@@ -55,7 +57,7 @@ if (isset($inputData['channelid']) && in_array($inputData['channelid'], $cnyChan
 // 开启演示模式
 define('APP_DEMO',0);
 // 开始调试模式
-define('APP_DEBUG',true);
+defined('APP_DEBUG') or define('APP_DEBUG', true);
 
 
 //判断走手机还是PC
@@ -108,7 +110,18 @@ if(wherecome()) {
 
 //define('WHERECOME','Home');
 //引入guzzlehttp框架
-require './core/Library/Vendor/composer/autoload.php';
+// PHP built-in server does not set PATH_INFO — fix for ThinkPHP routing
+if (!isset($_SERVER['PATH_INFO']) || $_SERVER['PATH_INFO'] === '') {
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
+    $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH) ?: '';
+}
+// ThinkPHP Dispatcher checks isset($_GET['s']) (VAR_PATHINFO) without empty check.
+// PHP built-in server may produce $_GET['s']='' which would override our PATH_INFO.
+// Remove any empty VAR_PATHINFO GET value to preserve the PATH_INFO we just set.
+if (isset($_GET['s']) && $_GET['s'] === '') {
+    unset($_GET['s']);
+}
+require __DIR__ . '/core/Library/Vendor/composer/autoload.php';
 // 引入入口文件
-require './core/ThinkPHP.php';
+require __DIR__ . '/core/ThinkPHP.php';
 ?>

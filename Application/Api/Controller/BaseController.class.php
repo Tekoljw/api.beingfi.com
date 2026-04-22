@@ -18,9 +18,11 @@ class BaseController extends Controller
     protected $adminid = 1;
     
     protected $appid = '647f374d41b6e0bf81055cc6';
-    protected $verifyWalltidUrl = "https://test-api.funihash.com/fingernft/mobile/wallet/validate";
-    protected $verifyWalltPinUrl = "https://test-api.funihash.com/fingernft/mobile/wallet/verifyPin";
-    protected $verifyWalltCodeUrl = "https://test-api.funihash.com/fingernft/mobile/wallet/verifyCode";
+    protected $bxbApiBase = 'http://127.0.0.1:8080/api/wallet';
+    protected $bxbSecret = 'bxb-internal-secret-2024';
+    protected $verifyWalltidUrl = "http://127.0.0.1:8080/api/wallet/user/validate";
+    protected $verifyWalltPinUrl = "http://127.0.0.1:8080/api/wallet/pin/verify";
+    protected $verifyWalltCodeUrl = "http://127.0.0.1:8080/api/wallet/code/verify";
     protected $getWalletInfoUrl = "https://test-api.funihash.com/fingernft/mobile/wallet/info";
     protected $walletTransferUrl = "https://test-api.funihash.com/fingernft/mobile/wallet/internalTransfer";
     
@@ -45,7 +47,7 @@ class BaseController extends Controller
         if (json_decode($inputString, true)) {
             $inputStringData = json_decode($inputString, true);
         } else {
-            $inputStringData = parse_str($inputString);
+            parse_str($inputString, $inputStringData);
         }
         
         if (!$inputStringData) {
@@ -68,11 +70,11 @@ class BaseController extends Controller
         ) {
             if ($this->inputData['token']) {
                 $this->user = M('PeAdmin')
-    				->where(['token' => $this->inputData['token']])
-    				->find();
-				if (!$this->user) {
-				    $this->errorJson('未知用户');
-				}
+                                ->where(['token' => $this->inputData['token']])
+                                ->find();
+                                if (!$this->user) {
+                                    $this->errorJson('未知用户');
+                                }
             } else {
                 $this->errorJson('未知用户');
             }

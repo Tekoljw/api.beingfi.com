@@ -27,7 +27,7 @@ class Dispatcher {
         $varController  =   C('VAR_CONTROLLER');
         $varAction      =   C('VAR_ACTION');
         $urlCase        =   C('URL_CASE_INSENSITIVE');
-        if(isset($_GET[$varPath])) { // 判断URL里面是否有兼容模式参数
+        if(!empty($_GET[$varPath])) { // 判断URL里面是否有兼容模式参数 (use !empty to avoid overriding PATH_INFO with empty string)
             $_SERVER['PATH_INFO'] = $_GET[$varPath];
             unset($_GET[$varPath]);
         }elseif(IS_CLI){ // CLI模式下 index.php module/controller/action/params/...
@@ -110,7 +110,6 @@ class Dispatcher {
 
         $depr = C('URL_PATHINFO_DEPR');
         define('MODULE_PATHINFO_DEPR',  $depr);
-
         if(empty($_SERVER['PATH_INFO'])) {
             $_SERVER['PATH_INFO'] = '';
             define('__INFO__','');
@@ -146,7 +145,7 @@ class Dispatcher {
             // 定义当前模块的模版缓存路径
             C('CACHE_PATH',CACHE_PATH.MODULE_NAME.'/');
             // 定义当前模块的日志目录
-	        C('LOG_PATH',  realpath(LOG_PATH).'/'.MODULE_NAME.'/');
+                C('LOG_PATH',  realpath(LOG_PATH).'/'.MODULE_NAME.'/');
 
             // 模块检测
             Hook::listen('module_check');
@@ -179,20 +178,20 @@ class Dispatcher {
         }
 
         if(!defined('__APP__')){
-	        $urlMode        =   C('URL_MODEL');
-	        if($urlMode == URL_COMPAT ){// 兼容模式判断
-	            define('PHP_FILE',_PHP_FILE_.'?'.$varPath.'=');
-	        }elseif($urlMode == URL_REWRITE ) {
-	            $url    =   dirname(_PHP_FILE_);
-	            if($url == '/' || $url == '\\')
-	                $url    =   '';
-	            define('PHP_FILE',$url);
-	        }else {
-	            define('PHP_FILE',_PHP_FILE_);
-	        }
-	        // 当前应用地址
-	        define('__APP__',strip_tags(PHP_FILE));
-	    }
+                $urlMode        =   C('URL_MODEL');
+                if($urlMode == URL_COMPAT ){// 兼容模式判断
+                    define('PHP_FILE',_PHP_FILE_.'?'.$varPath.'=');
+                }elseif($urlMode == URL_REWRITE ) {
+                    $url    =   dirname(_PHP_FILE_);
+                    if($url == '/' || $url == '\\')
+                        $url    =   '';
+                    define('PHP_FILE',$url);
+                }else {
+                    define('PHP_FILE',_PHP_FILE_);
+                }
+                // 当前应用地址
+                define('__APP__',strip_tags(PHP_FILE));
+            }
         // 模块URL地址
         $moduleName    =   defined('MODULE_ALIAS')? MODULE_ALIAS : MODULE_NAME;
         define('__MODULE__',(defined('BIND_MODULE') || !C('MULTI_MODULE'))? __APP__ : __APP__.'/'.($urlCase ? strtolower($moduleName) : $moduleName));
@@ -247,7 +246,7 @@ class Dispatcher {
         define('__ACTION__',__CONTROLLER__.$depr.(defined('ACTION_ALIAS')?ACTION_ALIAS:ACTION_NAME));
 
         //保证$_REQUEST正常取值
-        $_REQUEST = array_merge($_POST,$_GET,$_COOKIE);	// -- 加了$_COOKIE.  保证哦..
+        $_REQUEST = array_merge($_POST,$_GET,$_COOKIE); // -- 加了$_COOKIE.  保证哦..
     }
 
     /**

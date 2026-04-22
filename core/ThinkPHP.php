@@ -1,17 +1,19 @@
 <?php
-if(defined('M_DEBUG') && M_DEBUG == 1){
-    define('APP_DEBUG',1);
-}else {
-    if (isset($_GET['debug']) && $_GET['debug'] === 'tw_debug') {
-        setcookie('ADBUG','tw_debug',time()+ 60*3600);
-        exit('ok');
-    }
-    if (isset($_COOKIE['ADBUG']) && $_COOKIE['ADBUG'] == 'tw_debug') {
-        // 开启调试模式
-        define('APP_DEBUG', 1);
-    } else {
-        // 开启调试模式
-        define('APP_DEBUG', 0);
+if (!defined('APP_DEBUG')) {
+    if(defined('M_DEBUG') && M_DEBUG == 1){
+        define('APP_DEBUG',1);
+    }else {
+        if (isset($_GET['debug']) && $_GET['debug'] === 'tw_debug') {
+            setcookie('ADBUG','tw_debug',time()+ 60*3600);
+            exit('ok');
+        }
+        if (isset($_COOKIE['ADBUG']) && $_COOKIE['ADBUG'] == 'tw_debug') {
+            // 开启调试模式
+            define('APP_DEBUG', 1);
+        } else {
+            // 开启调试模式
+            define('APP_DEBUG', 0);
+        }
     }
 }
 function getChmod($filepath)
@@ -123,7 +125,7 @@ try {
 
 } catch (Exception $exception) {
 	send_http_status(404);
-	$string = file_get_contents('./404.html');
+	$string = file_get_contents(__DIR__ . '/../404.html');
 	$string = str_replace('$ERROR_MESSAGE', $exception->getMessage(), $string);
 	$string = str_replace('HTTP_HOST', 'http://' . $_SERVER['HTTP_HOST'], $string);
 	echo $string;
