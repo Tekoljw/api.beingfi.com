@@ -1,7 +1,7 @@
 <?php
 namespace Cli\Controller;
 
-use Cli\Common\ExchangeCommon;
+use Think\Controller;
 use Think\Log;
 /**
  * 自动网银交换：任务编排、AI 调用、操作文档、调 Node 执行浏览器操作
@@ -29,25 +29,43 @@ use Think\Log;
  *   BROWSERBASE_PROJECT_ID => '你的 Project ID'
  * 步骤共用（pending_steps），状态按账户记录在 doc.accounts[username]。
  */
-class AutoWebExchangeController extends ExchangeBaseController {
+class AutoWebExchangeController extends \Think\Controller {
+
+    /** 本次运行累计 token */
+    protected $totalTokens = 0;
+    /** 每通道 AI token 上限（601 达限不影响 6001） */
+    const TOKEN_LIMIT = 8000;
+    /** 步骤权重：初始 8，上限 10；成功 +1，步骤失败 -2，≤0 删除 */
+    const STEP_WEIGHT_INITIAL = 8;
+    const STEP_WEIGHT_MAX = 10;
+    const STEP_WEIGHT_SUCCESS_DELTA = 1;
+    const STEP_WEIGHT_FAIL_DELTA = -2;
 
     /** DeepSeek API Key */
     const DEEPSEEK_KEY = 'sk-73a3298a11c64ecca30eac0add899c89';
     /** DeepSeek API URL */
     const DEEPSEEK_API = 'https://api.deepseek.com/v1/chat/completions';
+    /** 操作文档路径（可改为配置） */
+    protected $opsDocPath;
     /** 通道操作文档目录：Public/WebAutoScriptDoc，每通道一个 JSON（channelid.json） */
+    protected $webAutoScriptDocDir;
     /** Node 脚本路径（PwBrowse 目录下的入口） */
     protected $nodeScriptPath;
+    /** Runtime 目录（用于按账户的缓存路径） */
+    protected $runtimePath;
     /**
      * 多账户列表： [ ['username'=>'xx','password'=>'xx','channelid'=>301,'website_url'=>'https://...'], ... ]
      * 优先从 tw_paytype_config + tw_payparams_list 读取（is_web=1），否则从配置 C('AUTO_WEB_EXCHANGE_ACCOUNTS')
      */
     protected $accounts = [];
+    /** 本次运行中各通道已消耗的 AI token，用于按次限制，不再持久化到文档 */
+    protected $channelRunTokens = [];
+
     public function __construct() {
         parent::__construct();
         $root = defined('ROOT_PATH') ? ROOT_PATH : dirname(dirname(dirname(dirname(__FILE__))));
         $this->opsDocPath = $root . '/Runtime/auto_web_exchange_ops.json';
-        $this->channelDocDir = $root . '/Public/WebAutoScriptDoc';
+        $this->webAutoScriptDocDir = $root . '/Public/WebAutoScriptDoc';
         $this->nodeScriptPath = $root . '/PwBrowse/run.js';
         $this->runtimePath = $root . '/Runtime';
         $this->accounts = $this->_getAccounts();
@@ -251,6 +269,44 @@ class AutoWebExchangeController extends ExchangeBaseController {
     }
 
     /**
+     * 从 AI 返回文本中解析出 step（支持纯 JSON、markdown 代码块、多字段对象）
+     */
+    protected function _parseStepJson($content) {
+        if ($content === '') {
+            return null;
+        }
+        $content = preg_replace('/^```\w*\s*|\s*```\s*$/s', '', $content);
+        $content = trim($content);
+        $step = json_decode($content, true);
+        if (is_array($step) && !empty($step['action'])) {
+            return $step;
+        }
+        $start = strpos($content, '{"action"');
+        if ($start === false) {
+            $start = strpos($content, '{');
+        }
+        if ($start !== false) {
+            $depth = 0;
+            $len = strlen($content);
+            for ($i = $start; $i < $len; $i++) {
+                if ($content[$i] === '{') {
+                    $depth++;
+                } elseif ($content[$i] === '}') {
+                    $depth--;
+                    if ($depth === 0) {
+                        $step = json_decode(substr($content, $start, $i - $start + 1), true);
+                        if (is_array($step) && !empty($step['action'])) {
+                            return $step;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * 调用 DeepSeek，累加 token，超限则不再请求
      */
     protected function _callDeepSeek($messages, $model = 'deepseek-chat') {
@@ -397,7 +453,190 @@ class AutoWebExchangeController extends ExchangeBaseController {
      * @return array { submitted: [...], skipped: [...], summary: string }
      */
     protected function _submitReceiptsForAccount($account, $receipts) {
-        return ExchangeCommon::submitReceiptsForAccount($this->runtimePath, $account, $receipts);
+        $result = [
+            'submitted' => [],
+            'skipped'   => [],
+            'summary'   => '',
+        ];
+        $username = isset($account['username']) ? $account['username'] : '';
+        if ($username === '' || empty($receipts)) {
+            return $result;
+        }
+
+        $prefix = C('DB_PREFIX') ?: 'tw_';
+        $configTable = $prefix . 'paytype_config';
+        $paramsTable = $prefix . 'payparams_list';
+        $currTable   = $prefix . 'currencys';
+        $peAdminTable = $prefix . 'pe_admin';
+
+        $channelid = isset($account['channelid']) ? (int)$account['channelid'] : 0;
+
+        // 读取通道配置（包括 receive_params / currencyid 等）
+        $cfgRow = null;
+        if ($channelid > 0) {
+            $cfgRow = M()->table($configTable)->where(['channelid' => $channelid])->field('currencyid')->find();
+        }
+
+        // 读取账号配置（获取 userid/appid/task_status/task_success_time）
+        $paramRow = M()->table($paramsTable)->where(['login_account' => $username])->field('userid,appid,task_status,task_success_time')->find();
+        $taskStatus = $paramRow && isset($paramRow['task_status']) ? (int)$paramRow['task_status'] : 0;
+        $taskTime   = $paramRow && isset($paramRow['task_success_time']) ? (int)$paramRow['task_success_time'] : 0;
+
+        // 起始水位：上次成功时间，否则最近 6 小时
+        $now = time();
+        if ($taskStatus === 2 && $taskTime > 0) {
+            $startTs = $taskTime;
+        } else {
+            $startTs = $now - 21600;
+        }
+
+        // 解析 currency
+        $currency = 'MMK';
+        if ($cfgRow && isset($cfgRow['currencyid']) && (int)$cfgRow['currencyid'] > 0) {
+            $cid = (int)$cfgRow['currencyid'];
+            $cRow = M()->table($currTable)->where(['id' => $cid])->field('currency')->find();
+            if ($cRow && !empty($cRow['currency'])) {
+                $currency = $cRow['currency'];
+            }
+        }
+
+        // 其他固定参数：opUserID 用 tw_pe_admin.id（tw_pe_admin.userid = tw_payparams_list.userid）
+        $opUserId = '';
+        if ($paramRow && isset($paramRow['userid'])) {
+            $peAdminRow = M()->table($peAdminTable)->where(['userid' => $paramRow['userid']])->field('id')->find();
+            $opUserId = ($peAdminRow && isset($peAdminRow['id'])) ? $peAdminRow['id'] : '';
+        }
+        $bankcard   = $paramRow && isset($paramRow['appid']) ? $paramRow['appid'] : '';
+        $paypassword = '123456';
+
+        $baseUrl = C('AUTO_WEB_EXCHANGE_BASE_URL');
+        if (!$baseUrl) {
+            return $result;
+        }
+        $orderUrl = rtrim($baseUrl, '/') . '/Pay/PayExchange/orderQueren';
+        $md5Key   = 'i8cuejg93k03kkuakdHDIhuyidOcUamp';
+
+        $allOk = true;
+        $maxTs = $taskTime;
+
+        foreach ($receipts as $r) {
+            $dateStr = isset($r['received_at']) ? trim($r['received_at']) : '';
+            $amount  = isset($r['amount']) ? trim($r['amount']) : '';
+            $orderId = isset($r['returnOrderID']) ? trim($r['returnOrderID']) : (isset($r['id']) ? trim($r['id']) : '');
+
+            if ($dateStr === '' || $amount === '' || $orderId === '') {
+                $result['skipped'][] = $r;
+                continue;
+            }
+
+            // 将 YYYY-MM-DD HH:ii:ss 转为时间戳
+            $ts = strtotime($dateStr);
+            if ($ts === false) {
+                $result['skipped'][] = $r;
+                continue;
+            }
+
+            // 增量过滤：仅提交大于上次成功时间的记录
+            if ($ts <= $startTs) {
+                $result['skipped'][] = $r;
+                continue;
+            }
+
+            $payload = [
+                'returnOrderID' => $orderId,
+                'bankcard'      => $bankcard,
+                'amount'        => $amount,
+                'opUserID'      => $opUserId,
+                'paypassword'   => $paypassword,
+                'currency'      => $currency,
+                'date'          => $dateStr,
+                'noticestr'     => md5(uniqid('', true)),
+            ];
+            $payload['sign'] = $this->_createSign($md5Key, $payload);
+
+            // 提交到后端接口
+            $ch = curl_init($orderUrl);
+            curl_setopt_array($ch, [
+                CURLOPT_POST           => true,
+                CURLOPT_POSTFIELDS     => http_build_query($payload),
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT        => 30,
+            ]);
+            $resp = curl_exec($ch);
+            $err  = curl_error($ch);
+            $httpCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            // 请求/响应日志，便于排查
+            $logLine = date('Y-m-d H:i:s') . ' account=' . $username . ' orderQueren request url=' . $orderUrl . ' payload=' . json_encode($payload, JSON_UNESCAPED_UNICODE) . ' response_http_code=' . $httpCode . ' response_body=' . (is_string($resp) ? $resp : '') . ' curl_error=' . $err . "\n";
+            @file_put_contents($this->runtimePath . '/order_queren_submit.log', $logLine, FILE_APPEND);
+
+            $ok = false;
+            if (!$err && $resp !== false) {
+                $respArr = json_decode($resp, true);
+                if (is_array($respArr) && isset($respArr['status']) && strtolower($respArr['status']) === 'success') {
+                    $ok = true;
+                }
+            }
+
+            if ($ok) {
+                $result['submitted'][] = $r;
+                if ($ts > $maxTs) {
+                    $maxTs = $ts;
+                }
+            } else {
+                $allOk = false;
+                $result['skipped'][] = $r;
+            }
+        }
+
+        // 根据整体提交结果更新账号任务状态
+        if (!empty($paramRow)) {
+            if ($allOk && $maxTs > 0) {
+                M()->table($paramsTable)->where(['login_account' => $username])->save([
+                    'task_status'       => 2,
+                    'task_success_time' => $maxTs,
+                ]);
+                $result['summary'] = 'submitted ' . count($result['submitted']) . ' receipt(s)';
+            } else {
+                M()->table($paramsTable)->where(['login_account' => $username])->save([
+                    'task_status' => 1,
+                ]);
+                if (empty($result['submitted'])) {
+                    $result['summary'] = 'no receipt submitted';
+                } else {
+                    $result['summary'] = 'partially submitted ' . count($result['submitted']) . ' receipt(s)';
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * 创建签名（按照业务方提供的规则）
+     * @param string $md5key
+     * @param array  $list
+     * @return string
+     */
+    protected function _createSign($md5key, $list) {
+        if (!is_array($list)) {
+            return '';
+        }
+        ksort($list);
+        reset($list);
+        $md5str = '';
+        foreach ($list as $key => $val) {
+            if (($val !== '' && $val !== []) && $key !== 'sign') {
+                if (is_array($val)) {
+                    $md5str .= $key . '=' . json_encode($val) . '&';
+                } else {
+                    $md5str .= $key . '=' . $val . '&';
+                }
+            }
+        }
+        $md5str .= 'key=' . $md5key;
+        return strtoupper(md5($md5str));
     }
 
     /**
@@ -614,10 +853,246 @@ class AutoWebExchangeController extends ExchangeBaseController {
             if (isset($payLog)) {
                 $payLog('[node_result] success=' . (isset($decoded['success']) ? ($decoded['success'] ? '1' : '0') : '?') . ' order_results_count=' . count($decoded['order_results']));
             }
-            ExchangeCommon::processPaymentOrderResults($this->runtimePath, $decoded['order_results'], $orders, $account, isset($payLog) ? $payLog : null);
+            $this->_processPaymentOrderResults($decoded['order_results'], $orders, $account, isset($payLog) ? $payLog : null);
         }
 
         return $decoded;
+    }
+
+    /**
+     * 根据 Node 返回的 order_results 更新订单状态、保存截图、确认订单（订单表用 D('ExchangeOrder')，支持分表）
+     * @param callable|null $payLog 日志回调 function($msg)
+     */
+    protected function _processPaymentOrderResults($orderResults, $orders, $account, $payLog = null) {
+        $orderModel = D('ExchangeOrder');
+        if (!$orderModel) {
+            if ($payLog) {
+                $payLog('[processResults] orderModel=null');
+            }
+            return;
+        }
+        $bankcard = isset($account['appid']) ? trim((string)$account['appid']) : (isset($account['username']) ? $account['username'] : '');
+        $saveDir = $this->runtimePath . '/pay_screenshots/' . date('Y/m/');
+        if (!is_dir($saveDir)) {
+            @mkdir($saveDir, 0755, true);
+        }
+        foreach ($orderResults as $res) {
+            $orderid = isset($res['orderid']) ? $res['orderid'] : '';
+            if ($orderid === '') {
+                continue;
+            }
+            $success = !empty($res['success']);
+            if ($payLog) {
+                $payLog('[processResults] orderid=' . $orderid . ' success=' . ($success ? '1' : '0') . ($success ? '' : ' error=' . (isset($res['error']) ? $res['error'] : '')));
+            }
+            if ($success) {
+                $proofPath = '';
+                if (!empty($res['screenshot_base64'])) {
+                    $ext = (strpos($res['screenshot_base64'], 'data:image/png') === 0) ? 'png' : 'jpg';
+                    $filename = $orderid . '_' . time() . '.' . $ext;
+                    $path = $saveDir . $filename;
+                    $bin = base64_decode(preg_replace('/^data:image\/\w+;base64,/', '', $res['screenshot_base64']));
+                    if ($bin !== false && file_put_contents($path, $bin) !== false) {
+                        $proofPath = 'Runtime/pay_screenshots/' . date('Y/m/') . $filename;
+                        if ($payLog) {
+                            $payLog('[processResults] orderid=' . $orderid . ' screenshot_saved=' . $proofPath);
+                        }
+                    }
+                }
+                $row = $orderModel->where(['orderid' => $orderid])->find();
+                $existing = isset($row['pay_proof']) ? trim((string)$row['pay_proof']) : '';
+                $newProof = ($proofPath !== '' && $existing !== '') ? $existing . ',' . $proofPath : ($proofPath !== '' ? $proofPath : $existing);
+                $orderModel->where(['orderid' => $orderid])->save([
+                    'pay_proof'   => $newProof,
+                    'status'      => 3,
+                    'task_status' => 3,
+                ]);
+                if ($proofPath !== '') {
+                    $orderInfo = $orderModel->where(['orderid' => $orderid])->find();
+                    if ($orderInfo && $bankcard !== '') {
+                        try {
+                            $payCtrl = A('Pay/PayExchange');
+                            $payCtrl->confirmC2COrderWithApiOrderInfo($orderInfo, $bankcard);
+                            if ($payLog) {
+                                $payLog('[processResults] orderid=' . $orderid . ' confirm_called=ok');
+                            }
+                        } catch (\Exception $e) {
+                            if ($payLog) {
+                                $payLog('[processResults] orderid=' . $orderid . ' confirm_exception=' . $e->getMessage());
+                            }
+                        }
+                    }
+                }
+            } else {
+                $orderModel->where(['orderid' => $orderid])->save([
+                    'task_status' => 4,
+                    'status'      => 8,
+                ]);
+            }
+        }
+    }
+
+    protected function _readOpsDoc() {
+        $default = ['pending_steps' => [], 'accounts' => []];
+        if (!is_file($this->opsDocPath)) {
+            return $default;
+        }
+        $json = file_get_contents($this->opsDocPath);
+        $doc = json_decode($json, true);
+        if (!is_array($doc)) {
+            return $default;
+        }
+        if (!isset($doc['accounts']) || !is_array($doc['accounts'])) {
+            $doc['accounts'] = [];
+        }
+        if (!isset($doc['pending_steps']) || !is_array($doc['pending_steps'])) {
+            $doc['pending_steps'] = [];
+        }
+        return $doc;
+    }
+
+    protected function _appendStepToDoc(&$doc, $step) {
+        if (!isset($doc['pending_steps'])) {
+            $doc['pending_steps'] = [];
+        }
+        $doc['pending_steps'][] = $step;
+        $this->_writeOpsDoc($doc);
+    }
+
+    protected function _writeStepResultToDoc($doc, $step, $result) {
+        if (!isset($doc['steps_history'])) {
+            $doc['steps_history'] = [];
+        }
+        $summary = isset($result['summary']) ? $result['summary'] : (isset($result['by_account']) ? 'by_account:' . count($result['by_account']) : '');
+        if (isset($result['otp_result'])) {
+            $summary .= ';otp_result=' . $result['otp_result'];
+        }
+        $doc['steps_history'][] = [
+            'step' => $step,
+            'result_summary' => $summary,
+            'time' => date('Y-m-d H:i:s'),
+        ];
+        $doc['last_action'] = isset($step['action']) ? $step['action'] : '';
+        $doc['last_result_summary'] = isset($result['summary']) ? $result['summary'] : (isset($result['by_account']) ? json_encode(array_keys($result['by_account'])) : '');
+        if (!empty($doc['pending_steps']) && isset($doc['pending_steps'][0])) {
+            array_shift($doc['pending_steps']);
+        }
+        if (!isset($doc['accounts']) || !is_array($doc['accounts'])) {
+            $doc['accounts'] = [];
+        }
+        $byAccount = isset($result['by_account']) && is_array($result['by_account']) ? $result['by_account'] : [];
+        if (!empty($byAccount)) {
+            foreach ($byAccount as $u => $data) {
+                if (!isset($doc['accounts'][$u]) || !is_array($doc['accounts'][$u])) {
+                    $doc['accounts'][$u] = ['checked_receipts' => [], 'executed_payments' => []];
+                }
+                if (!isset($doc['accounts'][$u]['checked_receipts'])) {
+                    $doc['accounts'][$u]['checked_receipts'] = [];
+                }
+                if (!isset($doc['accounts'][$u]['executed_payments'])) {
+                    $doc['accounts'][$u]['executed_payments'] = [];
+                }
+                if (isset($data['checked_receipts']) && is_array($data['checked_receipts'])) {
+                    foreach ($data['checked_receipts'] as $r) {
+                        $doc['accounts'][$u]['checked_receipts'][] = $r;
+                    }
+                }
+                if (!empty($data['payment_id'])) {
+                    $doc['accounts'][$u]['executed_payments'][] = [
+                        'id' => $data['payment_id'],
+                        'amount' => isset($data['amount']) ? $data['amount'] : '',
+                        'payee' => isset($data['payee']) ? $data['payee'] : '',
+                        'time' => date('Y-m-d H:i:s'),
+                    ];
+                }
+            }
+        } else {
+            $u = isset($result['_account']) ? $result['_account'] : '';
+            if ($u !== '') {
+                if (!isset($doc['accounts'][$u]) || !is_array($doc['accounts'][$u])) {
+                    $doc['accounts'][$u] = ['checked_receipts' => [], 'executed_payments' => []];
+                }
+                if (!isset($doc['accounts'][$u]['checked_receipts'])) {
+                    $doc['accounts'][$u]['checked_receipts'] = [];
+                }
+                if (!isset($doc['accounts'][$u]['executed_payments'])) {
+                    $doc['accounts'][$u]['executed_payments'] = [];
+                }
+                if (isset($result['checked_receipts']) && is_array($result['checked_receipts'])) {
+                    foreach ($result['checked_receipts'] as $r) {
+                        $doc['accounts'][$u]['checked_receipts'][] = $r;
+                    }
+                }
+                if (!empty($result['payment_id'])) {
+                    $doc['accounts'][$u]['executed_payments'][] = [
+                        'id' => $result['payment_id'],
+                        'amount' => isset($result['amount']) ? $result['amount'] : '',
+                        'payee' => isset($result['payee']) ? $result['payee'] : '',
+                        'time' => date('Y-m-d H:i:s'),
+                    ];
+                }
+            }
+        }
+        $doc['last_total_tokens'] = $this->totalTokens;
+        $this->_writeOpsDoc($doc);
+    }
+
+    protected function _writeOpsDoc($doc) {
+        $dir = dirname($this->opsDocPath);
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0755, true);
+        }
+        file_put_contents($this->opsDocPath, json_encode($doc, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    }
+
+    /** 通道操作文档路径：Public/WebAutoScriptDoc/{channelid}.json */
+    protected function _getChannelDocPath($channelid) {
+        return $this->webAutoScriptDocDir . '/' . (int)$channelid . '.json';
+    }
+
+    /** 读取通道文档，无则返回 ['steps'=>[], 'token_used'=>0]；为旧步骤补全 position */
+    protected function _readChannelDoc($channelid) {
+        $path = $this->_getChannelDocPath($channelid);
+        if (!is_file($path)) {
+            return ['steps' => []];
+        }
+        $json = file_get_contents($path);
+        $doc = json_decode($json, true);
+        if (!is_array($doc) || !isset($doc['steps']) || !is_array($doc['steps'])) {
+            return ['steps' => []];
+        }
+        if (!isset($doc['receipt_parse']) || !is_array($doc['receipt_parse'])) {
+            $doc['receipt_parse'] = [];
+        }
+        foreach ($doc['steps'] as $i => $s) {
+            if (!isset($s['position'])) {
+                $doc['steps'][$i]['position'] = $i;
+            }
+        }
+        return $doc;
+    }
+
+    /** 写入通道文档 */
+    protected function _writeChannelDoc($channelid, $doc) {
+        if (!is_dir($this->webAutoScriptDocDir)) {
+            @mkdir($this->webAutoScriptDocDir, 0755, true);
+        }
+        $path = $this->_getChannelDocPath($channelid);
+        file_put_contents($path, json_encode($doc, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    }
+
+    /**（已废弃）旧的默认步骤 seed 逻辑保留占位，实际不再使用，所有步骤均由文档/AI 决定 */
+    protected function _seedDefaultStepsForChannel($channelType) {
+        return [];
+    }
+
+    protected function _output($arr) {
+        if (php_sapi_name() === 'cli') {
+            echo json_encode($arr, JSON_UNESCAPED_UNICODE) . "\n";
+        } else {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($arr, JSON_UNESCAPED_UNICODE);
+        }
     }
 
     /**
@@ -1043,6 +1518,25 @@ class AutoWebExchangeController extends ExchangeBaseController {
         $this->_outputJson(['step' => null, 'done' => true]);
     }
 
+    /** 在 steps 中取 position 等于 $pos 的步，按 weight 降序取第一条 */
+    protected function _pickStepAtPosition($steps, $pos) {
+        $at = [];
+        foreach ($steps as $s) {
+            if (isset($s['position']) && (int)$s['position'] === (int)$pos) {
+                $at[] = $s;
+            }
+        }
+        if (empty($at)) {
+            return null;
+        }
+        usort($at, function ($a, $b) {
+            $wa = isset($a['weight']) ? (int)$a['weight'] : 0;
+            $wb = isset($b['weight']) ? (int)$b['weight'] : 0;
+            return $wb - $wa;
+        });
+        return $at[0];
+    }
+
     /**
      * 调 AI 生成步骤（文档空或某位置全失败）。扣该通道 token_used，超限不请求
      * @param int $position null=文档空生成整段，否则为该位置补充步骤
@@ -1142,6 +1636,226 @@ class AutoWebExchangeController extends ExchangeBaseController {
         $content = is_string($res['content']) ? trim($res['content']) : '';
         $spec = $this->_parseReceiptParseSpecJson($content);
         return $spec;
+    }
+
+    protected function _parseReceiptParseSpecJson($content) {
+        $content = preg_replace('/^```\w*\s*|\s*```\s*$/s', '', $content);
+        $content = trim($content);
+        if ($content === '') {
+            return null;
+        }
+        $spec = json_decode($content, true);
+        if (!is_array($spec)) {
+            $start = strpos($content, '{');
+            $end = strrpos($content, '}');
+            if ($start !== false && $end !== false && $end > $start) {
+                $spec = json_decode(substr($content, $start, $end - $start + 1), true);
+            }
+        }
+        if (!is_array($spec) || empty($spec['row_selector']) || empty($spec['amount_selector'])) {
+            return null;
+        }
+        $out = [
+            'row_selector' => (string)$spec['row_selector'],
+            'time_selector' => isset($spec['time_selector']) ? (string)$spec['time_selector'] : '',
+            'amount_selector' => (string)$spec['amount_selector'],
+        ];
+        if (!empty($spec['row_id_selector'])) {
+            $out['row_id_selector'] = (string)$spec['row_id_selector'];
+        }
+        if (isset($spec['filters']) && is_array($spec['filters'])) {
+            $out['filters'] = $spec['filters'];
+        }
+        return $out;
+    }
+
+    /**
+     * 获取当前运行中某通道已使用的 AI token（仅本次 index 调用有效，不持久化）
+     */
+    protected function _getChannelRunTokenUsed($channelid) {
+        $cid = (int)$channelid;
+        return isset($this->channelRunTokens[$cid]) ? (int)$this->channelRunTokens[$cid] : 0;
+    }
+
+    /**
+     * 为当前运行中某通道累计 AI token 用量
+     */
+    protected function _addChannelRunTokenUsed($channelid, $used) {
+        $cid = (int)$channelid;
+        $delta = (int)$used;
+        if ($delta <= 0) {
+            return;
+        }
+        if (!isset($this->channelRunTokens[$cid])) {
+            $this->channelRunTokens[$cid] = 0;
+        }
+        $this->channelRunTokens[$cid] += $delta;
+    }
+
+    protected function _parseAiStepsJson($content, $position) {
+        $content = preg_replace('/^```\w*\s*|\s*```\s*$/s', '', $content);
+        $content = trim($content);
+        $arr = json_decode($content, true);
+        if (!is_array($arr)) {
+            $start = strpos($content, '[');
+            if ($start !== false) {
+                $end = strrpos($content, ']');
+                if ($end !== false && $end > $start) {
+                    $arr = json_decode(substr($content, $start, $end - $start + 1), true);
+                }
+            }
+        }
+        if (!is_array($arr) || empty($arr)) {
+            return [];
+        }
+        $steps = [];
+        $pos = $position !== null ? (int)$position : 0;
+        foreach ($arr as $i => $item) {
+            if (!is_array($item) || empty($item['type'])) {
+                continue;
+            }
+            $positionVal = isset($item['position']) ? (int)$item['position'] : ($position !== null ? (int)$position : $i);
+            if ($position === null) {
+                $pos = $positionVal;
+            }
+            $step = [
+                'id'    => 'step_' . uniqid('', true),
+                'type'  => $item['type'],
+                'position' => $pos,
+                'weight' => self::STEP_WEIGHT_INITIAL,
+            ];
+            if (!empty($item['selector'])) {
+                $step['selector'] = $item['selector'];
+            }
+            if (isset($item['value'])) {
+                $step['value'] = $item['value'];
+            }
+            if (isset($item['amount'])) {
+                $step['amount'] = $item['amount'];
+            }
+            if (isset($item['payee'])) {
+                $step['payee'] = $item['payee'];
+            }
+            if (isset($item['optional'])) {
+                $step['optional'] = (bool)$item['optional'];
+            } elseif (isset($item['required'])) {
+                // 若 AI 提供 required 字段，则 optional = !required
+                $step['optional'] = !((bool)$item['required']);
+            }
+            $steps[] = $step;
+            if ($position === null) {
+                $pos++;
+            }
+        }
+        return $steps;
+    }
+
+    /**
+     * 按通道类型与占位符规则过滤步骤：
+     * - 登录用户名/密码步骤必须使用 {{username}}/{{password}} 占位符，否则丢弃
+     * - 收款通道(2) 丢弃 executePayment；付款通道(1) 可选丢弃 viewReceipts（暂保留）
+     */
+    protected function _filterChannelSteps($steps, $channelType) {
+        if (!is_array($steps) || empty($steps)) {
+            return [];
+        }
+        $out = [];
+        foreach ($steps as $step) {
+            if (!is_array($step) || empty($step['type'])) {
+                continue;
+            }
+            $type = strtolower((string)$step['type']);
+            $selector = isset($step['selector']) ? (string)$step['selector'] : '';
+            $value = isset($step['value']) ? (string)$step['value'] : null;
+
+            $looksLikeUser = false;
+            $looksLikePass = false;
+            $looksLikeLoginClick = false;
+
+            if ($selector !== '') {
+                $selLower = mb_strtolower($selector, 'UTF-8');
+
+                // 通道类型过滤：收款通道不允许明显的付款/转账相关步骤
+                if ((int)$channelType === 2) {
+                    // 显式禁止 executePayment 类型
+                    if ($type === 'executepayment') {
+                        continue;
+                    }
+                    // selector 中包含典型付款/收款输入字段名的步骤直接丢弃
+                    $hasPayeeLike =
+                        strpos($selLower, 'payee_') !== false ||          // PAYEE_ACCOUNT, PAYEE_ACCOUNT_NO 等
+                        strpos($selLower, 'payeeaccount') !== false ||    // payeeAccount
+                        strpos($selLower, 'tran_amt') !== false ||        // TRAN_AMT
+                        strpos($selLower, 'amount') !== false;            // amount 字段
+
+                    // 文案类中文关键词：收款方账号 / 收款账号 / 转账 / 付款 等
+                    $hasCnPayLike =
+                        mb_strpos($selLower, '收款方账号', 0, 'UTF-8') !== false ||
+                        mb_strpos($selLower, '收款账号', 0, 'UTF-8') !== false ||
+                        (
+                            // 同时出现“收款”和“账号”基本可以判断是收款账号输入框
+                            mb_strpos($selLower, '收款', 0, 'UTF-8') !== false &&
+                            mb_strpos($selLower, '账号', 0, 'UTF-8') !== false
+                        ) ||
+                        mb_strpos($selLower, '转账', 0, 'UTF-8') !== false ||
+                        mb_strpos($selLower, '付款', 0, 'UTF-8') !== false;
+
+                    if ($hasPayeeLike || $hasCnPayLike) {
+                        continue;
+                    }
+                }
+
+                $looksLikeUser =
+                    (strpos($selLower, 'userid') !== false) ||
+                    (mb_strpos($selLower, '用户名', 0, 'UTF-8') !== false) ||
+                    (mb_strpos($selLower, '账号', 0, 'UTF-8') !== false) ||
+                    (mb_strpos($selLower, '户名', 0, 'UTF-8') !== false) ||
+                    (strpos($selLower, 'loginname') !== false);
+                $looksLikePass =
+                    (strpos($selLower, 'loginpwd') !== false) ||
+                    (strpos($selLower, 'loginpass') !== false) ||
+                    (strpos($selLower, 'password') !== false) ||
+                    (mb_strpos($selLower, '密码', 0, 'UTF-8') !== false);
+                $looksLikeLoginClick =
+                    ($type === 'click') && (
+                        strpos($selLower, 'loginbutton') !== false ||
+                        strpos($selLower, 'logonbutton') !== false ||
+                        mb_strpos($selLower, '登录', 0, 'UTF-8') !== false
+                    );
+            }
+
+            // 登录用户名步骤：明显是用户名/账号输入框时，value 必须是 {{username}}，并归类到 position 0
+            if ($type === 'fill' && $looksLikeUser) {
+                if ($value !== '{{username}}') {
+                    continue;
+                }
+                $step['position'] = 0;
+            }
+
+            // 登录密码步骤：明显是密码输入框时，value 必须是 {{password}}，并归类到 position 1
+            if ($type === 'fill' && $looksLikePass) {
+                if ($value !== '{{password}}') {
+                    continue;
+                }
+                $step['position'] = 1;
+            }
+
+            // 登录按钮点击：明显是登录按钮时，归类到 position 2
+            if ($looksLikeLoginClick) {
+                $step['position'] = 2;
+            }
+
+            // 收款通道中，viewReceipts 至少应在 position>=3
+            if ($type === 'viewreceipts') {
+                $pos = isset($step['position']) ? (int)$step['position'] : 0;
+                if ($pos < 3) {
+                    $step['position'] = 3;
+                }
+            }
+
+            $out[] = $step;
+        }
+        return $out;
     }
 
     /** 调用 DeepSeek 并返回 [content, usage]，不累加 totalTokens（供按通道扣 token 用） */
@@ -1274,5 +1988,10 @@ class AutoWebExchangeController extends ExchangeBaseController {
                 ['type' => 'click', 'selector' => 'input[value="登录"], button:has-text("登录"), a:has-text("登录"), input[type="submit"]'],
             ],
         ];
+    }
+
+    protected function _outputJson($arr) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($arr, JSON_UNESCAPED_UNICODE);
     }
 }
